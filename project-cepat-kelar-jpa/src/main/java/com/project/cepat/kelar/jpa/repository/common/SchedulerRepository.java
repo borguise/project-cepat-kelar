@@ -17,7 +17,7 @@ public interface SchedulerRepository extends JpaRepository<Scheduler, Long>, Que
     @Query(value = "select ws  from Scheduler ws where ws.schedulerName like %:text% or ws.description like %:text%")
     Page<Scheduler> getPageable(@Param("text") String text, Pageable pageable);
 
-    @Query(value = "select ws  from Scheduler ws where ws.active=1 and (ws.schedulerName like %:text% or ws.description like %:text%)")
+    @Query(value = "select ws  from Scheduler ws where ws.active=true and (ws.schedulerName like %:text% or ws.description like %:text%)")
     Page<Scheduler> getPageableActive(@Param("text") String text, Pageable pageable);
 
 

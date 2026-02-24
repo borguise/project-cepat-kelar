@@ -94,7 +94,7 @@ public class AdminServiceImpl implements AdminService {
 	public Admin getByNo(Long no) throws Exception {
 		try {
 			log.info("Getting Admin by No: {}", no);
-			Optional<Admin> admin = adminRepository.findByNo(no);
+			Optional<Admin> admin = adminRepository.findById(no);
 			if (admin.isPresent()) {
 				return admin.get();
 			}
