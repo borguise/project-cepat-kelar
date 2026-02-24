@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: project-cepat-kelar
+  datasource:
+    url: jdbc:postgresql://localhost:5432/project-cepat-kelar
+    username: postgres
+    password: L@zu4rdy
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  app:
+    protocol: http
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
+    expose-request-attributes: true
+    expose-session-attributes: true
+    request-context-attribute: request
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  session:
+    cookie:
+      domain: localhost
+
+google:
+  recaptcha:
+    url: https://www.google.com/recaptcha/api/siteverify
+    secretkey: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+
+domain:
+  root: localhost:8080
+
+email:
+  address:
+    whiteDomainList: ""
+
+file:
+  uploaded-temp-dir: ./tmp/uploads
+  uploaded-dir: ./uploads
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    com.project.cepat.kelar: DEBUG
+    # org.springframework.web: DEBUG
