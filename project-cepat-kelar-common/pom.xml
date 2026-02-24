@@ -9,11 +9,11 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.project.cepat.kelar</groupId>
-	<artifactId>project-cepat-kelar-jpa</artifactId>
+	<artifactId>project-cepat-kelar-common</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>project-cepat-kelar-jpa</name>
-	<description>Demo project for Spring Boot</description>
+	<name>project-cepat-kelar-common</name>
+	<description>Common module for project cepat kelar</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -41,17 +41,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.project.cepat.kelar</groupId>
-			<artifactId>project-cepat-kelar-common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.persistence</groupId>
-			<artifactId>jakarta.persistence-api</artifactId>
-		</dependency>
-	</dependencies>
 
 </project>

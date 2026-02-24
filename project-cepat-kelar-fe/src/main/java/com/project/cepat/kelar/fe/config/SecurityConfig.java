@@ -1,0 +1,38 @@
+package com.project.cepat.kelar.fe.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/", "/signin", "/login", "/css/**", "/js/**", "/images/**", "/*.png").permitAll()
+                .anyRequest().permitAll()  // Allow all for now, add authentication later
+            )
+            .formLogin(form -> form
+                .loginPage("/signin")
+                .loginProcessingUrl("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/signin")
+                .permitAll()
+            )
+            .csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
+}
+
+
