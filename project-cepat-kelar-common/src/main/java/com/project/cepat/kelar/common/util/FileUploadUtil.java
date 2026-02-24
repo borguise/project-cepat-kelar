@@ -28,10 +28,10 @@ public class FileUploadUtil {
     public static final String PORTAL_USERS_TESTIMONY = "svc_users_testimony";
 
     private static final Logger logger = LoggerFactory.getLogger(FileUploadUtil.class);
-    @Value("${whee-pos.uploaded-temp-dir}")
+    @Value("${file.uploaded-temp-dir}")
     private String fileUploadTempDir;
 
-    @Value("${whee-pos.uploaded-dir}")
+    @Value("${file.uploaded-dir}")
     private String fileUploadDir;
 
     private Path tempLocation;

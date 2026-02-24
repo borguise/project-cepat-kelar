@@ -14,8 +14,6 @@ import com.project.cepat.kelar.jpa.model.User;
 
 public interface AdminRepository extends JpaRepository<Admin, Long>, QuerydslPredicateExecutor<Admin> {
 	
-	Optional<Admin> findByNo(Long no);
-	
 	Optional<Admin> findByUserNo(User userNo);
 	
 	@Query(value = "select mc from Admin mc where mc.userNo.username like concat('%', :text, '%')")

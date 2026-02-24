@@ -72,11 +72,6 @@ public class IndexController extends BaseController {
         // Default constructor
     }
 
-	@GetMapping("/test")
-	public String test() {
-		return "signin/signin";
-	}
-
 	@GetMapping("/forwardSuccessLogin")
 	public ModelAndView forwardSuccessLogin(UserContext user){
 		
@@ -204,11 +199,15 @@ public class IndexController extends BaseController {
 	}
 
 
-	@RequestMapping(value = {"/","/signin" })
-	public String getSignIn(Map<String, Object> mapObj) {
+	@RequestMapping(value = {"/admin/signin" })
+	public String getSignIn(@RequestParam(value = "error", required = false) String error,
+			Map<String, Object> mapObj) {
 		try {
 			mapObj.put("domainRoot", domainRoot != null ? domainRoot : "http://localhost:8080");
 			mapObj.put("serverDate", new Date());
+			if (error != null) {
+				mapObj.put("error", "Email atau password salah");
+			}
 			if (applicationConfigService != null) {
 				try {
 					mapObj.put("applicationName", applicationConfigService.getByConfigId("app.name"));
@@ -227,7 +226,7 @@ public class IndexController extends BaseController {
 			mapObj.put("applicationName", "Project Cepat Kelar");
 			mapObj.put("applicationDescription", "Admin Management System");
 		}
-		return "signin/signin";
+		return "backoffice/admin-login";
 	}
 
 	public Boolean validateEmailAddressFormat(String emailAddress) {

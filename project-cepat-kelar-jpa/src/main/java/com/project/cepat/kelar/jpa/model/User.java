@@ -30,7 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Data;
 
 @Entity
-@Table(name = "user")
+@Table(name = "app_user")
 @Data
 public class User implements UserDetails, CredentialsContainer {
 
@@ -61,7 +61,7 @@ public class User implements UserDetails, CredentialsContainer {
 	private boolean enabled;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "au_user_role", joinColumns = @JoinColumn(name = "USER_NO"))
+	@CollectionTable(name = "app_user_role", joinColumns = @JoinColumn(name = "USER_NO"))
 	@Column(name = "ROLE")
 	private Set<String> roles = new HashSet<>();
 
