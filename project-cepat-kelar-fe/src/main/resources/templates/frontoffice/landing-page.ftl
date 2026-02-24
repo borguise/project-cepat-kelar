@@ -77,7 +77,7 @@
                 <img src="${logoPath!"/images/frontoffice/logo.png"}" alt="Logo" class="w-full h-full object-contain mix-blend-multiply">
             </div>
             <div class="ml-8 text-deep-blue font-lato italic text-4xl tracking-widest font-medium">
-                ${content.slogan!"Salam literasi"}
+                ${(content.slogan)!"Salam literasi"}
             </div>
         </header>
 
@@ -85,22 +85,22 @@
         <main class="flex-1 flex flex-col items-center justify-center text-center px-10 -mt-32">
             <div class="w-full max-w-[800px] h-[2px] bg-deep-blue/10 mb-20"></div>
             <h2 class="text-deep-blue font-bold uppercase tracking-[0.5em] text-4xl mb-6">
-                ${content.titlePart1!"GRAHA PUSAT"}
+                ${(content.titlePart1)!"GRAHA PUSAT"}
             </h2>
             <h1 class="font-gelasio text-bamboo-green text-[180px] italic tracking-tight leading-none">
-                ${content.titlePart2!"LITERASI"}
+                ${(content.titlePart2)!"LITERASI"}
             </h1>
             <h2 class="text-deep-blue font-gelasio uppercase tracking-[0.4em] text-5xl mt-10">
-                ${content.titlePart3!"KABUPATEN MAGETAN"}
+                ${(content.titlePart3)!"KABUPATEN MAGETAN"}
             </h2>
         </main>
 
         <#-- FOOTER: Tombol dinaikkan dengan pb-80 (320px dari bawah) -->
         <footer class="pb-80 flex justify-center">
-            <a href="${content.buttonUrl!"/home"}" 
+            <a href="${(content.buttonUrl)!"/home"}" 
                class="animate-napas inline-block transform bg-bamboo-green text-stone-100 font-gelasio text-4xl tracking-[0.2em] px-24 py-8 rounded-[2rem] shadow-2xl 
                       transition-all duration-300 ease-in-out hover:brightness-110 active:scale-90">
-                ${content.buttonText!"mari menjelajah"}
+                ${(content.buttonText)!"mari menjelajah"}
             </a>
         </footer>
     </div>

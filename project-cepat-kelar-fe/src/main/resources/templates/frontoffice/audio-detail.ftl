@@ -50,7 +50,7 @@
             <div class="content-wrapper">
                 
                 <div class="Frame63 w-[700px] h-80 left-[30px] top-[30px] absolute bg-white overflow-hidden">
-                    <img src="${audio.coverUrl!'rekaman.jpeg'}" id="albumArt" class="Rectangle31 w-72 h-72 left-[-9px] top-[13.50px] absolute rounded-2xl object-cover bg-zinc-300">
+                    <img src="${audio.coverUrl!'/images/frontoffice/rekaman.jpeg'}" id="albumArt" class="Rectangle31 w-72 h-72 left-[-9px] top-[13.50px] absolute rounded-2xl object-cover bg-zinc-300">
                     <div class="w-80 left-[352.84px] top-[50px] absolute text-center text-black text-4xl font-bold font-['Gelasio'] leading-tight">${audio.title}</div>
                     <div class="w-60 left-[394.54px] top-[125px] absolute text-center text-black text-4xl font-bold font-['Gelasio']">${audio.callNumber}</div>
                     <div class="w-56 left-[454.29px] top-[195px] absolute text-black text-3xl font-bold font-['Gelasio'] opacity-60 uppercase">${audio.category}</div>
