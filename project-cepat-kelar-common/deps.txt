@@ -82,6 +82,7 @@ com.project.cepat.kelar:project-cepat-kelar-common:jar:0.0.1-SNAPSHOT
 |  +- org.springframework.boot:spring-boot:jar:4.0.2:compile
 |  |  \- org.springframework:spring-context:jar:7.0.3:compile
 |  \- org.springframework.boot:spring-boot-autoconfigure:jar:4.0.2:compile
++- com.h2database:h2:jar:2.4.240:runtime
 +- org.postgresql:postgresql:jar:42.7.9:runtime
 |  \- org.checkerframework:checker-qual:jar:3.52.0:runtime
 +- org.projectlombok:lombok:jar:1.18.42:compile (optional)
@@ -102,7 +103,7 @@ com.project.cepat.kelar:project-cepat-kelar-common:jar:0.0.1-SNAPSHOT
 |  |  +- net.minidev:json-smart:jar:2.6.0:compile
 |  |  |  \- net.minidev:accessors-smart:jar:2.6.0:compile
 |  |  |     \- org.ow2.asm:asm:jar:9.7.1:compile
-|  |  +- org.assertj:assertj-core:jar:3.27.6:test
+|  |  +- org.assertj:assertj-core:jar:3.27.7:test
 |  |  |  \- net.bytebuddy:byte-buddy:jar:1.17.8:runtime
 |  |  +- org.awaitility:awaitility:jar:4.3.0:test
 |  |  +- org.hamcrest:hamcrest:jar:3.0:test
@@ -135,7 +136,7 @@ com.project.cepat.kelar:project-cepat-kelar-common:jar:0.0.1-SNAPSHOT
 |  +- org.springframework.boot:spring-boot-starter-jackson-test:jar:4.0.2:test
 |  +- org.springframework.boot:spring-boot-webmvc-test:jar:4.0.2:test
 |  \- org.springframework.boot:spring-boot-resttestclient:jar:4.0.2:test
-+- com.querydsl:querydsl-jpa:jar:5.0.0:compile
-|  \- com.querydsl:querydsl-core:jar:5.1.0:compile
++- com.querydsl:querydsl-jpa:jar:jakarta:5.0.0:compile
+|  \- com.querydsl:querydsl-core:jar:5.0.0:compile
 |     \- com.mysema.commons:mysema-commons-lang:jar:0.2.4:compile
 \- jakarta.persistence:jakarta.persistence-api:jar:3.1.0:compile

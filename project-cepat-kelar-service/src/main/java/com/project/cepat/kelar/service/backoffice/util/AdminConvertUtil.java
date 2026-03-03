@@ -1,7 +1,7 @@
 package com.project.cepat.kelar.service.backoffice.util;
 
-import com.project.cepat.kelar.common.wrapper.AdminWrapper;
 import com.project.cepat.kelar.jpa.model.Admin;
+import com.project.cepat.kelar.wrapper.backoffice.AdminWrapper;
 
 public class AdminConvertUtil {
 	

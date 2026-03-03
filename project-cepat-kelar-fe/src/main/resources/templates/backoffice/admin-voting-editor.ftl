@@ -1,65 +1,8 @@
 <#assign activePage = "voting">
 <#import "/layout/backoffice_layout.ftl" as layout>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Manajemen Pemilihan | ${institutionName!"Graha Pusat Literasi"}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Gelasio:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        /* [TRIPLE LOCK] Struktur identik dengan admineditoraudio.ftl */
-        html, body { height: 100vh; width: 100vw; margin: 0; padding: 0; overflow: hidden; }
-        body { font-family: 'Lato', sans-serif; display: flex; background-color: #f8fafc; }
-        .font-gelasio { font-family: 'Gelasio', serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+<@layout.backofficeLayout title="Admin - Editor Voting" activePage=activePage adminName=adminName>
 
-        /* Custom Scrollbar Indikator */
-        .scroll-indah::-webkit-scrollbar { width: 8px; display: block; }
-        .scroll-indah::-webkit-scrollbar-track { background: transparent; }
-        .scroll-indah::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; border: 2px solid #f8fafc; }
-
-        /* Style Input Premium - Fit, Elegant & Centered */
-        .input-premium {
-            width: 100%;
-            background-color: white;
-            padding: 0.6rem 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-            outline: none;
-            color: #3730a3;
-            font-size: 1rem;
-            text-align: center;
-        }
-        .input-premium:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-        }
-        .label-elegant {
-            display: block;
-            font-size: 1rem;
-            font-weight: 700;
-            font-family: 'Gelasio', serif;
-            margin-bottom: 0.3rem;
-            color: #1e293b;
-            text-align: center;
-        }
-        .table-custom { border-collapse: separate; border-spacing: 0; width: 100%; }
-        .table-custom th, .table-custom td { border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; padding: 0.75rem; text-align: center; }
-        .table-custom th:last-child, .table-custom td:last-child { border-right: none; }
-    </style>
-</head>
-<body>
-
-    <@layout.backofficeSidebar activePage=activePage />
-
-    <main class="flex-1 ml-60 flex flex-col h-full overflow-hidden">
-    
-        <@layout.backofficeHeader adminName=(user.role!"Pustakawan") />
-
-    <div class="flex-1 overflow-y-auto p-10 bg-slate-50/50 flex flex-col gap-6 scroll-indah">      
+    <div class="w-full max-w-6xl mx-auto">      
       
       <div class="max-w-6xl w-full mx-auto px-4">
         <h2 class="text-3xl font-bold font-gelasio text-slate-800 italic">Manajemen Pemilihan</h2>
@@ -67,21 +10,21 @@
 
       <form action="/admin/voting/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
-        <input type="hidden" name="id" value="${voting.id!''}">
+                <input type="hidden" name="id" value="${(voting.id)!''}">
 
         <div class="space-y-5">
             <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Kegiatan Pemilihan</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2">
-                    <input type="text" name="name" value="${voting.name!''}" placeholder="Nama Kegiatan Pemilihan" class="input-premium" required>
+                    <input type="text" name="name" value="${(voting.name)!''}" placeholder="Nama Kegiatan Pemilihan" class="input-premium" required>
                 </div>
                 <div>
                     <label class="label-elegant">Tanggal Mulai</label>
-                    <input type="date" name="startDate" value="${voting.startDate!''}" class="input-premium" required>
+                    <input type="date" name="startDate" value="${(voting.startDate)!''}" class="input-premium" required>
                 </div>
                 <div>
                     <label class="label-elegant">Tanggal Selesai</label>
-                    <input type="date" name="endDate" value="${voting.endDate!''}" class="input-premium" required>
+                    <input type="date" name="endDate" value="${(voting.endDate)!''}" class="input-premium" required>
                 </div>
             </div>
         </div>
@@ -92,8 +35,8 @@
             <div class="lg:w-56 flex flex-col items-center gap-3">
                 <label class="label-elegant">Unggah foto / Poster</label>
                 <div class="w-52 h-52 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white transition-all group shadow-sm relative overflow-hidden">
-                    <#if voting.posterUrl??>
-                        <img src="${voting.posterUrl}" class="w-full h-full object-cover">
+                    <#if voting?? && voting.posterUrl?? && voting.posterUrl?has_content>
+                        <img src="${(voting.posterUrl)!''}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
                     <#else>
                         <div class="text-center p-4">
                             <span class="block text-2xl mb-1 group-hover:scale-110 transition">🖼️</span>
@@ -107,11 +50,11 @@
             <div class="flex-1 space-y-5">
                 <div>
                     <label class="label-elegant">Judul</label>
-                    <input type="text" name="title" value="${voting.title!''}" placeholder="Identitas, Pencipta, atau Acara" class="input-premium">
+                    <input type="text" name="title" value="${(voting.title)!''}" placeholder="Identitas, Pencipta, atau Acara" class="input-premium">
                 </div>
                 <div>
                     <label class="label-elegant">Keterangan singkat</label>
-                    <textarea name="description" placeholder="Deskripsi Singkat / Informasi" class="input-premium h-28 resize-none py-3 text-center">${voting.description!''}</textarea>
+                    <textarea name="description" placeholder="Deskripsi Singkat / Informasi" class="input-premium h-28 resize-none py-3">${(voting.description)!''}</textarea>
                 </div>
             </div>
         </div>
@@ -142,7 +85,7 @@
                             <tr>
                                 <td>
                                     <div class="w-12 h-12 bg-slate-200 rounded-lg mx-auto overflow-hidden">
-                                        <#if entry.imageUrl??><img src="${entry.imageUrl}" class="w-full h-full object-cover"></#if>
+                                        <#if entry.imageUrl?? && entry.imageUrl?has_content><img src="${entry.imageUrl}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')"></#if>
                                     </div>
                                 </td>
                                 <td class="font-bold text-black">${entry.name}</td>
@@ -174,6 +117,5 @@
       </form> 
 
     </div>
-  </main>
-</body>
-</html>
+
+</@layout.backofficeLayout>

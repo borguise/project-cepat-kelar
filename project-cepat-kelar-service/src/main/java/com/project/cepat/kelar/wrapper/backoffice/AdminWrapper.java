@@ -1,6 +1,7 @@
-package com.project.cepat.kelar.common.wrapper;
+package com.project.cepat.kelar.wrapper.backoffice;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.cepat.kelar.common.wrapper.ReferenceBaseWrapper;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

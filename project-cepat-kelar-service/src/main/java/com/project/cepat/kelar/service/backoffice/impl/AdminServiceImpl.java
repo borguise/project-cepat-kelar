@@ -6,16 +6,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.cepat.kelar.common.wrapper.AdminWrapper;
 import com.project.cepat.kelar.jpa.model.Admin;
 import com.project.cepat.kelar.jpa.model.User;
 import com.project.cepat.kelar.jpa.repository.AdminRepository;
 import com.project.cepat.kelar.jpa.repository.UserRepository;
 import com.project.cepat.kelar.service.backoffice.AdminService;
 import com.project.cepat.kelar.service.backoffice.util.AdminConvertUtil;
+import com.project.cepat.kelar.wrapper.backoffice.AdminWrapper;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -159,5 +160,29 @@ public class AdminServiceImpl implements AdminService {
 			log.error("Error getting Admin Wrapper by User No: {}", e.getMessage(), e);
 			throw new Exception("Failed to get Admin Wrapper: " + e.getMessage(), e);
 		}
+	}
+	
+	@Override
+	public String resolveAdminName(Authentication authentication) {
+		try {
+			if (authentication == null) {
+				return null;
+			}
+			Object principal = authentication.getPrincipal();
+			if (principal instanceof User user) {
+				try {
+					AdminWrapper admin = getAdminByUserNo(user.getNo());
+					if (admin != null && admin.getUsername() != null) {
+						return admin.getUsername();
+					}
+				} catch (Exception e) {
+					log.debug("Admin not found for user, using username from User entity");
+				}
+				return user.getUsername();
+			}
+		} catch (Exception e) {
+			log.warn("Unable to resolve admin name", e);
+		}
+		return null;
 	}
 }

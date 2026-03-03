@@ -2,31 +2,7 @@
 <#assign activePage = "komentar">
 <#import "/layout/backoffice_layout.ftl" as layout>
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Moderasi Komentar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Gelasio:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        /* [TRIPLE LOCK 1] Kunci Body agar aplikasi pas di monitor */
-        html, body { height: 100vh; width: 100vw; margin: 0; padding: 0; overflow: hidden; }
-        body { font-family: 'Lato', sans-serif; display: flex; }
-        .font-gelasio { font-family: 'Gelasio', serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
-</head>
-<body class="bg-[#f8fafc]">
-
-  <@layout.backofficeSidebar activePage=activePage />
-
-  <main class="flex-1 ml-60 flex flex-col h-full overflow-hidden">
-    
-    <@layout.backofficeHeader adminName=adminName />
-
-    <div class="flex-1 overflow-y-auto p-12 bg-slate-50/50 flex flex-col gap-10">
+<@layout.backofficeLayout title="Admin - Moderasi Komentar" activePage=activePage adminName=adminName>
       
       <div class="max-w-6xl w-full mx-auto px-4">
         <h2 class="text-3xl font-bold font-gelasio text-black italic">Moderasi Komentar Artikel & Berita</h2>
@@ -123,5 +99,4 @@
         }
     }
   </script>
-</body>
-</html>
+</@layout.backofficeLayout>

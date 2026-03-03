@@ -1,0 +1,159 @@
+<#assign activePage = "audio">
+<#import "/layout/backoffice_layout.ftl" as layout>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Editor Audio | ${institutionName!"Graha Pusat Literasi"}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Gelasio:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* [TRIPLE LOCK] Struktur identik dengan admineditorkoleksi.ftl */
+        html, body { height: 100vh; width: 100vw; margin: 0; padding: 0; overflow: hidden; }
+        body { font-family: 'Lato', sans-serif; display: flex; background-color: #f8fafc; }
+        .font-gelasio { font-family: 'Gelasio', serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Custom Scrollbar Indikator */
+        .scroll-indah::-webkit-scrollbar { width: 8px; display: block; }
+        .scroll-indah::-webkit-scrollbar-track { background: transparent; }
+        .scroll-indah::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; border: 2px solid #f8fafc; }
+
+        /* Style Input Premium - Compact & Centered */
+        .input-premium {
+            width: 100%;
+            background-color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            outline: none;
+            color: #3730a3;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .input-premium:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        .label-elegant {
+            display: block;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Gelasio', serif;
+            margin-bottom: 0.3rem;
+            color: #1e293b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+  <@layout.backofficeSidebar activePage=activePage />
+
+  <main class="flex-1 ml-60 flex flex-col h-full overflow-hidden">
+    
+    <@layout.backofficeHeader adminName=(user.role!"Pustakawan") />
+
+    <div class="flex-1 overflow-y-auto p-10 bg-slate-50/50 flex flex-col gap-6 scroll-indah">      
+      
+      <div class="max-w-6xl w-full mx-auto px-4">
+        <h2 class="text-3xl font-bold font-gelasio text-slate-800 italic">Editor Rekaman Audio</h2>
+      </div>
+
+      <form action="/admin/audio/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
+        
+        <input type="hidden" name="id" value="${audio.id!''}">
+
+        <div class="flex flex-col lg:flex-row gap-10">
+          <div class="flex-1 space-y-5">
+            <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">I. Data Utama</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="label-elegant">Nomor Panggil</label>
+                    <input type="text" name="callNumber" value="${audio.callNumber!''}" placeholder="Nomor ddc" class="input-premium">
+                </div>
+                <div>
+                    <label class="label-elegant">Subjek</label>
+                    <input type="text" name="subject" value="${audio.subject!''}" placeholder="Materi audio" class="input-premium">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="label-elegant">Judul Rekaman</label>
+                    <input type="text" name="title" value="${audio.title!''}" placeholder="Judul audio" class="input-premium">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="label-elegant">Pernyataan Tanggung Jawab</label>
+                    <input type="text" name="responsibility" value="${audio.responsibility!''}" placeholder="Nama Pengisi suara" class="input-premium">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="label-elegant">General Material Designation</label>
+                    <input type="text" name="gmd" value="${audio.gmd!''}" placeholder="[rekaman suara]" class="input-premium">
+                </div>
+            </div>
+          </div>
+
+          <div class="lg:w-56 flex flex-col items-center justify-center pt-8">
+            <div class="w-52 h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white hover:border-indigo-400 transition-all group overflow-hidden relative">
+              <#if audio.coverUrl??>
+                <img src="${audio.coverUrl}" class="w-full h-full object-cover">
+              <#else>
+                <div class="text-center p-4">
+                  <span class="block text-2xl mb-1 group-hover:scale-110 transition">🖼️</span>
+                  <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Cover</span>
+                </div>
+              </#if>
+              <input type="file" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer">
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-slate-50">
+
+        <div class="space-y-5">
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">II. Data Penerbit</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label class="label-elegant">Label / Lembaga</label>
+              <input type="text" name="publisher" value="${audio.publisher!''}" placeholder="Nama Penerbit" class="input-premium">
+            </div>
+            <div>
+              <label class="label-elegant">Kota Asal</label>
+              <input type="text" name="originCity" value="${audio.originCity!''}" placeholder="Daerah Terbit" class="input-premium">
+            </div>
+            <div>
+              <label class="label-elegant">Tahun Terbit</label>
+              <input type="text" name="publishYear" value="${audio.publishYear!''}" placeholder="Waktu Terbit" class="input-premium">
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-slate-50">
+
+        <div class="space-y-5">
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">III. Data Fisik</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="label-elegant">Jumlah dan Jenis Media</label>
+              <input type="text" name="mediaType" value="${audio.mediaType!''}" placeholder="1 keping cd" class="input-premium">
+            </div>
+            <div>
+              <label class="label-elegant">Detail dan Format Suara</label>
+              <input type="text" name="audioFormat" value="${audio.audioFormat!''}" placeholder="mp3, mp4," class="input-premium">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-center pt-6 border-t border-slate-50">
+          <button type="submit" class="bg-[#bef264] hover:bg-lime-400 text-indigo-900 font-bold px-24 py-4 rounded-2xl shadow-lg transition-all active:scale-95 text-xl font-lato">
+            Simpan Rekaman Audio
+          </button>
+        </div>
+
+      </form> 
+
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,292 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.project.cepat.kelar:fe:jar:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.scope' for org.projectlombok:lombok:jar must be one of [provided, compile, runtime, test, system] but is 'annotationProcessor'. @ line 88, column 11
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] ---------------------< com.project.cepat.kelar:fe >---------------------
+[INFO] Building fe 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.0.2:run (default-cli) > test-compile @ fe >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ fe ---
+[INFO] Copying 4 resources from src/main/resources to target/classes
+[INFO] Copying 99 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ fe ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ fe ---
+[INFO] skip non existing resourceDirectory /Users/fadhilaldien/Documents/workspaces/my-workspace/project-cepat-kelar/project-cepat-kelar-fe/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ fe ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:4.0.2:run (default-cli) < test-compile @ fe <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.0.2:run (default-cli) @ fe ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.2)
+
+2026-02-25T18:03:27.720+08:00  INFO 10697 --- [project-cepat-kelar] [           main] c.p.cepat.kelar.fe.FrontEndApplication   : Starting FrontEndApplication using Java 25.0.1 with PID 10697 (/Users/fadhilaldien/Documents/workspaces/my-workspace/project-cepat-kelar/project-cepat-kelar-fe/target/classes started by fadhilaldien in /Users/fadhilaldien/Documents/workspaces/my-workspace/project-cepat-kelar/project-cepat-kelar-fe)
+2026-02-25T18:03:27.721+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] c.p.cepat.kelar.fe.FrontEndApplication   : Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-02-25T18:03:27.721+08:00  INFO 10697 --- [project-cepat-kelar] [           main] c.p.cepat.kelar.fe.FrontEndApplication   : The following 1 profile is active: "devfadhil"
+2026-02-25T18:03:27.927+08:00  INFO 10697 --- [project-cepat-kelar] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-25T18:03:27.946+08:00  INFO 10697 --- [project-cepat-kelar] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 6 JPA repository interfaces.
+2026-02-25T18:03:28.235+08:00  INFO 10697 --- [project-cepat-kelar] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-02-25T18:03:28.241+08:00  INFO 10697 --- [project-cepat-kelar] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-25T18:03:28.241+08:00  INFO 10697 --- [project-cepat-kelar] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-25T18:03:28.261+08:00  INFO 10697 --- [project-cepat-kelar] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 517 ms
+2026-02-25T18:03:28.326+08:00  INFO 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-25T18:03:28.344+08:00  INFO 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-25T18:03:28.509+08:00  INFO 10697 --- [project-cepat-kelar] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-25T18:03:28.521+08:00  INFO 10697 --- [project-cepat-kelar] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-25T18:03:28.596+08:00  INFO 10697 --- [project-cepat-kelar] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@23d23d98
+2026-02-25T18:03:28.597+08:00  INFO 10697 --- [project-cepat-kelar] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-25T18:03:28.609+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-25T18:03:28.619+08:00  INFO 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/project_cepat_kelar]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.0
+	Default catalog/schema: project_cepat_kelar/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-25T18:03:28.664+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.Admin.createdDate.
+2026-02-25T18:03:28.665+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.Admin.updatedDate.
+2026-02-25T18:03:28.672+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.Article.createdDate.
+2026-02-25T18:03:28.672+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.Article.updatedDate.
+2026-02-25T18:03:28.682+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.common.ApplicationConfig.createdDate.
+2026-02-25T18:03:28.683+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.common.ApplicationConfig.updatedDate.
+2026-02-25T18:03:28.684+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.common.ApplicationNotification.createdDate.
+2026-02-25T18:03:28.684+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.common.ApplicationNotification.updatedDate.
+2026-02-25T18:03:28.686+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.common.Scheduler.createdDate.
+2026-02-25T18:03:28.686+08:00  WARN 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.deprecation            : HHH90000033: Encountered use of deprecated annotation [interface jakarta.persistence.Temporal] at com.project.cepat.kelar.jpa.model.common.Scheduler.updatedDate.
+2026-02-25T18:03:29.024+08:00  INFO 10697 --- [project-cepat-kelar] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    set client_min_messages = WARNING
+Hibernate: 
+    alter table if exists admin 
+       drop constraint if exists FKrixejeomhyfntj45ehbxw5o95
+Hibernate: 
+    alter table if exists app_user_role 
+       drop constraint if exists FK99wvof81irmbaaih2qvjsokk4
+Hibernate: 
+    drop table if exists admin cascade
+Hibernate: 
+    drop table if exists app_user cascade
+Hibernate: 
+    drop table if exists app_user_role cascade
+Hibernate: 
+    drop table if exists application_config cascade
+Hibernate: 
+    drop table if exists application_notification cascade
+Hibernate: 
+    drop table if exists article cascade
+Hibernate: 
+    drop table if exists scheduler cascade
+Hibernate: 
+    drop sequence if exists seq_user
+Hibernate: 
+    create sequence seq_user start with 1 increment by 50
+Hibernate: 
+    create table admin (
+        is_deleted integer,
+        created_date timestamp(6),
+        id bigint generated by default as identity,
+        updated_date timestamp(6),
+        user_no bigint not null unique,
+        version bigint,
+        created_by varchar(100),
+        updated_by varchar(100),
+        description varchar(500),
+        primary key (id)
+    )
+Hibernate: 
+    create table app_user (
+        acc_non_exp char(1) check ((acc_non_exp in ('N','Y'))),
+        acc_non_lock char(1) check ((acc_non_lock in ('N','Y'))),
+        crd_non_exp char(1) check ((crd_non_exp in ('N','Y'))),
+        enabled char(1) check ((enabled in ('N','Y'))),
+        is_admin char(1) check ((is_admin in ('N','Y'))),
+        no bigint not null,
+        password varchar(100),
+        username varchar(100) unique,
+        email varchar(191) unique,
+        mobile varchar(191) unique,
+        primary key (no)
+    )
+Hibernate: 
+    create table app_user_role (
+        user_no bigint not null,
+        role varchar(255)
+    )
+Hibernate: 
+    create table application_config (
+        created_date timestamp(6),
+        id bigint generated by default as identity,
+        updated_date timestamp(6),
+        config_id varchar(100) unique,
+        created_by varchar(100),
+        updated_by varchar(100),
+        description varchar(500),
+        config_value varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    create table application_notification (
+        active boolean not null,
+        notification_type integer not null,
+        created_date timestamp(6),
+        id bigint generated by default as identity,
+        notification_end_date timestamp(6) not null,
+        notification_start_date timestamp(6) not null,
+        updated_date timestamp(6),
+        created_by varchar(100),
+        updated_by varchar(100),
+        notification_name varchar(150) not null,
+        description varchar(500),
+        receiver varchar(1500),
+        primary key (id)
+    )
+Hibernate: 
+    create table article (
+        is_deleted integer,
+        created_date timestamp(6),
+        end_date timestamp(6),
+        id bigint generated by default as identity,
+        publish_date timestamp(6),
+        start_date timestamp(6),
+        updated_date timestamp(6),
+        version bigint,
+        created_by varchar(100),
+        updated_by varchar(100),
+        description varchar(500),
+        category varchar(255),
+        content text,
+        cover_image varchar(255),
+        status varchar(255) check ((status in ('DRAFT','PUBLISHED','HIDDEN','ARCHIVED'))),
+        title varchar(255),
+        cover_image_data bytea,
+        primary key (id)
+    )
+Hibernate: 
+    create table scheduler (
+        is_active boolean not null,
+        schedule_time time(0),
+        schedule_type integer not null,
+        created_date timestamp(6),
+        id bigint generated by default as identity,
+        schedule_date timestamp(6),
+        updated_date timestamp(6),
+        created_by varchar(100),
+        scheduler_name varchar(100) not null,
+        updated_by varchar(100),
+        class_name varchar(500),
+        description varchar(500),
+        primary key (id)
+    )
+Hibernate: 
+    alter table if exists admin 
+       add constraint FKrixejeomhyfntj45ehbxw5o95 
+       foreign key (user_no) 
+       references app_user
+Hibernate: 
+    alter table if exists app_user_role 
+       add constraint FK99wvof81irmbaaih2qvjsokk4 
+       foreign key (user_no) 
+       references app_user
+2026-02-25T18:03:29.076+08:00  INFO 10697 --- [project-cepat-kelar] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-25T18:03:29.124+08:00  INFO 10697 --- [project-cepat-kelar] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-25T18:03:29.604+08:00  INFO 10697 --- [project-cepat-kelar] [           main] c.p.c.kelar.common.util.FileUploadUtil   : Checking file upload dir on ./tmp/uploads
+2026-02-25T18:03:29.728+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] o.s.w.s.v.f.FreeMarkerConfigurer         : Template loader path [class path resource [templates/]] resolved to file path [/Users/fadhilaldien/Documents/workspaces/my-workspace/project-cepat-kelar/project-cepat-kelar-fe/target/classes/templates]
+2026-02-25T18:03:29.752+08:00  WARN 10697 --- [project-cepat-kelar] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-25T18:03:29.780+08:00  INFO 10697 --- [project-cepat-kelar] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name backofficeUserDetailsService
+2026-02-25T18:03:29.828+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-02-25T18:03:29.880+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : 61 mappings in 'requestMappingHandlerMapping'
+2026-02-25T18:03:29.891+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2026-02-25T18:03:29.904+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 2 RequestBodyAdvice, 1 ResponseBodyAdvice
+2026-02-25T18:03:29.919+08:00 DEBUG 10697 --- [project-cepat-kelar] [           main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2026-02-25T18:03:29.959+08:00  INFO 10697 --- [project-cepat-kelar] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-02-25T18:03:29.962+08:00  INFO 10697 --- [project-cepat-kelar] [           main] c.p.cepat.kelar.fe.FrontEndApplication   : Started FrontEndApplication in 2.411 seconds (process running for 2.559)
+Hibernate: 
+    select
+        u1_0.no,
+        u1_0.acc_non_exp,
+        u1_0.acc_non_lock,
+        u1_0.crd_non_exp,
+        u1_0.email,
+        u1_0.enabled,
+        u1_0.is_admin,
+        u1_0.mobile,
+        u1_0.password,
+        u1_0.username 
+    from
+        app_user u1_0 
+    where
+        u1_0.username=?
+Hibernate: 
+    select
+        nextval('seq_user')
+Hibernate: 
+    insert 
+    into
+        app_user
+        (acc_non_exp, acc_non_lock, crd_non_exp, email, enabled, is_admin, mobile, password, username, no) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        app_user_role
+        (user_no, role) 
+    values
+        (?, ?)
+Hibernate: 
+    insert 
+    into
+        app_user_role
+        (user_no, role) 
+    values
+        (?, ?)
+2026-02-25T18:03:30.131+08:00  INFO 10697 --- [project-cepat-kelar] [           main] c.p.c.kelar.fe.config.TestDataLoader     : Test user created: admin
+Hibernate: 
+    insert 
+    into
+        admin
+        (created_by, created_date, is_deleted, description, updated_by, updated_date, user_no, version) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2026-02-25T18:03:30.147+08:00  INFO 10697 --- [project-cepat-kelar] [           main] c.p.c.kelar.fe.config.TestDataLoader     : Admin record created for user: admin
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:31 min
+[INFO] Finished at: 2026-02-25T18:04:58+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.0.2:run (default-cli) on project fe: Process terminated with exit code: 137 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

@@ -1,36 +1,7 @@
 <#assign activePage = "sorotan">
 <#import "/layout/backoffice_layout.ftl" as layout>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Editor | Graha Pusat Literasi</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Gelasio:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-        html, body { height: 100vh; width: 100vw; margin: 0; padding: 0; overflow: hidden; }
-        body { font-family: 'Lato', sans-serif; display: flex; }
-        .font-gelasio { font-family: 'Gelasio', serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+<@layout.backofficeLayout title="Admin - Editor Sorotan" activePage=activePage adminName=adminName>
 
-        .scroll-indah::-webkit-scrollbar { width: 8px; }
-        .scroll-indah::-webkit-scrollbar-track { background: #f1f5f9; }
-        .scroll-indah::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        textarea:focus, input:focus { outline: none; }
-    </style>
-</head>
-<body class="bg-[#f8fafc]">
-
-  <@layout.backofficeSidebar activePage=activePage />
-
-  <main class="flex-1 ml-60 flex flex-col h-full overflow-hidden">
-    
-    <@layout.backofficeHeader adminName=adminName />
-
-    <div class="flex-1 overflow-y-auto p-12 bg-slate-50/50 flex flex-col gap-10 scroll-indah">      
-    
       <div class="max-w-4xl w-full mx-auto px-4">
         <h2 class="text-4xl font-bold font-gelasio text-black">Tambah Sorotan Baru</h2>
       </div>
@@ -58,13 +29,9 @@
 
       </form> 
 
-    </div>
-  </main>
-
   <script>
     const tx = document.getElementById('autoExpand');
     tx.setAttribute('style', 'height:' + (tx.scrollHeight) + 'px;overflow-y:hidden;');
   </script>
 
-</body>
-</html>
+</@layout.backofficeLayout>

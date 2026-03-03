@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.project.cepat.kelar.common.constant.AppConstant;
 import com.project.cepat.kelar.common.controller.BaseController;
 import com.project.cepat.kelar.common.web.UserContext;
-import com.project.cepat.kelar.common.wrapper.AdminWrapper;
 import com.project.cepat.kelar.service.backoffice.AdminService;
+import com.project.cepat.kelar.wrapper.backoffice.AdminWrapper;
 
 
 @Controller

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Literasi - ${agendaUtama.judul!'Kegiatan Literasi'}</title>
+    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
+    <title>Agenda Literasi - Graha Pusat Literasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -108,12 +109,12 @@
 
         <div class="WrapperCard">
             <div class="VisibleContent MainView">
-                <div class="KunjunganTitle">${agendaUtama.judul!'Kunjungan Berkelompok'}</div>
+                <div class="KunjunganTitle">${primaryEvent.title!'Kunjungan Berkelompok'}</div>
                 <div class="divider"></div>
 
                 <div class="VectorPlaceholder">
-                    <#if agendaUtama.imageUrl??>
-                        <img src="${agendaUtama.imageUrl}" class="w-full h-full object-cover">
+                    <#if primaryEvent.imageUrl??>
+                        <img src="${primaryEvent.imageUrl}" class="w-full h-full object-cover">
                     <#else>
                         <svg width="240" height="240" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.3">
                             <circle cx="12" cy="8" r="4" fill="#64748b"/>
@@ -124,7 +125,7 @@
 
                 <div class="DateContainer">
                     <i class="fa-regular fa-calendar-days" style="color: #94a3b8; font-size: 40px;"></i>
-                    <span>${agendaUtama.tanggalFormat!'Tanggal Belum Tersedia'}</span>
+                    <span>${primaryEvent.dateLabel!'Tanggal Belum Tersedia'}</span>
                 </div>
 
                 <div class="DescriptionLabel">Deskripsi Kegiatan</div>
@@ -133,22 +134,22 @@
             <div class="HiddenContent">
                 <div class="DescriptionBox">
                     <div class="DescriptionText">
-                        ${agendaUtama.deskripsi!'Teman-teman siswa mendapat tugas untuk menjelajahi literasi'}
+                        ${primaryEvent.description!'Teman-teman siswa mendapat tugas untuk menjelajahi literasi'}
                     </div>
                 </div>
 
                 <div class="NextAgenda">
                     <div class="text-3xl font-bold font-['Gelasio'] mb-8 text-slate-800 opacity-70 uppercase tracking-widest">Agenda Selanjutnya</div>
                     
-                    <#if listAgendaSelanjutnya?? && (listAgendaSelanjutnya?size > 0)>
-                        <#list listAgendaSelanjutnya as next>
+                    <#if upcomingEventList?? && (upcomingEventList?size > 0)>
+                        <#list upcomingEventList as next>
                             <div class="NextCard" onclick="location.href='${basePath!}/events/detail?id=${next.id}'">
                                 <div class="w-20 h-20 bg-[#f7f0cb] rounded-xl flex items-center justify-center text-3xl">
                                     <i class="fa-solid ${next.iconClass!'fa-book-open'}"></i>
                                 </div>
                                 <div>
-                                    <div class="text-3xl font-bold font-['Gelasio']">${next.judul}</div>
-                                    <div class="text-2xl text-slate-400 font-['Inter']">${next.tanggalFormat}</div>
+                                    <div class="text-3xl font-bold font-['Gelasio']">${next.title}</div>
+                                    <div class="text-2xl text-slate-400 font-['Inter']">${next.dateLabel}</div>
                                 </div>
                             </div>
                         </#list>
@@ -164,7 +165,7 @@
         function applyScaling() {
             const canvas = document.getElementById('kios-canvas');
             const windowH = window.innerHeight;
-            canvas.style.transform = `scale(${(windowH - 20) / 1920})`;
+            canvas.style.transform = "scale(" + ((windowH - 20) / 1920) + ")";
         }
         window.addEventListener('load', applyScaling);
         window.addEventListener('resize', applyScaling);

@@ -31,56 +31,6 @@ public class FrontofficeController {
         return "frontoffice/home-page";
     }
 
-    @GetMapping("/events")
-    public String events() {
-        return "frontoffice/events";
-    }
-
-    @GetMapping("/articles")
-    public String articles() {
-        return "frontoffice/articles";
-    }
-
-    @GetMapping("/article-detail")
-    public String articleDetail() {
-        return "frontoffice/article-detail";
-    }
-
-    @GetMapping("/article-detail-alt")
-    public String articleDetailAlt() {
-        return "frontoffice/article-detail-alt";
-    }
-
-    @GetMapping("/collections")
-    public String collections() {
-        return "frontoffice/collections";
-    }
-
-    @GetMapping("/collections-found")
-    public String collectionsFound() {
-        return "frontoffice/collections-found";
-    }
-
-    @GetMapping("/collections-not-found")
-    public String collectionsNotFound() {
-        return "frontoffice/collections-not-found";
-    }
-
-    @GetMapping("/collection-detail")
-    public String collectionDetail() {
-        return "frontoffice/collection-detail";
-    }
-
-    @GetMapping("/audio")
-    public String audio() {
-        return "frontoffice/audio";
-    }
-
-    @GetMapping("/audio-detail")
-    public String audioDetail() {
-        return "frontoffice/audio-detail";
-    }
-
     @GetMapping("/highlights")
     public String highlights() {
         return "frontoffice/highlights";
@@ -106,24 +56,9 @@ public class FrontofficeController {
         return "frontoffice/profile";
     }
 
-    @GetMapping("/voting")
-    public String voting() {
-        return "frontoffice/voting";
-    }
-
     @GetMapping("/loading-page")
     public String loadingPage() {
         return "frontoffice/loading-page";
-    }
-
-    @GetMapping("/search-results-audio")
-    public String searchResultsAudio() {
-        return "frontoffice/search-results-audio";
-    }
-
-    @GetMapping("/search-results-collections")
-    public String searchResultsCollections() {
-        return "frontoffice/search-results-collections";
     }
 
     @GetMapping("/search")
