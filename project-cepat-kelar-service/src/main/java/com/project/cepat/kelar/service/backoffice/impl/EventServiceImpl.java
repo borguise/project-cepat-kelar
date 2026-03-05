@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
 		event.setName(name);
 		event.setEventDate(eventDate);
 		event.setLocation(location);
-		event.setDescription(description);
+		event.setEventDescription(description);
 		event.setStatus((status == null || status.isBlank()) ? "Diproses" : status);
 
 		if (posterFile != null && !posterFile.isEmpty()) {

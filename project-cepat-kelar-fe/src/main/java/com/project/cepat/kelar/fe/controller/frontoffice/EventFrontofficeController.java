@@ -38,7 +38,7 @@ public class EventFrontofficeController {
                     var primary = events.get(0);
                     primaryEvent.put("id", primary.getId());
                     primaryEvent.put("title", primary.getName());
-                    primaryEvent.put("description", primary.getDescription());
+                    primaryEvent.put("description", primary.getEventDescription());
                     primaryEvent.put("dateLabel", primary.getEventDate() != null ? formatter.format(primary.getEventDate()) : "Tanggal belum tersedia");
                     if (primary.getPosterImage() != null && !primary.getPosterImage().isBlank()) {
                         primaryEvent.put("imageUrl", "/admin/events/image/" + primary.getId());

@@ -31,8 +31,8 @@ public class Event extends ReferenceBase {
 	@Column(name = "STATUS")
 	private String status;
 
-	@Column(name = "DESCRIPTION", columnDefinition = "text")
-	private String description;
+	@Column(name = "EVENT_DESCRIPTION", columnDefinition = "text")
+	private String eventDescription;
 
 	@Column(name = "POSTER_IMAGE")
 	private String posterImage;
