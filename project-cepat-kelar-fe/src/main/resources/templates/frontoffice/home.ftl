@@ -96,7 +96,7 @@
             
             <img id="totem-screen" src="${basePath}/${totemImages[0]}" class="totem-img-content" style="top: 3%; left: 10%; width: 90%; height: 86%;" alt="Content" fetchpriority="high">
             
-            <img src="${basePath}/highlightskosong2.png" class="totem-img-frame" alt="Frame" decoding="async">
+            <img src="${basePath}/sorotankosong2.png" class="totem-img-frame" alt="Frame" decoding="async">
         </button>
 
         <#-- 2. HOTSPOT LAINNYA (Menggunakan decoding="async" agar tidak menghambat main thread) -->

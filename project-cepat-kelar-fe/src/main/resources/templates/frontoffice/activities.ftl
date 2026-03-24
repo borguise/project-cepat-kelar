@@ -120,8 +120,8 @@
                 <div class="close-btn" onclick="window.history.back()">x</div>
                 <h1 class="main-title">${mainTitle!"Program - program unggulan<br>Graha Pusat Literasi Kabupaten Magetan"}</h1>
                 <nav class="tab-container">
-                    <a href="${layananLink!"#"}" class="tab-button">Layanan</a>
-                    <a href="${kegiatanLink!"#"}" class="tab-button active">Kegiatan</a>
+                    <a href="${layananLink!"programs"}" class="tab-button">Layanan</a>
+                    <a href="${kegiatanLink!"activities"}" class="tab-button active">Kegiatan</a>
                 </nav>
             </header>
 
