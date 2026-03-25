@@ -21,6 +21,16 @@ public class GlobalMultipartExceptionHandler {
                     "Ukuran file terlalu besar. Maksimal 10MB untuk sampul buku.");
             return "redirect:" + resolveBackUrl(request);
         }
+        if (isAudioSaveRequest(request)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Upload cover audio terlalu besar atau gagal diproses. Coba file gambar yang lebih kecil.");
+            return "redirect:" + resolveBackUrl(request);
+        }
+        if (isVotingSaveRequest(request)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Upload poster voting terlalu besar atau gagal diproses. Coba file gambar yang lebih kecil.");
+            return "redirect:" + resolveBackUrl(request);
+        }
         throw ex;
     }
 
@@ -33,6 +43,16 @@ public class GlobalMultipartExceptionHandler {
                     "Gagal memproses unggahan file. Coba gambar lain atau kecilkan ukurannya.");
             return "redirect:" + resolveBackUrl(request);
         }
+        if (isAudioSaveRequest(request)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Gagal memproses unggahan cover audio. Coba gambar lain atau kecilkan ukurannya.");
+            return "redirect:" + resolveBackUrl(request);
+        }
+        if (isVotingSaveRequest(request)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Gagal memproses unggahan poster voting. Coba gambar lain atau kecilkan ukurannya.");
+            return "redirect:" + resolveBackUrl(request);
+        }
         throw ex;
     }
 
@@ -42,6 +62,22 @@ public class GlobalMultipartExceptionHandler {
         }
         String uri = request.getRequestURI();
         return uri != null && uri.startsWith("/admin/collections/save");
+    }
+
+    private boolean isAudioSaveRequest(HttpServletRequest request) {
+        if (request == null) {
+            return false;
+        }
+        String uri = request.getRequestURI();
+        return uri != null && uri.startsWith("/admin/audio/save");
+    }
+
+    private boolean isVotingSaveRequest(HttpServletRequest request) {
+        if (request == null) {
+            return false;
+        }
+        String uri = request.getRequestURI();
+        return uri != null && uri.startsWith("/admin/voting/save");
     }
 
     private String resolveBackUrl(HttpServletRequest request) {

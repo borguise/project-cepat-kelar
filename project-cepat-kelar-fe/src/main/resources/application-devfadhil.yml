@@ -31,9 +31,9 @@ spring:
     request-context-attribute: request
   servlet:
     multipart:
-      location: ./tmp/uploads
-      max-file-size: 10MB
-      max-request-size: 12MB
+      location: /tmp/uploads
+      max-file-size: 25MB
+      max-request-size: 30MB
       file-size-threshold: 2KB
 
 server:
@@ -57,7 +57,7 @@ email:
     whiteDomainList: ""
 
 file:
-  uploaded-temp-dir: ./tmp/uploads
+  uploaded-temp-dir: /tmp/uploads
   uploaded-dir: ./uploads
 
 logging:

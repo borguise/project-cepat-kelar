@@ -8,6 +8,21 @@
         <h2 class="text-4xl font-bold font-gelasio text-slate-800 italic">Daftar Pemilihan & Voting</h2>
       </div>
 
+      <#if successMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${successMessage}</span>
+          </div>
+        </div>
+      </#if>
+      <#if errorMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${errorMessage}</span>
+          </div>
+        </div>
+      </#if>
+
       <div class="flex justify-center items-center w-full gap-10">
         <form action="/admin/voting/search" method="GET" class="relative w-[500px] h-12 bg-white rounded-xl shadow-lg flex items-center px-8 border border-stone-100">
            <input type="text" name="query" placeholder="Ketik Judul atau Kategori disini" class="w-full bg-transparent outline-none font-gelasio text-xl text-center text-black">
@@ -31,7 +46,7 @@
             </tr>
           </thead>
           <tbody class="font-['Lato'] text-base text-slate-700 divide-y divide-black/10">
-            <#if votingList?? && votingList?size > 0>
+            <#if votingList?? && (votingList?size gt 0)>
               <#list votingList as vote>
                 <tr class="hover:bg-slate-50 transition h-20">
                   <td class="px-6 border-r border-black/10 font-medium text-black">${vote.name}</td>
@@ -42,6 +57,7 @@
                   </td>
                   <td class="px-4">
                     <div class="flex justify-center gap-5 text-2xl py-2">
+                      <a href="/admin/voting/edit/${vote.id}" title="Edit" class="hover:scale-125 transition">✏️</a>
                       <a href="/admin/voting/result/${vote.id}" title="Lihat Hasil" class="hover:scale-125 transition">👁️</a>
                       <form action="/admin/voting/delete/${vote.id}" method="POST" onsubmit="return confirm('Hapus pemilihan ini?')">
                         <button type="submit" title="Hapus" class="hover:scale-125 transition text-red-400">🗑️</button>

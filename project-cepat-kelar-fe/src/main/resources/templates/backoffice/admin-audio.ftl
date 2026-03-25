@@ -8,6 +8,21 @@
         <h2 class="text-4xl font-bold font-gelasio text-slate-800 italic">Daftar Rekaman Audio</h2>
       </div>
 
+      <#if successMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${successMessage}</span>
+          </div>
+        </div>
+      </#if>
+      <#if errorMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${errorMessage}</span>
+          </div>
+        </div>
+      </#if>
+
       <div class="flex justify-center items-center w-full gap-10">
         <form action="/admin/audio/search" method="GET" class="relative w-[500px] h-12 bg-white rounded-xl shadow-lg flex items-center px-8 border border-stone-100">
           <input type="text" name="query" placeholder="Ketik judul atau nomor panggil disini" class="w-full bg-transparent outline-none font-gelasio text-xl text-center text-black">

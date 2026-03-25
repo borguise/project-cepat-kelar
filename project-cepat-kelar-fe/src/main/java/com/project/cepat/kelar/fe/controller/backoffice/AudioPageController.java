@@ -63,7 +63,7 @@ public class AudioPageController {
                 Audio audio = audioService.getById(id);
                 model.addAttribute("audio", audio);
                 if (audio.getCoverImageData() != null && audio.getCoverImageData().length > 0) {
-                    model.addAttribute("audio.coverUrl", "/admin/audio/image/" + id);
+                    model.addAttribute("coverUrl", "/admin/audio/image/" + id);
                 }
             } catch (Exception e) {
                 model.addAttribute("errorMessage", "Gagal memuat data audio: " + e.getMessage());
