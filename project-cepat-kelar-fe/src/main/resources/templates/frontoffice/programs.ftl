@@ -121,9 +121,9 @@
                 <div class="close-btn" onclick="window.history.back()">x</div>
                 <h1 class="main-title">${mainTitle!"Layanan - layanan untuk pengunjung<br>Graha Pusat Literasi Kabupaten Magetan"}</h1>
                 <nav class="tab-container">
-                    <a href="${layananLink!"#"}" class="tab-button active">Layanan</a>
-                    <a href="${kegiatanLink!"#"}" class="tab-button">Kegiatan</a>
-                </nav>
+                    <a href="${layananLink!/porgrams}" class="tab-button active">Layanan</a>
+                    <a href="${kegiatanLink!/activities}" class="tab-button">Kegiatan</a>
+                </nav> 
             </header>
 
             <div class="thin-separator" style="margin-bottom: 40px;"></div>
