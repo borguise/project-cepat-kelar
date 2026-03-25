@@ -30,6 +30,8 @@
 
     <form id="collection-form" action="/admin/collections/save" method="POST" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-10 flex flex-col gap-8">
         <input type="hidden" name="id" value="${(buku.id)!''}">
+        <input type="hidden" name="coverImageBase64" id="coverImageBase64" value="">
+        <input type="hidden" name="coverFileName" id="coverFileName" value="">
 
         <div class="flex flex-col lg:flex-row gap-10">
             <div class="flex-1 space-y-6">
@@ -52,12 +54,14 @@
             <div class="lg:w-64 flex flex-col gap-3">
                 <label class="block font-gelasio font-bold text-slate-800 text-center">Sampul Buku</label>
                 <label class="w-full aspect-[3/4] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-3 group hover:border-indigo-400 transition cursor-pointer relative overflow-hidden">
+                    <img id="coverPreview" src="" class="absolute inset-0 w-full h-full object-cover hidden" alt="Preview cover">
                     <#if buku?? && buku.coverImage?? && buku.coverImage?has_content>
-                        <img src="/admin/collections/image/${buku.id?c}" class="absolute inset-0 w-full h-full object-cover" onerror="this.classList.add('hidden')">
+                        <img id="existingCover" src="/admin/collections/image/${buku.id?c}" class="absolute inset-0 w-full h-full object-cover" onerror="this.classList.add('hidden')">
+                        <span id="coverPlaceholder" class="hidden text-4xl text-slate-300">📷</span>
                     <#else>
-                        <span class="text-4xl text-slate-300">📷</span>
+                        <span id="coverPlaceholder" class="text-4xl text-slate-300">📷</span>
                     </#if>
-                    <input id="coverFileInput" type="file" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                    <input id="coverFileInput" type="file" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*">
                     <span class="text-indigo-800 text-sm font-bold px-4 bg-white/90 py-1 rounded-full z-20">Unggah Gambar</span>
                 </label>
             </div>
@@ -123,20 +127,48 @@
         </div>
     </form>
 
-        <script>
-            (function () {
-                const form = document.getElementById('collection-form');
-                const fileInput = document.getElementById('coverFileInput');
-                if (!form || !fileInput) return;
+    <script>
+        (function () {
+            const input = document.getElementById('coverFileInput');
+            const preview = document.getElementById('coverPreview');
+            const existing = document.getElementById('existingCover');
+            const placeholder = document.getElementById('coverPlaceholder');
 
-                form.addEventListener('submit', function () {
-                    if (fileInput.files && fileInput.files.length > 0) {
-                        form.enctype = 'multipart/form-data';
-                    } else {
-                        form.removeAttribute('enctype');
+            if (!input || !preview) return;
+
+            input.addEventListener('change', function () {
+                const file = input.files && input.files[0];
+                if (!file) return;
+
+                const objectUrl = URL.createObjectURL(file);
+                preview.src = objectUrl;
+                preview.classList.remove('hidden');
+
+                if (existing) {
+                    existing.classList.add('hidden');
+                }
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                }
+
+                const base64Input = document.getElementById('coverImageBase64');
+                const fileNameInput = document.getElementById('coverFileName');
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    const dataUrl = String(ev.target && ev.target.result ? ev.target.result : '');
+                    const commaIndex = dataUrl.indexOf(',');
+                    if (commaIndex >= 0 && base64Input) {
+                        base64Input.value = dataUrl.substring(commaIndex + 1);
                     }
-                });
-            })();
-        </script>
+                    if (fileNameInput) {
+                        fileNameInput.value = file.name || 'cover-upload.jpg';
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        })();
+    </script>
+
+
 
 </@layout.backofficeLayout>
