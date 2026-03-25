@@ -148,15 +148,21 @@
                 </#attempt>
                 </div>
             </div>
-            <#-- Overlay Event -->
-            <div id="section-events" class="overlay-container" onclick="event.stopPropagation()">
-                <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
-                <div class="content-scroll">
-                    <#attempt><#include "events.ftl"><#recover>
-                        <h2 class="text-3xl font-bold text-[#3B5998] mb-4">Agenda Mendatang</h2><p>Event segera diumumkan.</p>
-                    </#attempt>
-                </div>
-            </div>
+            <#-- Overlay Agenda/Events di home.ftl -->
+<div id="section-events" class="overlay-container !bg-white !p-0 !border-0" onclick="event.stopPropagation()">
+    <#-- Tombol Tutup Manual agar konsisten dengan desain zigzag -->
+    <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold font-['Inter'] cursor-pointer text-black z-[100]">
+        X
+    </div>
+    
+    <div class="h-full w-full overflow-y-auto">
+        <#attempt>
+            <#include "events.ftl">
+        <#recover>
+            <div class="p-10 text-center">Gagal memuat agenda.</div>
+        </#attempt>
+    </div>
+</div>
 
         </div> </div> <script>
         function openOverlay(id) { document.getElementById('overlay-mask').style.display = 'flex'; document.getElementById(id).style.display = 'flex'; }
