@@ -65,9 +65,13 @@ public class ArticleFrontofficeController {
 
     @GetMapping("/detail")
     public String articleDetail(@RequestParam(required = false) Long id, ModelMap model) {
+        model.addAttribute("comments", new ArrayList<>());
         try {
             if (id != null && articleService != null) {
                 var article = articleService.getById(id);
+                if (article == null) {
+                    return "redirect:/articles";
+                }
                 model.addAttribute("articleTitle", article.getTitle());
                 model.addAttribute("articleContent", article.getContent());
                 if (article.getCoverImage() != null && !article.getCoverImage().isEmpty()) {
@@ -107,9 +111,13 @@ public class ArticleFrontofficeController {
 
     @GetMapping("/detail-alt")
     public String articleDetailAlt(@RequestParam(required = false) Long id, ModelMap model) {
+        model.addAttribute("comments", new ArrayList<>());
         try {
             if (id != null && articleService != null) {
                 var article = articleService.getById(id);
+                if (article == null) {
+                    return "redirect:/articles";
+                }
                 model.addAttribute("articleTitle", article.getTitle());
                 model.addAttribute("articleContent", article.getContent());
                 if (article.getCoverImage() != null && !article.getCoverImage().isEmpty()) {

@@ -1,6 +1,8 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,11 @@ public class CommentController extends BaseController {
                 return ResponseEntity.status(500).body("Service comment tidak tersedia");
             }
             Comment updated = commentService.toggleStatus(id);
-            return ResponseEntity.ok().body(updated);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("id", updated.getId());
+            response.put("status", updated.getStatus());
+            return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             logger.error("Error toggling comment status: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body("Gagal mengubah status komentar");

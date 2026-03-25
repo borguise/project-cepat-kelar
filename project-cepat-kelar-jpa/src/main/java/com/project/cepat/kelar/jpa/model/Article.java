@@ -16,6 +16,7 @@ import com.project.cepat.kelar.common.model.ReferenceBase;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "article")
@@ -54,5 +55,7 @@ public class Article extends ReferenceBase {
 	private Date endDate;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
     private List<Comment> comments;
 }

@@ -73,10 +73,21 @@
             border: none; text-align: center; resize: none;
         }
 
+        .comments-feed-box {
+            width: 100%;
+            max-height: 360px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid #d1d5db;
+        }
+
         .comment-item { display: flex; gap: 20px; align-items: flex-start; margin-top: 20px; }
         .avatar { width: 60px; height: 60px; border-radius: 50%; background: #e5e7eb; flex-shrink: 0; }
         .user-name { font-family: 'Lato', sans-serif; font-size: 22px; color: #1F1F1F; }
         .user-text { font-family: 'Gelasio', serif; font-size: 24px; font-weight: bold; color: #1F1F1F; }
+        .user-date { font-family: 'Lato', sans-serif; font-size: 16px; color: #6b7280; }
     </style>
 </head>
 <body>
@@ -125,20 +136,26 @@
                         </div>
                     </form>
 
-                    <div class="mt-8 space-y-6">
-                        <#if comments??>
-                            <#list comments as c>
-                                <div class="comment-item">
-                                    <div class="avatar">
-                                        <#if c.avatar??><img src="${c.avatar}" class="rounded-full w-full h-full"></#if>
+                    <div class="mt-8 space-y-4">
+                        <h3 class="text-left font-gelasio text-2xl font-bold text-slate-700">Komentar Publik</h3>
+                        <div class="comments-feed-box">
+                            <#if comments?? && (comments?size gt 0)>
+                                <#list comments as c>
+                                    <div class="comment-item">
+                                        <div class="avatar flex items-center justify-center"><i class="fas fa-user text-gray-500"></i></div>
+                                        <div class="text-left w-full border-b border-gray-100 pb-3">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="user-name">${c.userName!"Anonymous"}</div>
+                                                <div class="user-date">${c.date!""}</div>
+                                            </div>
+                                            <div class="user-text">${c.text!""}</div>
+                                        </div>
                                     </div>
-                                    <div class="text-left">
-                                        <div class="user-name">${c.userName}</div>
-                                        <div class="user-text">${c.text}</div>
-                                    </div>
-                                </div>
-                            </#list>
-                        </#if>
+                                </#list>
+                            <#else>
+                                <div class="text-center text-gray-400 italic py-8">Belum ada komentar yang dipublish.</div>
+                            </#if>
+                        </div>
                     </div>
                 </div>
             </div>

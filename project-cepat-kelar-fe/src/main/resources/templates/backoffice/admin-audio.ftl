@@ -31,7 +31,7 @@
             </tr>
           </thead>
           <tbody class="font-['Lato'] text-base text-slate-700 divide-y divide-black/10">
-            <#if audioRecordings?? && audioRecordings?size > 0>
+            <#if audioRecordings?? && (audioRecordings?size gt 0)>
               <#list audioRecordings as audio>
                 <tr class="hover:bg-slate-50 transition h-20">
                   <td class="px-4 border-r border-black/10 font-bold italic text-stone-600">${audio.callNumber!''}</td>
