@@ -47,6 +47,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
     <title>${title!"Admin - Graha Literasi Magetan"}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lato&family=Gelasio&display=swap" rel="stylesheet">
@@ -54,6 +55,51 @@
         body { font-family: 'Lato', sans-serif; }
         .font-gelasio { font-family: 'Gelasio', serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+      .label-elegant {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #334155;
+        font-weight: 700;
+        font-size: 0.95rem;
+        line-height: 1.25rem;
+      }
+      .input-premium {
+        width: 100%;
+        display: block;
+        border: 1px solid #cbd5e1;
+        border-radius: 0.75rem;
+        background: #ffffff;
+        color: #0f172a;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        line-height: 1.35rem;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      .input-premium::placeholder {
+        color: #94a3b8;
+      }
+      .input-premium:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      }
+      .table-custom {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+      }
+      .table-custom th,
+      .table-custom td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: middle;
+        word-break: break-word;
+      }
+      .table-custom tbody tr:last-child td {
+        border-bottom: none;
+      }
     </style>
 </head>
 <body class="bg-[#f8fafc] flex min-h-screen overflow-hidden">

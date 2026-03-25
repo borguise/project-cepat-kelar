@@ -37,6 +37,18 @@
 		<module>project-cepat-kelar-jpa</module>
 		<module>project-cepat-kelar-service</module>
 	</modules>
+
+	<!-- Override AssertJ to fix XXE vulnerability (CVE-2026-24400) -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>3.27.7</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

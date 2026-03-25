@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
     <title>Detail Audio - ${audio.title}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@700&family=Lato:wght@400&family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -83,7 +84,7 @@
                     <div class="Rectangle33 w-[650px] h-32 left-[27px] top-[390px] absolute bg-white rounded-2xl shadow-[0px_4px_10px_rgba(0,0,0,0.1)]"></div>
                     <div class="absolute left-[43px] top-[400px] text-black text-2xl font-bold font-['Gelasio'] opacity-40">Data Fisik</div>
                     <div class="flex justify-between w-[580px] left-[43px] top-[440px] absolute text-black text-3xl font-bold font-['Gelasio']">
-                        <span>${audio.duration}</span> <span>${audio.format}</span> <span>${audio.recordCount} rekaman</span>
+                        <span>${audio.mediaType!'-'}</span> <span>${audio.audioFormat!'-'}</span> <span>${audio.gmd!'-'}</span>
                     </div>
                 </div>
             </div>

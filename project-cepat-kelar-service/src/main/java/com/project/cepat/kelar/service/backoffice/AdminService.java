@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.security.core.Authentication;
+
 import com.project.cepat.kelar.common.service.CommonService;
 import com.project.cepat.kelar.jpa.model.Admin;
 import com.project.cepat.kelar.jpa.model.User;
@@ -58,6 +60,13 @@ public interface AdminService extends CommonService<Admin, Long> {
 	 * @return
 	 * @throws Exception
 	 */
-	com.project.cepat.kelar.common.wrapper.AdminWrapper getAdminByUserNo(Long userNo) throws Exception;
+	com.project.cepat.kelar.wrapper.backoffice.AdminWrapper getAdminByUserNo(Long userNo) throws Exception;
+	
+	/**
+	 * Resolve admin name from Authentication object
+	 * @param authentication
+	 * @return admin username or null
+	 */
+	String resolveAdminName(Authentication authentication);
 	
 }

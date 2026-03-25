@@ -1,4 +1,4 @@
-package com.project.cepat.kelar.fe.config;
+package com.project.cepat.kelar.service.backoffice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,5 +66,3 @@ public class SecurityConfig {
         };
     }
 }
-
-

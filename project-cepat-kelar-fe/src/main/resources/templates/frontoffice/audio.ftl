@@ -1,8 +1,9 @@
 <#-- 
   Variabel yang diharapkan dari Backend Java:
-  - keyword: String kata kunci
-  - tracks: List objek hasil (id, title, description)
-  - fJudul, fPenerbit, fIsbn, fPenulis: Boolean status filter
+  - keyword: String kata kunci pencarian
+  - audioList: List objek audio dari database
+  - currentPage: int halaman saat ini  
+  - totalPages: int total halaman
 -->
 
 <!DOCTYPE html>
@@ -10,7 +11,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>${keyword!"Hasil Pencarian"} - Graha Literasi</title>
+    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
+    <title>${keyword!"Rekaman Audio"} - Graha Literasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@700&family=Lato:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -57,30 +59,29 @@
     <div id="kios-canvas">
         <div class="close-gateway" onclick="window.history.back()">X</div>
 
-        <#-- Form Utama: Diarahkan ke /search-results-audio -->
+        <#-- Form Pencarian Audio -->
         <div class="top-bar-container">
-            <form action="/search-results-audio" method="GET" class="search-form">
+            <form action="/audio" method="GET" class="search-form">
                 <button type="submit" class="search-submit-btn">
                     <i class="fas fa-search"></i>
                 </button>
-                <input type="text" name="keyword" class="search-input" value="${keyword!""}" placeholder="Cari rekaman...">
-                <i class="fas fa-tree pine-icon ml-5" onclick="toggleFilter()"></i>
+                <input type="text" name="keyword" class="search-input" value="${keyword!""}" placeholder="Cari rekaman audio...">
             </form>
         </div>
 
-        <h1 class="result-header">Ini hasil pencarian “${keyword!"Pencarian"}”</h1>
+        <h1 class="result-header"><#if keyword??>Hasil pencarian "${keyword}"<#else>Rekaman Audio</#if></h1>
 
         <div class="content-card">
             <#-- Logika Kondisional FTL -->
-            <#if tracks?? && (tracks?size > 0)>
+            <#if audioList?? && (audioList?size > 0)>
                 <#-- Tampilan Ditemukan -->
                 <div class="result-grid">
-                    <#list tracks as t>
-                    <div class="audio-item" onclick="location.href='/audio/player?id=${t.id}'">
+                    <#list audioList as audio>
+                    <div class="audio-item" onclick="location.href='/audio/detail?id=${audio.id}'">
                         <div class="vinyl-record"><div class="vinyl-dot"></div></div>
                         <div class="flex flex-col gap-2">
-                            <span class="font-bold text-2xl">${t.title}</span>
-                            <span class="text-xl text-slate-600">${t.description!""}</span>
+                            <span class="font-bold text-2xl text-slate-800 font-['Gelasio']">${audio.title!''}</span>
+                            <span class="text-xl text-slate-600 font-['Lato']">${audio.responsibility!''}</span>
                         </div>
                     </div>
                     </#list>
@@ -88,7 +89,7 @@
             <#else>
                 <#-- Tampilan Tidak Ditemukan -->
                 <div class="not-found-container">
-                    <h2 class="not-found-title">Pencarian Tidak Ditemukan</h2>
+                    <h2 class="not-found-title">Rekaman Audio Tidak Ditemukan</h2>
                     <i class="fas fa-search-minus not-found-icon"></i>
                     <p class="not-found-text">Coba periksa kembali ejaan atau gunakan kata kunci lain.</p>
                 </div>

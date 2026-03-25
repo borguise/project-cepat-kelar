@@ -30,7 +30,25 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
+	<!-- Override AssertJ to fix XXE vulnerability (CVE-2026-24400) -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>3.27.7</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.project.cepat.kelar</groupId>
 			<artifactId>project-cepat-kelar-service</artifactId>

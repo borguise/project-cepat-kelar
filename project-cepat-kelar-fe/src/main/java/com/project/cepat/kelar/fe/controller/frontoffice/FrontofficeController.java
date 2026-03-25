@@ -1,10 +1,14 @@
 package com.project.cepat.kelar.fe.controller.frontoffice;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class FrontofficeController {
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.project.cepat.kelar.service.backoffice.HighlightService highlightService;
 
     @GetMapping("/")
     public String landingPage() {
@@ -31,58 +35,22 @@ public class FrontofficeController {
         return "frontoffice/home-page";
     }
 
-    @GetMapping("/events")
-    public String events() {
-        return "frontoffice/events";
-    }
-
-    @GetMapping("/articles")
-    public String articles() {
-        return "frontoffice/articles";
-    }
-
-    @GetMapping("/article-detail")
-    public String articleDetail() {
-        return "frontoffice/article-detail";
-    }
-
-    @GetMapping("/article-detail-alt")
-    public String articleDetailAlt() {
-        return "frontoffice/article-detail-alt";
-    }
-
-    @GetMapping("/collections")
-    public String collections() {
-        return "frontoffice/collections";
-    }
-
-    @GetMapping("/collections-found")
-    public String collectionsFound() {
-        return "frontoffice/collections-found";
-    }
-
-    @GetMapping("/collections-not-found")
-    public String collectionsNotFound() {
-        return "frontoffice/collections-not-found";
-    }
-
-    @GetMapping("/collection-detail")
-    public String collectionDetail() {
-        return "frontoffice/collection-detail";
-    }
-
-    @GetMapping("/audio")
-    public String audio() {
-        return "frontoffice/audio";
-    }
-
-    @GetMapping("/audio-detail")
-    public String audioDetail() {
-        return "frontoffice/audio-detail";
-    }
-
     @GetMapping("/highlights")
-    public String highlights() {
+    public String highlights(ModelMap model) {
+        try {
+            if (highlightService != null) {
+                java.util.List<java.util.Map<String, Object>> faqs = new java.util.ArrayList<>();
+                for (var item : highlightService.getPublishedList()) {
+                    java.util.Map<String, Object> faq = new java.util.HashMap<>();
+                    faq.put("question", item.getQuestion());
+                    faq.put("answer", item.getAnswer());
+                    faqs.add(faq);
+                }
+                model.addAttribute("faqs", faqs);
+            }
+        } catch (Exception ignored) {
+            model.addAttribute("faqs", new java.util.ArrayList<>());
+        }
         return "frontoffice/highlights";
     }
 
@@ -106,24 +74,9 @@ public class FrontofficeController {
         return "frontoffice/profile";
     }
 
-    @GetMapping("/voting")
-    public String voting() {
-        return "frontoffice/voting";
-    }
-
     @GetMapping("/loading-page")
     public String loadingPage() {
         return "frontoffice/loading-page";
-    }
-
-    @GetMapping("/search-results-audio")
-    public String searchResultsAudio() {
-        return "frontoffice/search-results-audio";
-    }
-
-    @GetMapping("/search-results-collections")
-    public String searchResultsCollections() {
-        return "frontoffice/search-results-collections";
     }
 
     @GetMapping("/search")

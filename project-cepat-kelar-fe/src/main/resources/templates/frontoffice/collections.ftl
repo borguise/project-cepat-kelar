@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
     <title>${pageTitle!"Koleksi Literasi - Graha Pusat Literasi"}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -151,9 +152,11 @@
                         <#list bookList as book>
                         <div class="flex flex-col items-center">
                             <div class="w-[450px] aspect-[2/3] rounded-3xl overflow-hidden mb-8 shadow-2xl border border-zinc-100">
-                                <img src="${book.cover!"https://placehold.co/400x600"}" class="w-full h-full object-cover">
+                                <a href="/collections/detail?id=${book.id}">
+                                    <img src="/admin/collections/image/${book.id}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600'">
+                                </a>
                             </div>
-                            <span class="book-title text-5xl">${book.title}</span>
+                            <span class="book-title text-5xl">${book.title!''}</span>
                         </div>
                         </#list>
 
@@ -161,10 +164,10 @@
                         <#-- TAMPILAN: 2-3 ITEM (TENGAH) -->
                         <div class="grid grid-cols-${resultCount} gap-12 w-full justify-center">
                             <#list bookList as book>
-                            <div class="book-card">
-                                <div class="book-cover w-[210px]"><img src="${book.cover!"https://placehold.co/400x600"}"></div>
-                                <span class="book-title">${book.title}</span>
-                            </div>
+                            <a class="book-card" href="/collections/detail?id=${book.id}">
+                                <div class="book-cover w-[210px]"><img src="/admin/collections/image/${book.id}" onerror="this.src='https://placehold.co/400x600'"></div>
+                                <span class="book-title">${book.title!''}</span>
+                            </a>
                             </#list>
                         </div>
 
@@ -172,10 +175,10 @@
                         <#-- TAMPILAN: MATCH BANYAK (GRID) -->
                         <div class="collection-grid">
                             <#list bookList as book>
-                            <div class="book-card" onclick="openFetchDetail('${book.id}', '${book.title}', '${book.cover}')">
-                                <div class="book-cover"><img src="${book.cover!"https://placehold.co/400x600"}"></div>
-                                <span class="book-title">${book.title}</span>
-                            </div>
+                            <a class="book-card" href="/collections/detail?id=${book.id}">
+                                <div class="book-cover"><img src="/admin/collections/image/${book.id}" onerror="this.src='https://placehold.co/400x600'"></div>
+                                <span class="book-title">${book.title!''}</span>
+                            </a>
                             </#list>
                         </div>
                     </#if>

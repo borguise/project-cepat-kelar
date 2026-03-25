@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
     <title>${book.title!"Detail Koleksi"} - Graha Pusat Literasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@700&family=Lato:wght@400;700&family=Inter:wght@400&display=swap" rel="stylesheet">
@@ -69,7 +70,7 @@
         <div class="close-btn" onclick="window.history.back()">X</div>
 
         <#-- GATEWAY 2: LINK KEMBALI -->
-        <a href="javascript:void(0)" onclick="window.history.back()" class="back-link">&lt; Kembali ke daftar audio</a>
+        <a href="javascript:void(0)" onclick="window.history.back()" class="back-link">&lt; Kembali ke daftar koleksi</a>
 
         <div class="white-card">
             <#-- INFO HEADER -->
