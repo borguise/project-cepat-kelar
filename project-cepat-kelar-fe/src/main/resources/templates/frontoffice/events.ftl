@@ -13,19 +13,23 @@
         * { box-sizing: border-box; }
         body { 
             background-color: #1a1a1a; margin: 0; padding: 0; 
-            height: 100vh; overflow: hidden; 
-            display: flex; justify-content: center; align-items: flex-start; 
+            height: 100vh; width: 100vw; overflow: hidden;
+            position: relative;
         }
 
         /* --- KANVAS KIOSK DENGAN BATIK MULTIPLY --- */
         .OverlayKalender {
-            width: 864px; height: 1920px;
+            width: 1080px; height: 1920px;
             background-color: #f7f0cb; 
             background-image: url('/images/frontoffice/batikspring.png');
             background-repeat: repeat;
             background-blend-mode: multiply;
-            position: relative; overflow: hidden;
-            transform-origin: top center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            overflow: hidden;
+            transform-origin: center center;
+            transform: translate(-50%, -50%);
             box-shadow: 0 0 100px rgba(0,0,0,0.5);
         }
 
@@ -48,8 +52,8 @@
         /* KARTU PUTIH DENGAN ANIMASI */
         .WrapperCard {
             position: absolute; 
-            top: 420px; left: 52px;
-            width: 760px; height: 1250px; 
+            top: 420px; left: 140px;
+            width: 800px; height: 1250px; 
             background: rgba(255, 255, 255, 0.98); 
             border-radius: 56px;
             box-shadow: 0 50px 100px rgba(0,0,0,0.15);
@@ -164,8 +168,8 @@
     <script>
         function applyScaling() {
             const canvas = document.getElementById('kios-canvas');
-            const windowH = window.innerHeight;
-            canvas.style.transform = "scale(" + ((windowH - 20) / 1920) + ")";
+            const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+            canvas.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
         }
         window.addEventListener('load', applyScaling);
         window.addEventListener('resize', applyScaling);

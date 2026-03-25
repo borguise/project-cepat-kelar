@@ -9,7 +9,7 @@
         <h2 class="text-3xl font-bold font-gelasio text-slate-800 italic">Editor Rekaman Audio</h2>
       </div>
 
-      <form action="/admin/audio/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
+      <form id="audio-form" action="/admin/audio/save" method="POST" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
         <input type="hidden" name="id" value="${(audio.id)!''}">
 
@@ -51,7 +51,7 @@
                   <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Cover</span>
                 </div>
               </#if>
-              <input type="file" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer">
+              <input type="file" id="coverFileInput" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer">
             </div>
           </div>
         </div>
@@ -99,6 +99,21 @@
         </div>
 
       </form> 
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const form = document.getElementById('audio-form');
+          const fileInput = document.getElementById('coverFileInput');
+          
+          form.addEventListener('submit', function(e) {
+            if (fileInput.files && fileInput.files.length > 0) {
+              form.setAttribute('enctype', 'multipart/form-data');
+            } else {
+              form.removeAttribute('enctype');
+            }
+          });
+        });
+      </script> 
 
     </div>
 

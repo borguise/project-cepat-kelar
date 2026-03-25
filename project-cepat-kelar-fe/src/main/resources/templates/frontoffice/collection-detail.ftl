@@ -70,7 +70,7 @@
         <div class="close-btn" onclick="window.history.back()">X</div>
 
         <#-- GATEWAY 2: LINK KEMBALI -->
-        <a href="javascript:void(0)" onclick="window.history.back()" class="back-link">&lt; Kembali ke daftar audio</a>
+        <a href="javascript:void(0)" onclick="window.history.back()" class="back-link">&lt; Kembali ke daftar koleksi</a>
 
         <div class="white-card">
             <#-- INFO HEADER -->

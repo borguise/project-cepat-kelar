@@ -84,7 +84,7 @@
                     <div class="Rectangle33 w-[650px] h-32 left-[27px] top-[390px] absolute bg-white rounded-2xl shadow-[0px_4px_10px_rgba(0,0,0,0.1)]"></div>
                     <div class="absolute left-[43px] top-[400px] text-black text-2xl font-bold font-['Gelasio'] opacity-40">Data Fisik</div>
                     <div class="flex justify-between w-[580px] left-[43px] top-[440px] absolute text-black text-3xl font-bold font-['Gelasio']">
-                        <span>${audio.duration}</span> <span>${audio.format}</span> <span>${audio.recordCount} rekaman</span>
+                        <span>${audio.mediaType!'-'}</span> <span>${audio.audioFormat!'-'}</span> <span>${audio.gmd!'-'}</span>
                     </div>
                 </div>
             </div>

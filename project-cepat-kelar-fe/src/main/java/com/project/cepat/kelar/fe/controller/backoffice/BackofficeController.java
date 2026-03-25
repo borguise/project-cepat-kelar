@@ -28,6 +28,9 @@ public class BackofficeController extends BaseController {
 	
 	@Autowired(required = false)
 	private com.project.cepat.kelar.service.backoffice.EventService eventService;
+
+	@Autowired(required = false)
+	private com.project.cepat.kelar.service.backoffice.CollectionService collectionService;
 	
 	@Override
 	public String pageTitle() {
@@ -56,19 +59,25 @@ public class BackofficeController extends BaseController {
 			if (articleService != null) {
 				try {
 					long totalPublished = articleService.getByStatus(ArticleStatus.PUBLISHED).size();
-					
 					model.addAttribute("totalArticles", totalPublished);
-					model.addAttribute("totalCollections", 0); // placeholder
+					long totalCollections = (collectionService != null)
+							? collectionService.getPageableActive(org.springframework.data.domain.PageRequest.of(0, 1)).getTotalElements()
+							: 0;
+					model.addAttribute("totalCollections", totalCollections);
 					long totalEvents = (eventService != null) ? eventService.getNum() : 0;
 					model.addAttribute("totalEvents", totalEvents);
 					
-					logger.info("Loaded dashboard statistics");
+					// Load draft articles for dashboard display
+					var draftArticles = articleService.getDraftArticles();
+					model.addAttribute("draftArticles", draftArticles);
+					logger.info("Loaded dashboard statistics and {} draft articles", draftArticles.size());
 				} catch (Exception e) {
 					logger.error("Error loading dashboard statistics: {}", e.getMessage());
 					// Continue even if statistics loading fails
 					model.addAttribute("totalArticles", 0);
 					model.addAttribute("totalCollections", 0);
 					model.addAttribute("totalEvents", 0);
+					model.addAttribute("draftArticles", new java.util.ArrayList<>());
 				}
 			}
 			

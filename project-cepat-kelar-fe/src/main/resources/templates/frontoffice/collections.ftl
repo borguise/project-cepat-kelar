@@ -152,9 +152,11 @@
                         <#list bookList as book>
                         <div class="flex flex-col items-center">
                             <div class="w-[450px] aspect-[2/3] rounded-3xl overflow-hidden mb-8 shadow-2xl border border-zinc-100">
-                                <img src="${book.cover!"https://placehold.co/400x600"}" class="w-full h-full object-cover">
+                                <a href="/collections/detail?id=${book.id}">
+                                    <img src="/admin/collections/image/${book.id}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600'">
+                                </a>
                             </div>
-                            <span class="book-title text-5xl">${book.title}</span>
+                            <span class="book-title text-5xl">${book.title!''}</span>
                         </div>
                         </#list>
 
@@ -162,10 +164,10 @@
                         <#-- TAMPILAN: 2-3 ITEM (TENGAH) -->
                         <div class="grid grid-cols-${resultCount} gap-12 w-full justify-center">
                             <#list bookList as book>
-                            <div class="book-card">
-                                <div class="book-cover w-[210px]"><img src="${book.cover!"https://placehold.co/400x600"}"></div>
-                                <span class="book-title">${book.title}</span>
-                            </div>
+                            <a class="book-card" href="/collections/detail?id=${book.id}">
+                                <div class="book-cover w-[210px]"><img src="/admin/collections/image/${book.id}" onerror="this.src='https://placehold.co/400x600'"></div>
+                                <span class="book-title">${book.title!''}</span>
+                            </a>
                             </#list>
                         </div>
 
@@ -173,10 +175,10 @@
                         <#-- TAMPILAN: MATCH BANYAK (GRID) -->
                         <div class="collection-grid">
                             <#list bookList as book>
-                            <div class="book-card" onclick="openFetchDetail('${book.id}', '${book.title}', '${book.cover}')">
-                                <div class="book-cover"><img src="${book.cover!"https://placehold.co/400x600"}"></div>
-                                <span class="book-title">${book.title}</span>
-                            </div>
+                            <a class="book-card" href="/collections/detail?id=${book.id}">
+                                <div class="book-cover"><img src="/admin/collections/image/${book.id}" onerror="this.src='https://placehold.co/400x600'"></div>
+                                <span class="book-title">${book.title!''}</span>
+                            </a>
                             </#list>
                         </div>
                     </#if>

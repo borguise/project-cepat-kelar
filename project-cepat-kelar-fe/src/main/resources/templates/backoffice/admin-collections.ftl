@@ -9,11 +9,26 @@
         <h2 class="text-4xl font-bold font-gelasio text-black italic">Katalog Koleksi</h2>
       </div>
 
-      <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 gap-6">
-        <div class="relative w-[500px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
-           <input type="text" placeholder="Ketik Judul, Pengarang..." class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
-           <span class="text-xl text-stone-400">🔍</span>
+      <#if successMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${successMessage}</span>
+          </div>
         </div>
+      </#if>
+      <#if errorMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${errorMessage}</span>
+          </div>
+        </div>
+      </#if>
+
+      <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 gap-6">
+        <form action="/admin/collections" method="GET" class="relative w-[500px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
+           <input type="text" name="query" value="${query!''}" placeholder="Ketik Judul, Pengarang..." class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
+           <button type="submit" class="text-xl text-stone-400">🔍</button>
+        </form>
 
         <div id="filterContainer" onclick="toggleFilter(event)" class="relative w-56 h-12 bg-white rounded-xl shadow-lg flex items-center justify-between px-6 border border-stone-100 cursor-pointer">
            <span class="font-gelasio text-base text-black">Semua Kategori</span>
@@ -68,10 +83,10 @@
             <#if daftarBuku?? && (daftarBuku?size > 0)>
               <#list daftarBuku as buku>
                 <tr class="hover:bg-slate-50 transition h-20">
-                  <td class="font-bold px-4 border-r border-black/10">${buku.nomorPanggil}</td>
-                  <td class="px-6 leading-tight border-r border-black/10">${buku.judul} - ${buku.pengarang}</td>
-                  <td class="px-4 leading-tight border-r border-black/10">${buku.penerbit}, ${buku.tahunTerbit}</td>
-                  <td class="italic px-4 border-r border-black/10">${buku.stok} eks</td>
+                  <td class="font-bold px-4 border-r border-black/10">${buku.callNumber!'-'}</td>
+                  <td class="px-6 leading-tight border-r border-black/10">${buku.title!'-'} - ${buku.author!'-'}</td>
+                  <td class="px-4 leading-tight border-r border-black/10">${buku.publisher!'-'}, ${buku.publishYear!'-'}</td>
+                  <td class="italic px-4 border-r border-black/10">${(buku.stock!0)} eks</td>
                   <td class="px-4">
                     <div class="flex justify-center gap-6 text-xl">
                       <#-- Navigasi Edit menggunakan ID dinamis -->
