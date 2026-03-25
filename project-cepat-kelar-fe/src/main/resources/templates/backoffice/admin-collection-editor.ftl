@@ -57,9 +57,9 @@
                     <img id="coverPreview" src="" class="absolute inset-0 w-full h-full object-cover hidden" alt="Preview cover">
                     <#if buku?? && buku.coverImage?? && buku.coverImage?has_content>
                         <img id="existingCover" src="/admin/collections/image/${buku.id?c}" class="absolute inset-0 w-full h-full object-cover" onerror="this.classList.add('hidden')">
-                        <span id="coverPlaceholder" class="hidden text-4xl text-slate-300">📷</span>
+                        <span id="coverPlaceholder" class="hidden text-4xl text-slate-300">Upload</span>
                     <#else>
-                        <span id="coverPlaceholder" class="text-4xl text-slate-300">📷</span>
+                        <span id="coverPlaceholder" class="text-4xl text-slate-300">Upload</span>
                     </#if>
                     <input id="coverFileInput" type="file" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer z-10" accept="image/*">
                     <span class="text-indigo-800 text-sm font-bold px-4 bg-white/90 py-1 rounded-full z-20">Unggah Gambar</span>

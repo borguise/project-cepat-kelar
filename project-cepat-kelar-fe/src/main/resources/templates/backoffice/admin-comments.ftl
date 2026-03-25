@@ -12,8 +12,8 @@
         <form action="/admin/comments" method="GET">
           <input type="text" name="search" placeholder="Ketik Sumber Komentar disini" 
                  value="${searchKeyword!''}"
-                 class="w-full py-4 px-10 bg-white rounded-xl shadow-[0px_4px_15px_rgba(0,0,0,0.1)] border border-stone-100 outline-none font-gelasio text-2xl text-center">
-          <button type="submit" class="absolute right-6 top-1/2 -translate-y-1/2 text-indigo-600 hover:text-indigo-800 text-2xl">🔍</button>
+                   class="w-full py-4 px-10 bg-white rounded-xl shadow-[0px_4px_15px_rgba(0,0,0,0.1)] border border-stone-100 outline-none font-gelasio text-lg text-center">
+                 <button type="submit" class="absolute right-6 top-1/2 -translate-y-1/2 text-indigo-600 hover:text-indigo-800 text-sm font-semibold">Search</button>
         </form>
       </div>
 
@@ -45,12 +45,12 @@
                   <td class="px-4">
                     <div class="flex justify-center gap-4">
                       <#-- Tombol Mata Berubah Sesuai Status Awal -->
-                      <button onclick="toggleEye(${c.id})" class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
-                        <span class="eye-icon text-xl">
-                          <#if c.status == "Hidden">👁️‍🗨️<#else>👁️</#if>
+                      <button onclick="toggleEye(${c.id})" class="h-9 px-3 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition text-xs font-semibold">
+                        <span class="eye-icon text-xs font-semibold">
+                          <#if c.status == "Hidden">View<#else>Hidden</#if>
                         </span>
                       </button>
-                      <button onclick="confirmDelete(${c.id})" class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-red-600 transition">🗑️</button>
+                      <button onclick="confirmDelete(${c.id})" class="h-9 px-3 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-red-600 transition text-xs font-semibold">Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -69,9 +69,9 @@
             <div class="flex gap-4 items-center">
                 <#if (currentPage!0) gt 0>
                     <a href="/admin/comments?page=${(currentPage!0) - 1}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
-                       class="hover:text-indigo-600 font-bold transition">« Sebelumnya</a>
+                       class="hover:text-indigo-600 font-semibold text-sm transition">Prev</a>
                 <#else>
-                    <span class="text-gray-300 font-bold">« Sebelumnya</span>
+                    <span class="text-gray-300 font-semibold text-sm">Prev</span>
                 </#if>
                 <div class="flex gap-2">
                     <#list 0..<(totalPages!1) as i>
@@ -85,9 +85,9 @@
                 </div>
                 <#if (currentPage!0) lt ((totalPages!1) - 1)>
                     <a href="/admin/comments?page=${(currentPage!0) + 1}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
-                       class="hover:text-indigo-600 font-bold transition">Selanjutnya »</a>
+                       class="hover:text-indigo-600 font-semibold text-sm transition">Next</a>
                 <#else>
-                    <span class="text-gray-300 font-bold">Selanjutnya »</span>
+                    <span class="text-gray-300 font-semibold text-sm">Next</span>
                 </#if>
             </div>
         </div>
@@ -114,11 +114,11 @@
             const statusText = row.querySelector('.status-text');
 
             if (data.status === "Hidden") {
-                icon.innerText = "👁️‍🗨️";
+              icon.innerText = "View";
                 statusText.innerText = "Hidden";
                 statusText.classList.replace('text-green-600', 'text-red-500');
             } else {
-                icon.innerText = "👁️";
+              icon.innerText = "Hidden";
                 statusText.innerText = "Published";
                 statusText.classList.replace('text-red-500', 'text-green-600');
             }

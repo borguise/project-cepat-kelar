@@ -42,7 +42,7 @@
                         <img id="votingExistingPoster" src="${posterUrl}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
                     <#else>
                         <div id="votingPosterPlaceholder" class="text-center p-4">
-                            <span class="block text-2xl mb-1 group-hover:scale-110 transition">🖼️</span>
+                            <span class="block text-2xl mb-1 group-hover:scale-110 transition">Image</span>
                             <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Gambar</span>
                         </div>
                     </#if>
@@ -95,8 +95,8 @@
                                 <td class="text-sm">${entry.summary}</td>
                                 <td>
                                     <div class="flex justify-center gap-3 text-xl">
-                                        <button type="button" title="Edit" class="hover:scale-110 transition">✏️</button>
-                                        <button type="button" title="Hapus" class="hover:scale-110 transition text-red-400">🗑️</button>
+                                        <button type="button" title="Edit" class="hover:scale-110 transition">Edit</button>
+                                        <button type="button" title="Hapus" class="hover:scale-110 transition text-red-400">Delete</button>
                                     </div>
                                 </td>
                             </tr>

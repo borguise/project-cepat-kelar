@@ -137,7 +137,7 @@
         
         <#-- Overlay Koleksi (Rak Atas) -->
         <div id="section-collections" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "collections.ftl"><#recover>
                     <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Katalog Koleksi</h2>
@@ -148,7 +148,7 @@
 
         <#-- Overlay Audio (Soundproof Pod) -->
         <div id="section-audio" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "audio.ftl"><#recover>
                     <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Audio & Podcast</h2>
@@ -159,7 +159,7 @@
 
         <#-- Overlay Fasilitas (Area Baca) -->
         <div id="section-facilities" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "facilities.ftl"><#recover>
                     <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Fasilitas Ruang Baca</h2>
@@ -170,7 +170,7 @@
 
         <#-- Overlay Voting (Kotak Suara) -->
         <div id="section-voting" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "voting.ftl"><#recover>
                     <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Ruang Aspirasi</h2>

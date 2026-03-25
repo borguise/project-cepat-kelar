@@ -114,7 +114,7 @@
     <div id="fasilitas-canvas">
         <div class="batik-overlay"></div>
         
-        <div class="close-btn" onclick="window.history.back()">×</div>
+        <div class="close-btn" onclick="window.history.back()">X</div>
 
         <div class="content-container">
             <header class="header-section">

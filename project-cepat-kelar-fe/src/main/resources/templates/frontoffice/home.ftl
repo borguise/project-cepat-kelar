@@ -112,19 +112,19 @@
     <#-- OVERLAY MODAL -->
     <div id="overlay-mask" class="overlay-mask" onclick="closeAllOverlays()">
         <div id="section-programs" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "programs.ftl"><#recover><h2 class="text-3xl font-bold text-[#3B5998] mb-4">Layanan & Program</h2><p>Informasi segera hadir.</p></#attempt>
             </div>
         </div>
         <div id="section-events" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "events.ftl"><#recover><h2 class="text-3xl font-bold text-[#3B5998] mb-4">Agenda Mendatang</h2><p>Event segera diumumkan.</p></#attempt>
             </div>
         </div>
         <div id="section-highlights" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
+            <div class="close-overlay" onclick="closeAllOverlays()">X</div>
             <div class="content-scroll">
                 <#attempt><#include "highlights.ftl"><#recover><h2 class="text-3xl font-bold text-[#3B5998] mb-4">Sorotan</h2><p>Berita terbaru dari Magetan.</p></#attempt>
             </div>

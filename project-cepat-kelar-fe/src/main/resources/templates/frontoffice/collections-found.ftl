@@ -72,25 +72,25 @@
                     
                     <label class="f-item left-[14px] top-[65px]">
                         <input type="checkbox" name="fJudul" value="true" ${(fJudul?? && fJudul)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Judul</div>
                     </label>
 
                     <label class="f-item left-[175px] top-[65px]">
                         <input type="checkbox" name="fPenerbit" value="true" ${(fPenerbit?? && fPenerbit)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Penerbit</div>
                     </label>
 
                     <label class="f-item left-[15px] top-[115px]">
                         <input type="checkbox" name="fIsbn" value="true" ${(fIsbn?? && fIsbn)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Isbn</div>
                     </label>
 
                     <label class="f-item left-[174px] top-[115px]">
                         <input type="checkbox" name="fPenulis" value="true" ${(fPenulis?? && fPenulis)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Penulis</div>
                     </label>
 
@@ -118,7 +118,7 @@
             <div class="spacer-top"></div>
             
             <h2 class="font-['Gelasio'] font-bold text-slate-700/75 text-[44px] text-center mb-16 leading-tight">
-                Ini hasil pencarian “${keyword!"Gunung Lawu"}”
+                Ini hasil pencarian "${keyword!"Gunung Lawu"}"
             </h2>
 
             <div class="results-wrapper">

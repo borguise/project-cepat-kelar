@@ -132,7 +132,7 @@
             <div class="white-wrapper">
                 <#-- JUDUL HASIL PENCARIAN -->
                 <h2 class="font-['Gelasio'] font-bold text-4xl text-slate-500/70 text-center mb-12">
-                    Ini hasil pencarian “${keyword!"Sepak bola"}”
+                    Ini hasil pencarian "${keyword!"Sepak bola"}"
                 </h2>
 
                 <#assign resultCount = (bookList??)?then(bookList?size, 0)>
@@ -187,9 +187,9 @@
                 <#-- PAGINASI: HANYA MUNCUL JIKA HASIL BANYAK -->
                 <#if resultCount gt 3>
                 <div class="pagination-footer">
-                    <a href="?keyword=${keyword!""}&page=${currentPage-1}" class="bg-zinc-100 text-zinc-500 px-8 py-4 rounded-xl font-bold text-xl">← Sblmnya</a>
+                    <a href="?keyword=${keyword!""}&page=${currentPage-1}" class="bg-zinc-100 text-zinc-500 px-8 py-4 rounded-xl font-bold text-xl">Prev</a>
                     <div class="text-zinc-400 font-['Inter'] text-xl font-semibold">Hal <span class="text-[#3730a3]">${currentPage!1}</span> dari ${totalPages!5}</div>
-                    <a href="?keyword=${keyword!""}&page=${currentPage+1}" class="bg-[#3730a3] text-white px-8 py-4 rounded-xl font-bold text-xl shadow-lg">Brkutnya →</a>
+                    <a href="?keyword=${keyword!""}&page=${currentPage+1}" class="bg-[#3730a3] text-white px-8 py-4 rounded-xl font-bold text-xl shadow-lg">Next</a>
                 </div>
                 </#if>
             </div>

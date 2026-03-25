@@ -69,7 +69,7 @@
             </form>
         </div>
 
-        <h1 class="result-header">Ini hasil pencarian “${keyword!"Pencarian"}”</h1>
+        <h1 class="result-header">Ini hasil pencarian "${keyword!"Pencarian"}"</h1>
 
         <div class="content-card">
             <#-- LOGIKA KONDISIONAL FTL -->

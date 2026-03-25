@@ -172,15 +172,15 @@
                 
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                showStatus('✓ Draft tersimpan otomatis pada ' + timeStr, 'success');
+                showStatus('OK Draft tersimpan otomatis pada ' + timeStr, 'success');
             } else {
-                showStatus('⚠ Gagal menyimpan: ' + (data.message || 'Unknown error'), 'error');
+                showStatus('Warning: Gagal menyimpan: ' + (data.message || 'Unknown error'), 'error');
             }
         })
         .catch(error => {
             isSaving = false;
             console.error('Auto-save error:', error);
-            showStatus('⚠ Gagal menyimpan draft', 'error');
+            showStatus('Warning: Gagal menyimpan draft', 'error');
         });
     }
     

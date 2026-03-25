@@ -65,7 +65,7 @@
                 <img id="audioExistingCover" src="${coverUrl}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
               <#else>
                 <div id="audioCoverPlaceholder" class="text-center p-4">
-                  <span class="block text-2xl mb-1 group-hover:scale-110 transition">🖼️</span>
+                  <span class="block text-2xl mb-1 group-hover:scale-110 transition">Image</span>
                   <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Cover</span>
                 </div>
               </#if>

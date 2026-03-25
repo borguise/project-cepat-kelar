@@ -117,15 +117,15 @@
                     <h2 class="text-[#6B8A7A] text-[34px] font-bold font-['Gelasio'] uppercase tracking-[0.4em] mb-4">Visi & Misi</h2>
                     <div class="title-line"></div>
                     <div class="space-y-10 px-4">
-                        <p class="font-['Gelasio'] text-[36px] font-bold ink-text leading-snug">${visionStatement!"“Masyarakat Magetan yang SMART semakin mantap dan lebih sejahtera”"}</p>
+                        <p class="font-['Gelasio'] text-[36px] font-bold ink-text leading-snug">${visionStatement!""Masyarakat Magetan yang SMART semakin mantap dan lebih sejahtera""}</p>
                         <div class="font-['Lato'] text-[26px] text-slate-700 leading-relaxed">
                             <#if missions??>
                                 <#list missions as mission>
-                                    <p>• ${mission}</p>
+                                    <p>- ${mission}</p>
                                 </#list>
                             <#else>
-                                <p>• Meningkatkan percepatan dan perluasan pembentukan sumber daya manusia yang SMART.</p>
-                                <p>• Mengembangkan penyelenggaraan tata pemerintahan yang baik dan manajemen pemerintahan yang bersih, profesional dan adil.</p>
+                                <p>- Meningkatkan percepatan dan perluasan pembentukan sumber daya manusia yang SMART.</p>
+                                <p>- Mengembangkan penyelenggaraan tata pemerintahan yang baik dan manajemen pemerintahan yang bersih, profesional dan adil.</p>
                             </#if>
                         </div>
                     </div>

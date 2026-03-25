@@ -38,7 +38,7 @@
                    value="<#if searchText??>${searchText}</#if>"
                    class="w-full py-4 px-10 bg-white rounded-xl shadow-[0px_4px_15px_rgba(0,0,0,0.1)] border border-stone-100 outline-none font-gelasio text-2xl text-center focus:ring-2 focus:ring-indigo-100">
             <#if searchText??>
-              <a href="/admin/articles" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 text-2xl" title="Clear search">×</a>
+              <a href="/admin/articles" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 text-2xl" title="Clear search">X</a>
             </#if>
           </div>
         </form>
@@ -93,11 +93,11 @@
                   <td class="px-4">
                     <div class="flex justify-center gap-6 items-center">
                       <#-- LINK DINAMIS: Mengirim ID unik ke halaman editor -->
-                      <a href="/admin/articles/edit/${art.id?c}" title="Edit" class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow hover:bg-indigo-800 transition">
-                        ✏️
+                      <a href="/admin/articles/edit/${art.id?c}" title="Edit" class="h-9 px-3 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow hover:bg-indigo-800 transition text-xs font-semibold">
+                        Edit
                       </a>
-                      <button onclick="confirmDelete(${art.id?c})" title="Delete" class="w-12 h-12 bg-slate-400 text-white rounded-xl flex items-center justify-center shadow hover:bg-red-600 transition">
-                        🗑️
+                      <button onclick="confirmDelete(${art.id?c})" title="Delete" class="h-9 px-3 bg-slate-400 text-white rounded-xl flex items-center justify-center shadow hover:bg-red-600 transition text-xs font-semibold">
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -123,12 +123,12 @@
             </span>
             <div class="flex gap-4 items-center">
                 <#-- Logika paginasi sederhana -->
-                <button class="hover:text-indigo-600 font-bold">« Sebelumnya</button>
+                <button class="hover:text-indigo-600 font-semibold text-sm">Prev</button>
                 <div class="flex gap-2">
                     <span class="w-10 h-10 flex items-center justify-center bg-indigo-600 text-white rounded-lg cursor-pointer">1</span>
                     <span class="w-10 h-10 flex items-center justify-center hover:bg-indigo-100 rounded-lg cursor-pointer transition">2</span>
                 </div>
-                <button class="hover:text-indigo-600 font-bold">Selanjutnya »</button>
+                <button class="hover:text-indigo-600 font-semibold text-sm">Next</button>
             </div>
         </div>
       </div>
