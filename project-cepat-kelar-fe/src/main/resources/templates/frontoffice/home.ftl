@@ -48,7 +48,7 @@
             animation-play-state: paused;
         }
 
-        /* --- SISTEM OVERLAY --- */
+        /* --- SISTEM OVERLAY (Ukuran 864x1536 sesuai Kiosk) --- */
         .overlay-mask { 
             position: absolute; inset: 0; 
             background: rgba(0,0,0,0.85); 
@@ -67,9 +67,9 @@
             width: 60px; height: 60px; 
             background: #3B5998; color: white; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; z-index: 100; font-size: 30px; font-weight: bold; 
+            cursor: pointer; z-index: 1000; font-size: 30px; font-weight: bold; 
         }
-        .content-scroll { padding: 50px; overflow-y: auto; flex-grow: 1; scrollbar-width: none; }
+        .content-scroll { padding: 0; overflow-y: auto; flex-grow: 1; scrollbar-width: none; }
         .content-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -78,7 +78,7 @@
     <div id="homepage-canvas">
         <img src="${basePath}/bg.png" alt="Interior Library" class="bg-illustration" fetchpriority="high">
 
-        <#-- 1. TOTEM HIGHLIGHT (TETAP SEPERTI KODE ASLI ANDA) -->
+        <#-- 1. TOTEM HIGHLIGHT -->
         <button class="hotspot w-[198px] h-[531px] left-[30px] top-[1300px]" onclick="openOverlay('section-highlights')">
             <div class="absolute bg-[#4A4A4A] z-[4] skew-y-[-26deg] rounded-[2px] flex items-center justify-center" 
                  style="top: 10%; left: 10%; width: 90%; height: 80%;">
@@ -106,13 +106,13 @@
             <img src="${basePath}/lift.png" alt="Lift">
         </button>
 
-        <#-- 5. FIGURA (Ubah agar membuka Overlay Profile) -->
+        <#-- 5. FIGURA -->
         <button class="hotspot w-48 h-40 left-[861px] top-[1281px]" onclick="openOverlay('section-profile')">
             <img src="${basePath}/figura.png" alt="Figura">
         </button>
 
-        <#-- 6. TROLI -->
-        <button class="hotspot w-80 h-80 left-[825px] top-[1427px]" onclick="location.href='${beritaUrl! '/articles'}'">
+        <#-- 6. TROLI (Ubah agar membuka Overlay Artikel) -->
+        <button class="hotspot w-80 h-80 left-[825px] top-[1427px]" onclick="openOverlay('section-articles')">
             <img src="${basePath}/troli.png" alt="Troli">
         </button>
 
@@ -124,7 +124,7 @@
             <div id="section-highlights" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "highlights.ftl"><#recover><p>Gagal memuat sorotan.</p></#attempt>
+                    <#attempt><#include "highlights.ftl"><#recover><p class="p-10">Gagal memuat sorotan.</p></#attempt>
                 </div>
             </div>
 
@@ -132,23 +132,31 @@
             <div id="section-programs" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "activities.ftl"><#recover><p>Gagal memuat program.</p></#attempt>
+                    <#attempt><#include "activities.ftl"><#recover><p class="p-10">Gagal memuat program.</p></#attempt>
                 </div>
             </div>
 
             <#-- Overlay Agenda -->
             <div id="section-events" class="overlay-container !bg-white !p-0 !border-0" onclick="event.stopPropagation()">
-                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[100]">X</div>
-                <div class="h-full w-full overflow-y-auto">
-                    <#attempt><#include "events.ftl"><#recover><p>Gagal memuat agenda.</p></#attempt>
+                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[1000]">X</div>
+                <div class="h-full w-full overflow-y-auto scrollbar-hide">
+                    <#attempt><#include "events.ftl"><#recover><p class="p-10">Gagal memuat agenda.</p></#attempt>
                 </div>
             </div>
 
-            <#-- Overlay Profil (FIGURA BARU) -->
+            <#-- Overlay Profil (Figura) -->
             <div id="section-profile" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
                 <div onclick="closeAllOverlays()" class="absolute top-10 right-12 text-[60px] font-light cursor-pointer text-[#334155] z-[1000]">&times;</div>
-                <div class="h-full w-full overflow-y-auto">
-                    <#attempt><#include "profile.ftl"><#recover><p>Gagal memuat profil.</p></#attempt>
+                <div class="h-full w-full overflow-y-auto scrollbar-hide">
+                    <#attempt><#include "profile.ftl"><#recover><p class="p-10">Gagal memuat profil.</p></#attempt>
+                </div>
+            </div>
+
+            <#-- Overlay Artikel (Troli) -->
+            <div id="section-articles" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
+                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[60px] font-light cursor-pointer text-[#334155] z-[1000]">&times;</div>
+                <div class="h-full w-full overflow-y-auto scrollbar-hide">
+                    <#attempt><#include "articles.ftl"><#recover><p class="p-10">Gagal memuat artikel.</p></#attempt>
                 </div>
             </div>
 
@@ -156,8 +164,15 @@
     </div>
 
     <script>
-        function openOverlay(id) { document.getElementById('overlay-mask').style.display = 'flex'; document.getElementById(id).style.display = 'flex'; }
-        function closeAllOverlays() { document.getElementById('overlay-mask').style.display = 'none'; const containers = document.querySelectorAll('.overlay-container'); containers.forEach(c => c.style.display = 'none'); }
+        function openOverlay(id) { 
+            document.getElementById('overlay-mask').style.display = 'flex'; 
+            document.getElementById(id).style.display = 'flex'; 
+        }
+        function closeAllOverlays() { 
+            document.getElementById('overlay-mask').style.display = 'none'; 
+            const containers = document.querySelectorAll('.overlay-container'); 
+            containers.forEach(c => c.style.display = 'none'); 
+        }
 
         function scaleCanvas() {
             const canvas = document.getElementById('homepage-canvas');
@@ -170,7 +185,7 @@
         window.addEventListener('DOMContentLoaded', scaleCanvas);
         setTimeout(scaleCanvas, 100);
 
-        // Animasi Totem (TETAP AMAN)
+        // Animasi Totem
         const screen = document.getElementById('totem-screen');
         const contents = [<#list totemImages as img>'${basePath}/${img}'<#if img_has_next>, </#if></#list>];
         let idx = 0;

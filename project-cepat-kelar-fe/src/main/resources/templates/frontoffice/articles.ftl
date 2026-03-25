@@ -1,257 +1,179 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>Daftar Artikel - Graha Pusat Literasi</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<#-- articles.ftl - VERSI PREMIUM ESTETIS (OVERLAY ARTIKEL) -->
+
+<style>
+    /* 1. KONTAINER UTAMA DENGAN TEKSTUR BATIK */
+    .articles-premium-wrapper {
+        background-color: #f7f0cb; 
+        min-height: 100%;
+        width: 100%;
+        padding: 80px 50px 120px;
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    /* Overlay Batik Halus agar Estetis */
+    .articles-premium-wrapper::before {
+        content: "";
+        position: absolute; inset: 0;
+        background-image: url('/images/frontoffice/batikspring.png'); 
+        background-size: 600px;
+        opacity: 0.4;
+        mix-blend-mode: multiply;
+        pointer-events: none;
+    }
+
+    /* 2. FEATURED CARD (ANIMASI & ELEGAN) */
+    .featured-card-premium {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        width: 100%;
+        border-radius: 50px;
+        padding: 45px;
+        margin-top: 40px;
+        margin-bottom: 70px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        cursor: pointer;
+        z-index: 10;
+        animation: fadeInUp 0.8s ease-out;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .featured-card-premium img {
+        width: 100%;
+        height: 440px;
+        object-fit: cover;
+        border-radius: 30px;
+        margin-bottom: 35px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .featured-card-premium h2 {
+        font-family: 'Gelasio', serif;
+        font-size: 52px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 20px;
+        letter-spacing: -1px;
+    }
+
+    .featured-card-premium p {
+        font-family: 'Lato', sans-serif;
+        font-size: 28px;
+        color: #64748b;
+        line-height: 1.6;
+        padding: 0 30px;
+        font-weight: 400;
+    }
+
+    /* 3. GRID ARTIKEL (3x3 DENGAN EFEK HOVER/ACTIVE) */
+    .articles-grid-premium {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 45px;
+        width: 100%;
+        z-index: 10;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .grid-item-premium {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
     
-    <style>
-        body { 
-            background-color: #1a1a1a; 
-            margin: 0; 
-            padding: 0; 
-            height: 100vh; 
-            width: 100vw; 
-            overflow: hidden; 
-            position: relative;
-        }
+    .grid-item-premium:active { transform: scale(0.95); }
 
-        /* KANVAS UTAMA */
-        #kios-canvas {
-            width: 1080px; height: 1920px;
-            background-color: #f7f0cb; 
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5);
-            transform-origin: center center;
-            transform: translate(-50%, -50%);
-        }
+    .grid-thumb-premium {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        border-radius: 24px;
+        margin-bottom: 22px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        border: 1px solid rgba(255,255,255,0.6);
+    }
 
-        .close-btn {
-            position: absolute;
-            top: 28px;
-            right: 38px;
-            font-size: 60px;
-            color: #1F1F1F;
-            cursor: pointer;
-            z-index: 1000;
-            font-family: 'Inter', sans-serif;
-            line-height: 1;
-        }
+    .grid-thumb-premium img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
 
-        .scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 82px 40px 48px;
-            z-index: 10;
-            scrollbar-width: none;
-        }
-        .scroll-area::-webkit-scrollbar { display: none; }
+    .grid-label-premium {
+        font-family: 'Lato', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.4;
+        max-width: 90%;
+    }
 
-        .hero-card {
-            background: #f7f7f7;
-            border-radius: 24px;
-            padding: 24px;
-            margin-top: 62px;
-            margin-bottom: 26px;
-        }
+    /* KEYFRAMES ANIMASI */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        .hero-image {
-            width: 100%;
-            height: 430px;
-            border-radius: 20px;
-            object-fit: cover;
-            background: #cfcfcf;
-            display: block;
-            transition: opacity 0.35s ease;
-        }
+    /* Hide Scrollbar but keep functionality */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+</style>
 
-        .hero-title {
-            text-align: center;
-            margin-top: 14px;
-            font-family: 'Gelasio', serif;
-            font-size: 56px;
-            line-height: 1.1;
-            color: rgba(71, 85, 105, 0.85);
-            transition: opacity 0.35s ease;
-        }
+<div class="articles-premium-wrapper scrollbar-hide">
+    
+    <#assign articleData = articles![]>
+    
+    <#if articleData?size == 0>
+        <#assign articleData = [
+            { "id": 0, "title": "Memori Milik Kita", "content": "Sebuah perpustakaan modern tidak hanya menyimpan buku; ia menjaga memori kolektif. Di Graha Pusat Literasi, kami menjaga warisan lokal Magetan.", "img": "/images/frontoffice/profil.png" },
+            { "id": 1, "title": "Lebih dari Sekedar Membaca" },
+            { "id": 2, "title": "Menikmati Literasi Bersama" },
+            { "id": 3, "title": "Dari Literasi ke Aksi" },
+            { "id": 4, "title": "Belajar & Berbagi" },
+            { "id": 5, "title": "Inovasi Tanpa Batas" },
+            { "id": 6, "title": "Kisah dan Kasih" },
+            { "id": 7, "title": "Literasi Hidup Disini" },
+            { "id": 8, "title": "Pengetahuan Jadi Kreasi" },
+            { "id": 9, "title": "Membaca Menuju Mencipta" }
+        ]>
+    </#if>
 
-        .hero-desc {
-            margin: 14px auto 0;
-            max-width: 90%;
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-size: 36px;
-            line-height: 1.25;
-            color: #6b8f82;
-            transition: opacity 0.35s ease;
-        }
-
-        .article-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px 24px;
-        }
-
-        .grid-item {
-            cursor: pointer;
-        }
-
-        .grid-thumb {
-            width: 100%;
-            height: 250px;
-            border-radius: 2px;
-            object-fit: cover;
-            background: #cfcfcf;
-            display: block;
-        }
-
-        .grid-title {
-            margin-top: 12px;
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-size: 40px;
-            line-height: 1.1;
-            color: #1f1f1f;
-            min-height: 86px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .empty-text {
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-size: 34px;
-            color: #64748b;
-            padding: 40px 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="kios-canvas">
-        <div class="close-btn" onclick="window.location.href='/home'">x</div>
-
-        <div id="scrollArea" class="scroll-area">
-            <#if articles?? && articles?size gt 0>
-                <#assign featured = articles[0]>
-                <div id="featuredCard" class="hero-card" onclick="openFeatured()">
-                    <#if featured.coverImage?? && featured.coverImage?has_content>
-                        <img id="featuredImage" src="/admin/articles/image/${featured.id?c}" class="hero-image" alt="${featured.title!""}" onerror="this.onerror=null;this.src='https://placehold.co/900x430?text=Artikel';">
-                    <#else>
-                        <img id="featuredImage" src="https://placehold.co/900x430?text=Artikel" class="hero-image" alt="${featured.title!""}">
-                    </#if>
-
-                    <div id="featuredTitle" class="hero-title">${featured.title!"Memori milik kita"}</div>
-                    <div id="featuredDesc" class="hero-desc">
-                        <#if featured.content?? && featured.content?has_content>
-                            ${featured.content?replace("<[^>]*>", "", "r")?truncate(140, "...")}
-                        <#else>
-                            Sebuah perpustakaan modern tidak hanya menyimpan buku; ia menjaga memori kolektif.
-                        </#if>
-                    </div>
-                </div>
-
-                <div class="article-grid">
-                    <#list articles as article>
-                        <div class="grid-item" onclick="window.location.href='/articles/detail?id=${article.id?c}'">
-                            <#if article.coverImage?? && article.coverImage?has_content>
-                                <img src="/admin/articles/image/${article.id?c}" class="grid-thumb" alt="${article.title!""}" onerror="this.onerror=null;this.src='https://placehold.co/260x250?text=Artikel';">
-                            <#else>
-                                <img src="https://placehold.co/260x250?text=Artikel" class="grid-thumb" alt="${article.title!""}">
-                            </#if>
-                            <div class="grid-title">${article.title!"Tanpa Judul"}</div>
-                        </div>
-                    </#list>
-                </div>
-            <#else>
-                <div class="empty-text" style="padding-top: 180px;">
-                    Belum ada artikel yang dipublikasikan.
-                </div>
-            </#if>
-        </div>
+    <#-- 1. FEATURED BANNER -->
+    <#assign main = articleData[0]>
+    <div class="featured-card-premium" onclick="location.href='/articles/detail?id=${main.id?c}'">
+        <#if main.img?? && main.img?has_content>
+            <img src="${main.img}">
+        <#elseif (main.id > 0)>
+            <img src="/admin/articles/image/${main.id?c}" onerror="this.src='/images/frontoffice/profil.png'">
+        <#else>
+            <img src="/images/frontoffice/profil.png">
+        </#if>
+        
+        <h2>${main.title}</h2>
+        <p>${main.content!""}</p>
     </div>
 
-    <script>
-        let featuredIndex = 0;
-        let featuredItems = [];
-
-        function autoScale() {
-            const canvas = document.getElementById('kios-canvas');
-            const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-            canvas.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
-        }
-
-        function openFeatured() {
-            if (featuredItems.length > 0) {
-                window.location.href = '/articles/detail?id=' + featuredItems[featuredIndex].id;
-            }
-        }
-
-        function renderFeatured(index) {
-            const featuredImage = document.getElementById('featuredImage');
-            const featuredTitle = document.getElementById('featuredTitle');
-            const featuredDesc = document.getElementById('featuredDesc');
-            if (!featuredImage || !featuredTitle || !featuredDesc || featuredItems.length === 0) {
-                return;
-            }
-
-            const item = featuredItems[index];
-            featuredImage.style.opacity = '0.35';
-            featuredTitle.style.opacity = '0.35';
-            featuredDesc.style.opacity = '0.35';
-
-            setTimeout(function () {
-                featuredImage.src = item.image;
-                featuredImage.alt = item.title;
-                featuredTitle.textContent = item.title;
-                featuredDesc.textContent = item.desc;
-                featuredImage.style.opacity = '1';
-                featuredTitle.style.opacity = '1';
-                featuredDesc.style.opacity = '1';
-            }, 180);
-        }
-
-        function initFeaturedCarousel() {
-            <#if articles?? && articles?size gt 0>
-            featuredItems = [
-                <#list articles as article>
-                {
-                    id: ${article.id?c},
-                    title: "${(article.title!"Tanpa Judul")?js_string}",
-                    desc: "${((article.content!"Sebuah perpustakaan modern tidak hanya menyimpan buku; ia menjaga memori kolektif.")?replace("<[^>]*>", "", "r")?truncate(140, "..."))?js_string}",
-                    image: "<#if article.coverImage?? && article.coverImage?has_content>/admin/articles/image/${article.id?c}<#else>https://placehold.co/900x430?text=Artikel</#if>"
-                }<#if article_has_next>,</#if>
-                </#list>
-            ];
-            if (featuredItems.length > 1) {
-                setInterval(function () {
-                    let nextIndex = Math.floor(Math.random() * featuredItems.length);
-                    if (featuredItems.length > 1) {
-                        while (nextIndex === featuredIndex) {
-                            nextIndex = Math.floor(Math.random() * featuredItems.length);
-                        }
-                    }
-                    featuredIndex = nextIndex;
-                    renderFeatured(featuredIndex);
-                }, 3000);
-            }
+    <#-- 2. GRID 3x3 -->
+    <div class="articles-grid-premium">
+        <#list articleData as item>
+            <#if item?index gt 0>
+                <div class="grid-item-premium" onclick="location.href='/articles/detail?id=${item.id?c}'">
+                    <div class="grid-thumb-premium">
+                        <#if item.img?? && item.img?has_content>
+                            <img src="${item.img}">
+                        <#elseif (item.id > 0)>
+                            <img src="/admin/articles/image/${item.id?c}">
+                        </#if>
+                    </div>
+                    <span class="grid-label-premium">${item.title}</span>
+                </div>
             </#if>
-        }
-
-        window.addEventListener('load', function () {
-            autoScale();
-            initFeaturedCarousel();
-        });
-        window.addEventListener('resize', autoScale);
-    </script>
-</body>
-</html>
+        </#list>
+    </div>
+</div>
