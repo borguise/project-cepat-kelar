@@ -136,16 +136,18 @@
                 </div>
             </div>
 
-            <#-- Overlay Program -->
+            <#-- Overlay Program & Kegiatan (Meja) -->
             <div id="section-programs" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "programs.ftl"><#recover>
-                        <h2 class="text-3xl font-bold text-[#3B5998] mb-4">Layanan & Program</h2><p>Informasi segera hadir.</p>
-                    </#attempt>
+                <#-- PASTIKAN NAMA FILE DI SINI SAMA DENGAN FILE YANG KAMU EDIT -->
+                <#attempt>
+                <#include "activities.ftl"> <#-- Jika kamu pakai nama activities.ftl -->
+                <#recover>
+                <p class="text-center">Gagal memuat file activities.ftl</p>
+                </#attempt>
                 </div>
             </div>
-
             <#-- Overlay Event -->
             <div id="section-events" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
