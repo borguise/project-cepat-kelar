@@ -1,3 +1,4 @@
+<#-- home.ftl - VERSI FINAL TERPADU LANTAI 1 -->
 <#-- Variabel Konfigurasi -->
 <#assign basePath = (basePath!"/images/frontoffice")>
 <#assign totemImages = ["sorotan12.png", "sorotan22.png"]>
@@ -12,7 +13,8 @@
     
     <link rel="preload" href="${basePath}/bg.png" as="image" fetchpriority="high">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Gelasio:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Gelasio:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* --- BASE & CANVAS (1080x1920 Kaku) --- */
@@ -28,7 +30,7 @@
 
         .bg-illustration { position: absolute; inset: 0; width: 1080px !important; height: 1920px !important; max-width: none !important; object-fit: fill; z-index: 1; }
 
-        /* --- HOTSPOT & ANIMASI (GOLDEN GLOW - Konsisten dengan Lantai 2) --- */
+        /* --- HOTSPOT & ANIMASI --- */
         @keyframes heartbeatGlow {
             0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3)); } 
             50% { filter: drop-shadow(0 0 25px rgba(255, 200, 0, 0.7)); }
@@ -45,21 +47,19 @@
             filter: drop-shadow(0 0 30px rgba(255, 180, 0, 0.9)); 
             animation-play-state: paused;
         }
-        .hotspot:active { transform: scale(0.98); }
 
-        /* --- SISTEM OVERLAY / MODAL (UKURAN KAKU 864x1536) --- */
+        /* --- SISTEM OVERLAY --- */
         .overlay-mask { 
-            position: absolute; /* Mengikuti ukuran Kanvas 1080x1920 */
-            inset: 0; 
+            position: absolute; inset: 0; 
             background: rgba(0,0,0,0.85); 
             display: none; justify-content: center; align-items: center; 
             z-index: 9999; backdrop-filter: blur(8px); 
         }
         .overlay-container { 
-            width: 864px; height: 1536px; /* Proporsional 80% dari layar kiosk */
+            width: 864px; height: 1536px; 
             background: #F7F3EE; border-radius: 40px; 
             position: relative; overflow: hidden; display: none; 
-            flex-direction: column; border: 4px solid #3B5998; /* Tema Biru Lantai 1 */
+            flex-direction: column; border: 4px solid #3B5998;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
         .close-overlay { 
@@ -67,13 +67,9 @@
             width: 60px; height: 60px; 
             background: #3B5998; color: white; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; z-index: 100; font-size: 30px; font-weight: bold; transition: background 0.3s; 
+            cursor: pointer; z-index: 100; font-size: 30px; font-weight: bold; 
         }
-        .close-overlay:hover { background: #2a4175; }
-        .content-scroll { 
-            padding: 50px; overflow-y: auto; flex-grow: 1; color: #333; 
-            scrollbar-width: none; 
-        }
+        .content-scroll { padding: 50px; overflow-y: auto; flex-grow: 1; scrollbar-width: none; }
         .content-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -82,7 +78,7 @@
     <div id="homepage-canvas">
         <img src="${basePath}/bg.png" alt="Interior Library" class="bg-illustration" fetchpriority="high">
 
-        <#-- 1. TOTEM HIGHLIGHT -->
+        <#-- 1. TOTEM HIGHLIGHT (TETAP SEPERTI KODE ASLI ANDA) -->
         <button class="hotspot w-[198px] h-[531px] left-[30px] top-[1300px]" onclick="openOverlay('section-highlights')">
             <div class="absolute bg-[#4A4A4A] z-[4] skew-y-[-26deg] rounded-[2px] flex items-center justify-center" 
                  style="top: 10%; left: 10%; width: 90%; height: 80%;">
@@ -110,8 +106,8 @@
             <img src="${basePath}/lift.png" alt="Lift">
         </button>
 
-        <#-- 5. FIGURA -->
-        <button class="hotspot w-48 h-40 left-[861px] top-[1281px]" onclick="location.href='${galeriUrl! '/profile'}'">
+        <#-- 5. FIGURA (Ubah agar membuka Overlay Profile) -->
+        <button class="hotspot w-48 h-40 left-[861px] top-[1281px]" onclick="openOverlay('section-profile')">
             <img src="${basePath}/figura.png" alt="Figura">
         </button>
 
@@ -121,50 +117,45 @@
         </button>
 
 
-        <#-- ========================================================== -->
-        <#-- SISTEM MODAL / OVERLAY LANTAI 1 (DI DALAM KANVAS) -->
-        <#-- ========================================================== -->
+        <#-- SISTEM MODAL / OVERLAY -->
         <div id="overlay-mask" class="overlay-mask" onclick="closeAllOverlays()">
             
             <#-- Overlay Sorotan -->
             <div id="section-highlights" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "highlights.ftl"><#recover>
-                        <h2 class="text-3xl font-bold text-[#3B5998] mb-4">Sorotan</h2><p>Informasi segera hadir.</p>
-                    </#attempt>
+                    <#attempt><#include "highlights.ftl"><#recover><p>Gagal memuat sorotan.</p></#attempt>
                 </div>
             </div>
 
-            <#-- Overlay Program & Kegiatan (Meja) -->
+            <#-- Overlay Program -->
             <div id="section-programs" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="close-overlay" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                <#-- PASTIKAN NAMA FILE DI SINI SAMA DENGAN FILE YANG KAMU EDIT -->
-                <#attempt>
-                <#include "activities.ftl"> <#-- Jika kamu pakai nama activities.ftl -->
-                <#recover>
-                <p class="text-center">Gagal memuat file activities.ftl</p>
-                </#attempt>
+                    <#attempt><#include "activities.ftl"><#recover><p>Gagal memuat program.</p></#attempt>
                 </div>
             </div>
-            <#-- Overlay Agenda/Events di home.ftl -->
-<div id="section-events" class="overlay-container !bg-white !p-0 !border-0" onclick="event.stopPropagation()">
-    <#-- Tombol Tutup Manual agar konsisten dengan desain zigzag -->
-    <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold font-['Inter'] cursor-pointer text-black z-[100]">
-        X
-    </div>
-    
-    <div class="h-full w-full overflow-y-auto">
-        <#attempt>
-            <#include "events.ftl">
-        <#recover>
-            <div class="p-10 text-center">Gagal memuat agenda.</div>
-        </#attempt>
-    </div>
-</div>
 
-        </div> </div> <script>
+            <#-- Overlay Agenda -->
+            <div id="section-events" class="overlay-container !bg-white !p-0 !border-0" onclick="event.stopPropagation()">
+                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[100]">X</div>
+                <div class="h-full w-full overflow-y-auto">
+                    <#attempt><#include "events.ftl"><#recover><p>Gagal memuat agenda.</p></#attempt>
+                </div>
+            </div>
+
+            <#-- Overlay Profil (FIGURA BARU) -->
+            <div id="section-profile" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
+                <div onclick="closeAllOverlays()" class="absolute top-10 right-12 text-[60px] font-light cursor-pointer text-[#334155] z-[1000]">&times;</div>
+                <div class="h-full w-full overflow-y-auto">
+                    <#attempt><#include "profile.ftl"><#recover><p>Gagal memuat profil.</p></#attempt>
+                </div>
+            </div>
+
+        </div> 
+    </div>
+
+    <script>
         function openOverlay(id) { document.getElementById('overlay-mask').style.display = 'flex'; document.getElementById(id).style.display = 'flex'; }
         function closeAllOverlays() { document.getElementById('overlay-mask').style.display = 'none'; const containers = document.querySelectorAll('.overlay-container'); containers.forEach(c => c.style.display = 'none'); }
 
@@ -179,10 +170,10 @@
         window.addEventListener('DOMContentLoaded', scaleCanvas);
         setTimeout(scaleCanvas, 100);
 
+        // Animasi Totem (TETAP AMAN)
         const screen = document.getElementById('totem-screen');
         const contents = [<#list totemImages as img>'${basePath}/${img}'<#if img_has_next>, </#if></#list>];
         let idx = 0;
-
         if (contents.length > 1) {
             setInterval(() => {
                 if(!screen) return;
