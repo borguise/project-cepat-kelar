@@ -180,6 +180,24 @@ public class AdminServiceImpl implements AdminService {
 				}
 				return user.getUsername();
 			}
+
+			String authName = authentication.getName();
+			if (authName != null && !authName.isBlank()) {
+				Optional<User> userByUsername = userRepository.findByUsername(authName);
+				if (userByUsername.isPresent()) {
+					User user = userByUsername.get();
+					try {
+						AdminWrapper admin = getAdminByUserNo(user.getNo());
+						if (admin != null && admin.getUsername() != null) {
+							return admin.getUsername();
+						}
+					} catch (Exception e) {
+						log.debug("Admin wrapper not found for username {}, fallback to user username", authName);
+					}
+					return user.getUsername();
+				}
+				return authName;
+			}
 		} catch (Exception e) {
 			log.warn("Unable to resolve admin name", e);
 		}

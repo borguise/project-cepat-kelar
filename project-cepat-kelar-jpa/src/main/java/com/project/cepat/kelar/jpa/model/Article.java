@@ -1,11 +1,14 @@
 package com.project.cepat.kelar.jpa.model;
 
 import java.util.Date;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import com.project.cepat.kelar.common.constant.ArticleStatus;
@@ -49,4 +52,7 @@ public class Article extends ReferenceBase {
 	
 	@Column(name = "END_DATE")
 	private Date endDate;
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 }

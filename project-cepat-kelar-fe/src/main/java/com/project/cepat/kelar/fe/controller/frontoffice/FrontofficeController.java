@@ -1,10 +1,14 @@
 package com.project.cepat.kelar.fe.controller.frontoffice;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class FrontofficeController {
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.project.cepat.kelar.service.backoffice.HighlightService highlightService;
 
     @GetMapping("/")
     public String landingPage() {
@@ -32,7 +36,21 @@ public class FrontofficeController {
     }
 
     @GetMapping("/highlights")
-    public String highlights() {
+    public String highlights(ModelMap model) {
+        try {
+            if (highlightService != null) {
+                java.util.List<java.util.Map<String, Object>> faqs = new java.util.ArrayList<>();
+                for (var item : highlightService.getPublishedList()) {
+                    java.util.Map<String, Object> faq = new java.util.HashMap<>();
+                    faq.put("question", item.getQuestion());
+                    faq.put("answer", item.getAnswer());
+                    faqs.add(faq);
+                }
+                model.addAttribute("faqs", faqs);
+            }
+        } catch (Exception ignored) {
+            model.addAttribute("faqs", new java.util.ArrayList<>());
+        }
         return "frontoffice/highlights";
     }
 

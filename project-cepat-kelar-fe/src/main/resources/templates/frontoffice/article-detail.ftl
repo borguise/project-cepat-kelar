@@ -103,9 +103,22 @@
 
                 <#-- SEKSI KOMENTAR -->
                 <div class="comment-section">
-                    <form action="${commentAction!"#"}" method="POST" class="flex flex-col gap-6">
-                        <input type="email" name="email" placeholder="Email" class="input-field" required>
-                        <input type="password" name="password" placeholder="Password" class="input-field" required>
+                    <#if commentSuccess??>
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                            ${commentSuccess}
+                        </div>
+                    </#if>
+                    <#if commentError??>
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            ${commentError}
+                        </div>
+                    </#if>
+                    <form action="${commentAction!"/comment/submit"}" method="POST" class="flex flex-col gap-6">
+                        <input type="hidden" name="articleId" value="${articleId!''}"/>
+                        <input type="hidden" name="source" value="${commentSource!''}"/>
+                        <input type="hidden" name="redirectUrl" value="${redirectUrl!''}"/>
+                        <input type="text" name="name" placeholder="Nama" class="input-field" required>
+                        <input type="email" name="email" placeholder="Email (opsional)" class="input-field">
                         <div class="relative">
                             <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="textarea-field" required></textarea>
                             <button type="submit" class="absolute bottom-4 right-4 text-indigo-800 text-3xl"><i class="fas fa-paper-plane"></i></button>

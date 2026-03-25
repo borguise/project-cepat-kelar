@@ -35,16 +35,25 @@
               <#list audioRecordings as audio>
                 <tr class="hover:bg-slate-50 transition h-20">
                   <td class="px-4 border-r border-black/10 font-bold italic text-stone-600">${audio.callNumber!''}</td>
-                  <td class="px-6 border-r border-black/10 font-bold leading-tight text-stone-800">${audio.title!''}</td>
-                  <td class="px-4 border-r border-black/10 text-stone-500 italic text-sm leading-tight">${audio.physicalDetails!''}</td>
-                  <td class="px-4 border-r border-black/10 text-stone-500 font-bold">${audio.labelYear!''}</td>
+                  <td class="px-6 border-r border-black/10 font-bold leading-tight text-stone-800">
+                    ${audio.title!''}
+                    <#if audio.responsibility?? && audio.responsibility?has_content>
+                      <br><span class="text-sm text-stone-500 font-normal">${audio.responsibility}</span>
+                    </#if>
+                  </td>
+                  <td class="px-4 border-r border-black/10 text-stone-500 italic text-sm leading-tight">
+                    <#if audio.mediaType?? && audio.mediaType?has_content>${audio.mediaType}</#if>
+                    <#if audio.audioFormat?? && audio.audioFormat?has_content><br>${audio.audioFormat}</#if>
+                  </td>
+                  <td class="px-4 border-r border-black/10 text-stone-500 font-bold">
+                    <#if audio.publisher?? && audio.publisher?has_content>${audio.publisher}<br></#if>
+                    ${audio.publishYear!''}
+                  </td>
                   <td class="px-4">
                     <div class="flex justify-center gap-5 text-2xl py-2">
                       <button title="Play" class="hover:scale-125 transition">▶️</button>
                       <a href="/admin/audio/edit/${audio.id}" title="Edit" class="hover:scale-125 transition">✏️</a>
-                      <form action="/admin/audio/delete/${audio.id}" method="POST" onsubmit="return confirm('Hapus rekaman ini?')">
-                        <button type="submit" title="Hapus" class="hover:scale-125 transition text-red-400">🗑️</button>
-                      </form>
+                      <a href="/admin/audio/delete/${audio.id}" onclick="return confirm('Hapus rekaman ini?')" title="Hapus" class="hover:scale-125 transition text-red-400">🗑️</a>
                     </div>
                   </td>
                 </tr>

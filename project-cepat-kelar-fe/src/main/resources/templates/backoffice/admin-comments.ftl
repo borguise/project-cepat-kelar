@@ -9,8 +9,12 @@
       </div>
 
       <div class="w-full max-w-2xl mx-auto relative group">
-        <input type="text" placeholder="Ketik Sumber Komentar disini" 
-               class="w-full py-4 px-10 bg-white rounded-xl shadow-[0px_4px_15px_rgba(0,0,0,0.1)] border border-stone-100 outline-none font-gelasio text-2xl text-center">
+        <form action="/admin/comments" method="GET">
+          <input type="text" name="search" placeholder="Ketik Sumber Komentar disini" 
+                 value="${searchKeyword!''}"
+                 class="w-full py-4 px-10 bg-white rounded-xl shadow-[0px_4px_15px_rgba(0,0,0,0.1)] border border-stone-100 outline-none font-gelasio text-2xl text-center">
+          <button type="submit" class="absolute right-6 top-1/2 -translate-y-1/2 text-indigo-600 hover:text-indigo-800 text-2xl">🔍</button>
+        </form>
       </div>
 
       <div class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-[0px_10px_30px_rgba(243,237,237,1.0)] border border-stone-100 overflow-hidden mb-12 flex flex-col">
@@ -31,11 +35,11 @@
             <#if comments?? && comments?size gt 0>
               <#list comments as c>
                 <tr class="h-28 hover:bg-slate-50 transition" id="row-${c.id}">
-                  <td class="px-4 border-r border-black/10 font-bold">${c.pengirim}</td>
-                  <td class="px-4 border-r border-black/10 font-bold">${c.tanggal}</td>
-                  <td class="px-6 border-r border-black/10 text-sm italic font-bold text-left">${c.isiPesan}</td>
-                  <td class="px-4 border-r border-black/10 text-xs">${c.sumber}</td>
-                  <td class="px-4 border-r border-black/10 font-bold status-text <#if c.status == 'Disembunyikan'>text-red-500<#else>text-green-600</#if>">
+                  <td class="px-4 border-r border-black/10 font-bold">${c.sender}</td>
+                  <td class="px-4 border-r border-black/10 font-bold">${c.commentDate}</td>
+                  <td class="px-6 border-r border-black/10 text-sm italic font-bold text-left">${c.content}</td>
+                  <td class="px-4 border-r border-black/10 text-xs">${c.source}</td>
+                  <td class="px-4 border-r border-black/10 font-bold status-text <#if c.status == 'Hidden'>text-red-500<#else>text-green-600</#if>">
                     ${c.status}
                   </td>
                   <td class="px-4">
@@ -43,7 +47,7 @@
                       <#-- Tombol Mata Berubah Sesuai Status Awal -->
                       <button onclick="toggleEye(${c.id})" class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
                         <span class="eye-icon text-xl">
-                          <#if c.status == "Disembunyikan">👁️‍🗨️<#else>👁️</#if>
+                          <#if c.status == "Hidden">👁️‍🗨️<#else>👁️</#if>
                         </span>
                       </button>
                       <button onclick="confirmDelete(${c.id})" class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-red-600 transition">🗑️</button>
@@ -61,36 +65,67 @@
         </table>
 
         <div class="px-12 py-8 bg-slate-50 border-t border-black/10 flex justify-between items-center text-slate-500">
-            <span>Menampilkan ${(comments?size)!0} Komentar</span>
+            <span>Menampilkan ${(comments?size)!0} dari ${(totalItems)!0} Komentar</span>
             <div class="flex gap-4 items-center">
-                <button class="hover:text-indigo-600 font-bold transition">« Sebelumnya</button>
+                <#if (currentPage!0) gt 0>
+                    <a href="/admin/comments?page=${(currentPage!0) - 1}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
+                       class="hover:text-indigo-600 font-bold transition">« Sebelumnya</a>
+                <#else>
+                    <span class="text-gray-300 font-bold">« Sebelumnya</span>
+                </#if>
                 <div class="flex gap-2">
-                    <span class="w-10 h-10 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-md cursor-pointer">1</span>
+                    <#list 0..<(totalPages!1) as i>
+                        <#if i == (currentPage!0)>
+                            <span class="w-10 h-10 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-md cursor-pointer">${i + 1}</span>
+                        <#else>
+                            <a href="/admin/comments?page=${i}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
+                               class="w-10 h-10 flex items-center justify-center bg-gray-200 text-gray-700 rounded-lg hover:bg-indigo-600 hover:text-white transition">${i + 1}</a>
+                        </#if>
+                    </#list>
                 </div>
-                <button class="hover:text-indigo-600 font-bold transition">Selanjutnya »</button>
+                <#if (currentPage!0) lt ((totalPages!1) - 1)>
+                    <a href="/admin/comments?page=${(currentPage!0) + 1}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
+                       class="hover:text-indigo-600 font-bold transition">Selanjutnya »</a>
+                <#else>
+                    <span class="text-gray-300 font-bold">Selanjutnya »</span>
+                </#if>
             </div>
         </div>
       </div>
 
-    </div>
-  </main>
-
   <script>
     function toggleEye(id) {
-        // Di sini nanti kamu hubungkan ke API Java untuk update status di database
-        const row = document.getElementById('row-' + id);
-        const icon = row.querySelector('.eye-icon');
-        const statusText = row.querySelector('.status-text');
+        // Call API to toggle status in database
+        fetch('/admin/comments/toggle/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Failed to toggle status');
+        })
+        .then(data => {
+            const row = document.getElementById('row-' + id);
+            const icon = row.querySelector('.eye-icon');
+            const statusText = row.querySelector('.status-text');
 
-        if (statusText.innerText.trim() === "Disembunyikan") {
-            icon.innerText = "👁️";
-            statusText.innerText = "Tampil";
-            statusText.classList.replace('text-red-500', 'text-green-600');
-        } else {
-            icon.innerText = "👁️‍🗨️";
-            statusText.innerText = "Disembunyikan";
-            statusText.classList.replace('text-green-600', 'text-red-500');
-        }
+            if (data.status === "Hidden") {
+                icon.innerText = "👁️‍🗨️";
+                statusText.innerText = "Hidden";
+                statusText.classList.replace('text-green-600', 'text-red-500');
+            } else {
+                icon.innerText = "👁️";
+                statusText.innerText = "Published";
+                statusText.classList.replace('text-red-500', 'text-green-600');
+            }
+        })
+        .catch(error => {
+            alert('Gagal mengubah status komentar: ' + error.message);
+        });
     }
 
     function confirmDelete(id) {

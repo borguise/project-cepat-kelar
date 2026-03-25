@@ -8,10 +8,10 @@
       </div>
 
       <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 gap-8">
-        <div class="relative w-[600px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
-           <input type="text" placeholder="Ketik Judul atau Kategori disini" class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
-           <span class="text-xl text-stone-400">🔍</span>
-        </div>
+        <form action="/admin/highlights" method="GET" class="relative w-[600px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
+          <input type="text" name="query" value="${query!''}" placeholder="Ketik pertanyaan atau jawaban disini" class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
+          <button type="submit" class="text-xl text-stone-400">🔍</button>
+        </form>
         
         <a href="/admin/highlights/new" class="h-12 bg-[#bef264] text-indigo-900 px-8 flex items-center justify-center rounded-xl shadow-md font-bold text-base hover:bg-lime-400 transition-all active:scale-95 text-center">
           + Tambah Sorotan baru
@@ -24,6 +24,7 @@
             <tr class="font-gelasio text-black text-xl border-b border-black/10 bg-slate-50/20">
               <th class="px-8 py-7 border-r border-black/10 text-left font-bold">Judul / Pertanyaan</th>
               <th class="px-4 py-7 border-r border-black/10 font-bold w-44">Urutan</th>
+              <th class="px-4 py-7 border-r border-black/10 font-bold w-44">Status</th>
               <th class="px-6 py-7 font-bold w-36">Aksi</th>
             </tr>
           </thead>
@@ -31,8 +32,17 @@
             <#if sorotanList?? && (sorotanList?size > 0)>
               <#list sorotanList as item>
                 <tr class="hover:bg-slate-50 transition h-20">
-                  <td class="px-8 border-r border-black/10 text-left font-bold leading-tight">${item.pertanyaan!""}</td>
-                  <td class="px-4 border-r border-black/10 font-normal">Nomor ${item.urutan!0}</td>
+                  <td class="px-8 border-r border-black/10 text-left font-bold leading-tight">${item.question!""}</td>
+                  <td class="px-4 border-r border-black/10 font-normal">Nomor ${item.displayOrder!0}</td>
+                  <td class="px-4 border-r border-black/10 text-center">
+                    <#assign statusLabel = "Dipublikasikan">
+                    <#assign statusClass = "bg-green-100 text-green-700">
+                    <#if item.status?? && item.status?string == "HIDDEN">
+                      <#assign statusLabel = "Disembunyikan">
+                      <#assign statusClass = "bg-slate-200 text-slate-600">
+                    </#if>
+                    <span class="inline-flex px-4 py-1 rounded-full text-sm font-bold ${statusClass}">${statusLabel}</span>
+                  </td>
                   <td class="px-4">
                     <div class="flex justify-center gap-6 text-2xl">
                       <a href="/admin/highlights/edit/${item.id}" title="Edit">✏️</a>
@@ -43,7 +53,7 @@
               </#list>
             <#else>
               <tr>
-                <td colspan="3" class="py-20 text-center italic text-stone-400">Belum ada data sorotan tersedia.</td>
+                <td colspan="4" class="py-20 text-center italic text-stone-400">Belum ada data sorotan tersedia.</td>
               </tr>
             </#if>
           </tbody>
