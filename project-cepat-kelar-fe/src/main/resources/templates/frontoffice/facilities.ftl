@@ -1,192 +1,203 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>${pageTitle!"Fasilitas - Graha Pusat Literasi Magetan"}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Gelasio:ital,wght@0,400;0,700;1,700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<#-- =======================================================
+     FASILITAS.FTL - KOMPONEN OVERLAY MURNI (FRAGMENT)
+     ======================================================= -->
+
+<style>
+    /* ========================================================
+       KODE CSS MURNI UNTUK KOMPONEN FASILITAS
+       ======================================================== */
+    .fas-container {
+        width: 100%; 
+        min-height: 100%; 
+        background-color: #f7f0cb; 
+        position: relative;
+        display: flex; 
+        flex-direction: column;
+        overflow: hidden; 
+    }
+
+    /* Lapisan Batik yang menutupi seluruh container */
+    .fas-batik-bg {
+        position: absolute; inset: 0;
+        background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
+        background-size: cover;
+        opacity: 0.4; mix-blend-mode: multiply;
+        pointer-events: none; z-index: 1;
+    }
+
+    .fas-content-wrapper {
+        flex: 1; display: flex; flex-direction: column;
+        justify-content: space-between; align-items: center;
+        padding: 80px 40px; 
+        z-index: 10;
+    }
+
+    /* --- HEADER --- */
+    .fas-header-section { text-align: center; margin-bottom: 20px; }
+    .fas-title { font-family: 'Gelasio', serif; color: #334155; font-size: 85px; font-weight: bold; margin-bottom: 10px; line-height: 1.1;}
+    .fas-subtitle { font-family: 'Gelasio', serif; color: #475569; font-size: 38px; font-weight: bold; }
+
+    /* --- CAROUSEL --- */
+    .fas-carousel-outer { 
+        position: relative; 
+        width: 100%; max-width: 800px; 
+        display: flex; align-items: center; justify-content: center; 
+        margin: auto 0; 
+    }
+
+    .fas-carousel-frame {
+        width: 720px; 
+        height: 850px; 
+        background-color: white;
+        border-radius: 60px;
+        border: 2px solid #000; 
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    }
+
+    .fas-carousel-track {
+        display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+        scrollbar-width: none; height: 100%; scroll-behavior: smooth;
+    }
+    .fas-carousel-track::-webkit-scrollbar { display: none; }
+
+    .fas-carousel-slide {
+        min-width: 100%; height: 100%; scroll-snap-align: start;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 40px 60px; text-align: center; box-sizing: border-box; 
+    }
+
+    .fas-slide-judul { font-family: 'Gelasio', serif; font-size: 48px; color: #000; margin-bottom: 25px; font-weight: bold; }
+    .fas-slide-img { width: 100%; height: 450px; border-radius: 30px; object-fit: cover; margin-bottom: 35px; border: 1px solid #ddd; background-color: #e2e8f0; }
+    .fas-slide-caption { font-family: 'Lato', sans-serif; font-size: 30px; color: #334155; line-height: 1.5; }
+
+    /* NAVIGASI PANAH */
+    .fas-nav-arrow {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 80px; height: 80px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: 2px solid #334155; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px; color: #334155; cursor: pointer;
+        z-index: 20; transition: all 0.2s ease;
+    }
+    .fas-nav-arrow:hover { background-color: #334155; color: white; }
+    .fas-prev-arrow { left: -15px; }
+    .fas-next-arrow { right: -15px; }
+
+    /* --- FOOTER --- */
+    .fas-footer-text {
+        width: 100%; max-width: 780px; text-align: center;
+        font-family: 'Lato', sans-serif; font-size: 26px; color: #64748b; 
+        line-height: 1.6; font-style: italic; margin-top: 20px;
+    }
+</style>
+
+<div class="fas-container">
     
-    <style>
-        body { 
-            background-color: #1a1a1a; margin: 0; padding: 0; 
-            height: 100vh; width: 100vw; overflow: hidden; 
-            display: flex; justify-content: center; align-items: center; 
-        }
+    <div class="fas-batik-bg"></div>
 
-        /* KANVAS UTAMA: Terkunci 864x1536 */
-        #fasilitas-canvas {
-            width: 864px; height: 1536px;
-            background-color: #f7f0cb; 
-            position: relative;
-            box-shadow: 0 0 120px rgba(0,0,0,0.6); 
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            transform-origin: center center;
-        }
-
-        .batik-overlay {
-            position: absolute; inset: 0;
-            background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
-            background-size: cover;
-            opacity: 0.4; mix-blend-mode: multiply;
-            pointer-events: none; z-index: 1;
-        }
-
-        .close-btn {
-            position: absolute; top: 40px; right: 50px;
-            font-size: 80px; color: #334155;
-            cursor: pointer; z-index: 1000; line-height: 1;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .content-container {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: space-between; align-items: center;
-            padding: 120px 40px 80px 40px; z-index: 10;
-        }
-
-        .header-section { text-align: center; }
-        .title-fasilitas { font-family: 'Gelasio'; color: #334155; font-size: 85px; font-weight: bold; margin-bottom: 10px; }
-        .subtitle-fasilitas { font-family: 'Gelasio'; color: #475569; font-size: 38px; font-weight: bold; }
-
-        .carousel-outer { 
-            position: relative; 
-            width: 800px; 
-            display: flex; align-items: center; justify-content: center; 
-        }
-
-        .carousel-frame {
-            width: 720px; 
-            height: 900px; 
-            background-color: white;
-            border-radius: 60px;
-            border: 2px solid #000; 
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-        }
-
-        .carousel-track {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            height: 100%;
-            scroll-behavior: smooth;
-        }
-        .carousel-track::-webkit-scrollbar { display: none; }
-
-        .carousel-slide {
-            min-width: 100%; height: 100%;
-            scroll-snap-align: start;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 40px 60px; text-align: center;
-        }
-
-        .slide-judul { font-family: 'Gelasio'; font-size: 48px; color: #000; margin-bottom: 25px; font-weight: bold; }
-        .slide-img { width: 100%; height: 450px; border-radius: 30px; object-fit: cover; margin-bottom: 35px; border: 1px solid #ddd; }
-        .slide-caption { font-family: 'Lato'; font-size: 30px; color: #334155; line-height: 1.5; }
-
-        .nav-arrow {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            width: 80px; height: 80px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 2px solid #334155; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; color: #334155; cursor: pointer;
-            z-index: 20;
-        }
-        .prev-arrow { left: -15px; }
-        .next-arrow { right: -15px; }
-
-        .footer-text {
-            width: 780px; text-align: center;
-            font-family: 'Lato'; font-size: 26px; color: #64748b; 
-            line-height: 1.6; font-style: italic;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="fasilitas-canvas">
-        <div class="batik-overlay"></div>
+    <div class="fas-content-wrapper">
         
-        <div class="close-btn" onclick="window.history.back()">×</div>
+        <header class="fas-header-section">
+            <h1 class="fas-title">${mainHeader!"Fasilitas"}</h1>
+            <p class="fas-subtitle">${subHeader!"Satu ruang, banyak inspirasi"}</p>
+        </header>
 
-        <div class="content-container">
-            <header class="header-section">
-                <h1 class="title-fasilitas">${mainHeader!"Fasilitas"}</h1>
-                <p class="subtitle-fasilitas">${subHeader!"Satu ruang, banyak inspirasi"}</p>
-            </header>
+        <div class="fas-carousel-outer">
+            <div class="fas-nav-arrow fas-prev-arrow" onclick="fasManualMove(-1)"><i class="fas fa-chevron-left"></i></div>
+            <div class="fas-nav-arrow fas-next-arrow" onclick="fasManualMove(1)"><i class="fas fa-chevron-right"></i></div>
 
-            <div class="carousel-outer">
-                <div class="nav-arrow prev-arrow" onclick="manualMove(-1)"><i class="fas fa-chevron-left"></i></div>
-                <div class="nav-arrow next-arrow" onclick="manualMove(1)"><i class="fas fa-chevron-right"></i></div>
-
-                <div class="carousel-frame">
-                    <div class="carousel-track" id="carouselTrack">
-                        <#-- LOOPING FASILITAS DINAMIS -->
-                        <#if facilities??>
-                            <#list facilities as f>
-                                <div class="carousel-slide">
-                                    <h2 class="slide-judul">${f.title}</h2>
-                                    <img src="${f.imagePath}" class="slide-img" alt="${f.title}">
-                                    <p class="slide-caption">${f.caption}</p>
-                                </div>
-                            </#list>
-                        </#if>
-                    </div>
+            <div class="fas-carousel-frame">
+                <div class="fas-carousel-track" id="fasCarouselTrack">
+                    
+                    <#if facilities?? && facilities?size gt 0>
+                        <#list facilities as f>
+                            <div class="fas-carousel-slide">
+                                <h2 class="fas-slide-judul">${f.title}</h2>
+                                <img src="${f.imagePath}" class="fas-slide-img" alt="${f.title}" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Gambar+Tidak+Tersedia'">
+                                <p class="fas-slide-caption">${f.caption}</p>
+                            </div>
+                        </#list>
+                    <#else>
+                        <#-- Konten Fallback/Statis -->
+                        <div class="fas-carousel-slide">
+                            <h2 class="fas-slide-judul">Ruang Baca Okky</h2>
+                            <img src="okky.jpeg" class="fas-slide-img" alt="Ruang Baca Okky" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Okky'">
+                            <p class="fas-slide-caption">Sebuah ruang yang didedikasi Okky Madasari berisikan koleksi pilihannya</p>
+                        </div>
+                        <div class="fas-carousel-slide">
+                            <h2 class="fas-slide-judul">Ruang Baca Umum</h2>
+                            <img src="bacaumum.jpg" class="fas-slide-img" alt="Ruang Baca Umum" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Umum'">
+                            <p class="fas-slide-caption">Sebuah aula bagi pengunjung untuk memanfaatkan koleksi dengan nyaman dan tenang.</p>
+                        </div>
+                        <div class="fas-carousel-slide">
+                            <h2 class="fas-slide-judul">Ruang Baca Anak</h2>
+                            <img src="anak.jpeg" class="fas-slide-img" alt="Ruang Baca Anak" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Anak'">
+                            <p class="fas-slide-caption">Sebuah ruangan yang disediakan untuk anak-anak bermain dan berliterasi dengan nyaman</p>
+                        </div>
+                        <div class="fas-carousel-slide">
+                            <h2 class="fas-slide-judul">Ruang Pertemuan</h2>
+                            <img src="pertemuan.jpeg" class="fas-slide-img" alt="Ruang Pertemuan" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Pertemuan'">
+                            <p class="fas-slide-caption">Sebuah aula dengan fasilitas lengkap untuk kegiatan dengan kapasitas 300 orang.</p>
+                        </div>
+                        <div class="fas-carousel-slide">
+                            <h2 class="fas-slide-judul">Ruang Komputer</h2>
+                            <img src="lab komputer.jpeg" class="fas-slide-img" alt="Ruang Komputer" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Komputer'">
+                            <p class="fas-slide-caption">Sebuah ruang khusus dengan unit komputer dan internet untuk digunakan pengunjung.</p>
+                        </div>
+                        <div class="fas-carousel-slide">
+                            <h2 class="fas-slide-judul">Ruang Laktasi</h2>
+                            <img src="laktasi.jpg" class="fas-slide-img" alt="Ruang Laktasi" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Laktasi'">
+                            <p class="fas-slide-caption">Sebuah ruang khusus bagi pengunjung yang membawa anak kecil untuk menikmati layanan perpustakaan</p>
+                        </div>
+                    </#if>
+                    
                 </div>
             </div>
-
-            <footer class="footer-text">
-                ${footerText!"\"Perpustakaan bukan hanya tentang buku, tapi tentang bagaimana menciptakan ide menjadi kenyataan. Sebuah wadah bagi pribadi yang ingin terus berkembang.\""}
-            </footer>
         </div>
+
+        <footer class="fas-footer-text">
+            "Perpustakaan bukan hanya tentang buku, tapi tentang bagaimana menciptakan ide menjadi kenyataan. Sebuah wadah bagi pribadi yang ingin terus berkembang."
+        </footer>
     </div>
+</div>
 
-    <script>
-        const track = document.getElementById('carouselTrack');
-        const slides = document.querySelectorAll('.carousel-slide');
-        let currentIndex = 0;
-        const totalSlides = slides.length;
-        let slideInterval;
+<script>
+    const fasTrack = document.getElementById('fasCarouselTrack');
+    const fasSlides = document.querySelectorAll('.fas-carousel-slide');
+    let fasCurrentIndex = 0;
+    const fasTotalSlides = fasSlides.length;
+    let fasSlideInterval;
 
-        function manualMove(direction) {
-            clearInterval(slideInterval);
-            currentIndex += direction;
-            if (currentIndex >= totalSlides) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = totalSlides - 1;
-            updatePosition();
-            startAutoSlide();
+    function fasManualMove(direction) {
+        clearInterval(fasSlideInterval);
+        fasCurrentIndex += direction;
+        
+        if (fasCurrentIndex >= fasTotalSlides) fasCurrentIndex = 0;
+        if (fasCurrentIndex < 0) fasCurrentIndex = fasTotalSlides - 1;
+        
+        fasUpdatePosition();
+        fasStartAutoSlide();
+    }
+
+    function fasUpdatePosition() {
+        if(fasTrack) {
+            const width = fasTrack.offsetWidth;
+            fasTrack.scrollTo({ left: fasCurrentIndex * width, behavior: 'smooth' });
         }
+    }
 
-        function updatePosition() {
-            const width = track.offsetWidth;
-            track.scrollTo({ left: currentIndex * width, behavior: 'smooth' });
-        }
+    function fasStartAutoSlide() {
+        fasSlideInterval = setInterval(() => {
+            if (fasTotalSlides > 1) {
+                fasCurrentIndex = (fasCurrentIndex + 1) % fasTotalSlides;
+                fasUpdatePosition();
+            }
+        }, 6000);
+    }
 
-        function startAutoSlide() {
-            slideInterval = setInterval(() => {
-                if (totalSlides > 0) {
-                    currentIndex = (currentIndex + 1) % totalSlides;
-                    updatePosition();
-                }
-            }, 6000);
-        }
-
-        startAutoSlide();
-
-        function scaleCanvas() {
-            const canvas = document.getElementById('fasilitas-canvas');
-            const scale = Math.min(window.innerWidth / 864, window.innerHeight / 1536);
-            canvas.style.transform = "scale(" + scale + ")";
-        }
-        window.addEventListener('load', scaleCanvas);
-        window.addEventListener('resize', scaleCanvas);
-    </script>
-</body>
-</html>
+    if(fasTotalSlides > 1) {
+        fasStartAutoSlide();
+    }
+</script>
