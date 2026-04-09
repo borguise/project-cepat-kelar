@@ -12,7 +12,8 @@
     
     <link rel="preload" href="${basePath}/Latar2.png" as="image" fetchpriority="high">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Gelasio:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Gelasio:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* --- OPTIMASI VISUAL & KETAJAMAN --- */
@@ -74,12 +75,31 @@
             animation: scannerMove 3s infinite linear; pointer-events: none;
         }
 
-        /* --- SISTEM OVERLAY / MODAL --- */
-        .overlay-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(8px); }
-        .overlay-container { width: 90%; max-width: 800px; height: 85vh; background: #F7F3EE; border-radius: 30px; position: relative; overflow: hidden; display: none; flex-direction: column; border: 2px solid #D4AF37; /* Border Emas */ }
-        .close-overlay { position: absolute; top: 20px; right: 20px; width: 45px; height: 45px; background: #D4AF37; color: #1a1a1a; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; font-size: 20px; font-weight: bold; transition: background 0.3s; }
-        .close-overlay:hover { background: #FFD700; }
-        .content-scroll { padding: 40px; overflow-y: auto; flex-grow: 1; color: #333; }
+        /* --- SISTEM OVERLAY / MODAL (STANDAR KIOSK 864x1536) --- */
+        .overlay-mask { 
+            position: absolute; /* WAJIB ABSOLUTE agar tidak rusak kena scale */
+            inset: 0; 
+            background: rgba(0,0,0,0.85); 
+            display: none; justify-content: center; align-items: center; 
+            z-index: 9999; backdrop-filter: blur(8px); 
+        }
+        
+        .overlay-container { 
+            width: 864px; height: 1536px; /* Ukuran statis agar komponen anak rapi */
+            background: #FAF6ED; /* Warna Krem Premium */
+            border-radius: 40px; 
+            position: relative; overflow: hidden; display: none; 
+            flex-direction: column; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* Menyembunyikan Scrollbar Bawaan namun tetap bisa discroll */
+        .content-scroll { 
+            padding: 0; /* PENTING: Padding 0 agar komponen anak bisa full-bleed */
+            overflow-y: auto; flex-grow: 1; 
+            scrollbar-width: none; scroll-behavior: smooth;
+        }
+        .content-scroll::-webkit-scrollbar { display: none; }
 
         /* Z-Index Management */
         .layer-bg { z-index: 1; }
@@ -128,57 +148,65 @@
 
         <#-- 7. TANAMAN (Statis) -->
         <img src="${basePath}/tanaman1.png" class="absolute w-[320px] h-[674px] left-0 top-[1218px] layer-depan pointer-events-none" alt="Tanaman" decoding="async">
-    </div>
 
-    <#-- ========================================================== -->
-    <#-- SISTEM MODAL / OVERLAY LANTAI 2 -->
-    <#-- ========================================================== -->
-    <div id="overlay-mask" class="overlay-mask" onclick="closeAllOverlays()">
-        
-        <#-- Overlay Koleksi (Rak Atas) -->
-        <div id="section-collections" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
-            <div class="content-scroll">
-                <#attempt><#include "collections.ftl"><#recover>
-                    <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Katalog Koleksi</h2>
-                    <p class="text-lg">Informasi buku dan literatur akan ditampilkan di sini.</p>
-                </#attempt>
+        <#-- ========================================================== -->
+        <#-- SISTEM MODAL / OVERLAY WADAH FRAGMENT LANTAI 2 -->
+        <#-- ========================================================== -->
+        <div id="overlay-mask" class="overlay-mask" onclick="closeAllOverlays()">
+            
+            <#-- Overlay Koleksi (Rak Atas) -->
+            <div id="section-collections" class="overlay-container" onclick="event.stopPropagation()">
+                <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
+                <div class="content-scroll">
+                    <#attempt><#include "collections.ftl"><#recover>
+                        <div class="p-20 text-center">
+                            <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Katalog Koleksi</h2>
+                            <p class="text-xl text-slate-600">File collections.ftl belum ditemukan atau gagal dimuat.</p>
+                        </div>
+                    </#attempt>
+                </div>
             </div>
-        </div>
 
-        <#-- Overlay Audio (Soundproof Pod) -->
-        <div id="section-audio" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
-            <div class="content-scroll">
-                <#attempt><#include "audio.ftl"><#recover>
-                    <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Audio & Podcast</h2>
-                    <p class="text-lg">Dengarkan koleksi audiobook kami secara eksklusif.</p>
-                </#attempt>
+            <#-- Overlay Audio (Soundproof Pod) -->
+            <div id="section-audio" class="overlay-container" onclick="event.stopPropagation()">
+                <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
+                <div class="content-scroll">
+                    <#attempt><#include "audio.ftl"><#recover>
+                        <div class="p-20 text-center">
+                            <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Audio & Podcast</h2>
+                            <p class="text-xl text-slate-600">File audio.ftl belum ditemukan atau gagal dimuat.</p>
+                        </div>
+                    </#attempt>
+                </div>
             </div>
-        </div>
 
-        <#-- Overlay Fasilitas (Area Baca) -->
-        <div id="section-facilities" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
-            <div class="content-scroll">
-                <#attempt><#include "facilities.ftl"><#recover>
-                    <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Fasilitas Ruang Baca</h2>
-                    <p class="text-lg">Nikmati kenyamanan membaca di area fasilitas kami.</p>
-                </#attempt>
+            <#-- Overlay Fasilitas (Area Baca) -->
+            <div id="section-facilities" class="overlay-container" onclick="event.stopPropagation()">
+                <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
+                <div class="content-scroll">
+                    <#attempt><#include "facilities.ftl"><#recover>
+                        <div class="p-20 text-center">
+                            <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Fasilitas Ruang Baca</h2>
+                            <p class="text-xl text-slate-600">File facilities.ftl belum ditemukan atau gagal dimuat.</p>
+                        </div>
+                    </#attempt>
+                </div>
             </div>
-        </div>
 
-        <#-- Overlay Voting (Kotak Suara) -->
-        <div id="section-voting" class="overlay-container" onclick="event.stopPropagation()">
-            <div class="close-overlay" onclick="closeAllOverlays()">✕</div>
-            <div class="content-scroll">
-                <#attempt><#include "voting.ftl"><#recover>
-                    <h2 class="text-3xl font-bold text-[#D4AF37] mb-4">Ruang Aspirasi</h2>
-                    <p class="text-lg">Berikan suara atau pendapat Anda untuk kemajuan literasi.</p>
-                </#attempt>
+            <#-- Overlay Voting (Kotak Suara) -->
+            <div id="section-voting" class="overlay-container" onclick="event.stopPropagation()">
+                <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
+                <div class="content-scroll">
+                    <#attempt><#include "voting.ftl"><#recover>
+                        <div class="p-20 text-center">
+                            <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Ruang Aspirasi</h2>
+                            <p class="text-xl text-slate-600">File voting.ftl belum ditemukan atau gagal dimuat.</p>
+                        </div>
+                    </#attempt>
+                </div>
             </div>
-        </div>
 
+        </div> 
     </div>
 
     <script>
