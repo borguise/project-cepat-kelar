@@ -1,4 +1,6 @@
-<#-- home.ftl - VERSI FINAL TERPADU LANTAI 1 -->
+<#-- =======================================================
+     HOME.FTL - VERSI FINAL TERPADU LANTAI 1
+     ======================================================= -->
 <#-- Variabel Konfigurasi -->
 <#assign basePath = (basePath!"/images/frontoffice")>
 <#assign totemImages = ["sorotan12.png", "sorotan22.png"]>
@@ -30,7 +32,7 @@
 
         .bg-illustration { position: absolute; inset: 0; width: 1080px !important; height: 1920px !important; max-width: none !important; object-fit: fill; z-index: 1; }
 
-        /* --- HOTSPOT & ANIMASI --- */
+        /* --- HOTSPOT & ANIMASI GLOWING --- */
         @keyframes heartbeatGlow {
             0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3)); } 
             50% { filter: drop-shadow(0 0 25px rgba(255, 200, 0, 0.7)); }
@@ -68,7 +70,10 @@
             background: #3B5998; color: white; border-radius: 50%; 
             display: flex; align-items: center; justify-content: center; 
             cursor: pointer; z-index: 1000; font-size: 30px; font-weight: bold; 
+            transition: background 0.2s;
         }
+        .close-overlay:hover { background: #ef4444; }
+        
         .content-scroll { padding: 0; overflow-y: auto; flex-grow: 1; scrollbar-width: none; }
         .content-scroll::-webkit-scrollbar { display: none; }
     </style>
@@ -78,7 +83,7 @@
     <div id="homepage-canvas">
         <img src="${basePath}/bg.png" alt="Interior Library" class="bg-illustration" fetchpriority="high">
 
-        <#-- 1. TOTEM HIGHLIGHT -->
+        <#-- 1. TOTEM HIGHLIGHT (Dengan Atribut data-images untuk JS) -->
         <button class="hotspot w-[198px] h-[531px] left-[30px] top-[1300px]" onclick="openOverlay('section-highlights')">
             <div class="absolute bg-[#4A4A4A] z-[4] skew-y-[-26deg] rounded-[2px] flex items-center justify-center" 
                  style="top: 10%; left: 10%; width: 90%; height: 80%;">
@@ -86,8 +91,14 @@
                     #salam<br>literasi
                 </span>
             </div>
-            <img id="totem-screen" src="${basePath}/${totemImages[0]}" class="absolute object-cover transition-opacity duration-500" 
+            
+            <#-- Layar Totem -->
+            <img id="totem-screen" 
+                 src="${basePath}/${totemImages[0]}" 
+                 data-images="<#list totemImages as img>${basePath}/${img}<#if img?has_next>,</#if></#list>"
+                 class="absolute object-cover transition-opacity duration-500" 
                  style="top: 3%; left: 10%; width: 90%; height: 86%; z-index: 5; filter: contrast(0.95) brightness(1.05);" alt="Content">
+                 
             <img src="${basePath}/sorotankosong2.png" class="absolute inset-0 z-10 pointer-events-none" alt="Frame">
         </button>
 
@@ -111,13 +122,14 @@
             <img src="${basePath}/figura.png" alt="Figura">
         </button>
 
-        <#-- 6. TROLI (Ubah agar membuka Overlay Artikel) -->
+        <#-- 6. TROLI (Membuka Overlay Artikel) -->
         <button class="hotspot w-80 h-80 left-[825px] top-[1427px]" onclick="openOverlay('section-articles')">
             <img src="${basePath}/troli.png" alt="Troli">
         </button>
 
-
-        <#-- SISTEM MODAL / OVERLAY -->
+        <#-- =======================================================
+             SISTEM MODAL / OVERLAY KIOSK (864x1536)
+             ======================================================= -->
         <div id="overlay-mask" class="overlay-mask" onclick="closeAllOverlays()">
             
             <#-- Overlay Sorotan -->
@@ -138,7 +150,7 @@
 
             <#-- Overlay Agenda -->
             <div id="section-events" class="overlay-container !bg-white !p-0 !border-0" onclick="event.stopPropagation()">
-                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[1000]">X</div>
+                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[1000] hover:text-red-500">X</div>
                 <div class="h-full w-full overflow-y-auto scrollbar-hide">
                     <#attempt><#include "events.ftl"><#recover><p class="p-10">Gagal memuat agenda.</p></#attempt>
                 </div>
@@ -146,17 +158,17 @@
 
             <#-- Overlay Profil (Figura) -->
             <div id="section-profile" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
-                <div onclick="closeAllOverlays()" class="absolute top-10 right-12 text-[60px] font-light cursor-pointer text-[#334155] z-[1000]">&times;</div>
+                <div onclick="closeAllOverlays()" class="absolute top-10 right-12 text-[60px] font-light cursor-pointer text-[#334155] hover:text-red-500 transition-colors z-[1000]">&times;</div>
                 <div class="h-full w-full overflow-y-auto scrollbar-hide">
                     <#attempt><#include "profile.ftl"><#recover><p class="p-10">Gagal memuat profil.</p></#attempt>
                 </div>
             </div>
 
-            <#-- Overlay Artikel (Troli) -->
+            <#-- Overlay Artikel (Troli) - Telah disesuaikan untuk articles.ftl terbaru -->
             <div id="section-articles" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
-                <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[60px] font-light cursor-pointer text-[#334155] z-[1000]">&times;</div>
-                <div class="h-full w-full overflow-y-auto scrollbar-hide">
-                    <#attempt><#include "articles.ftl"><#recover><p class="p-10">Gagal memuat artikel.</p></#attempt>
+                <div onclick="closeAllOverlays()" id="gplArticleCloseBtn" class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none">&times;</div>
+                <div class="h-full w-full overflow-y-auto scrollbar-hide" id="article-scroll-area">
+                    <#attempt><#include "articles.ftl"><#recover><p class="p-10 text-center font-bold text-red-500 mt-20">Gagal memuat artikel.</p></#attempt>
                 </div>
             </div>
 
@@ -164,16 +176,23 @@
     </div>
 
     <script>
+        // ==========================================
+        // 1. MANAJEMEN OVERLAY
+        // ==========================================
         function openOverlay(id) { 
             document.getElementById('overlay-mask').style.display = 'flex'; 
             document.getElementById(id).style.display = 'flex'; 
         }
+        
         function closeAllOverlays() { 
             document.getElementById('overlay-mask').style.display = 'none'; 
             const containers = document.querySelectorAll('.overlay-container'); 
             containers.forEach(c => c.style.display = 'none'); 
         }
 
+        // ==========================================
+        // 2. SKALA KANVAS OTOMATIS
+        // ==========================================
         function scaleCanvas() {
             const canvas = document.getElementById('homepage-canvas');
             if (!canvas) return;
@@ -185,21 +204,39 @@
         window.addEventListener('DOMContentLoaded', scaleCanvas);
         setTimeout(scaleCanvas, 100);
 
-        // Animasi Totem
-        const screen = document.getElementById('totem-screen');
-        const contents = [<#list totemImages as img>'${basePath}/${img}'<#if img_has_next>, </#if></#list>];
-        let idx = 0;
-        if (contents.length > 1) {
-            setInterval(() => {
-                if(!screen) return;
-                screen.style.opacity = '0'; 
-                setTimeout(() => {
-                    idx = (idx + 1) % contents.length;
-                    screen.src = contents[idx];
-                    screen.onload = () => screen.style.opacity = '1';
-                }, 500);
-            }, 5500);
-        }
+        // ==========================================
+        // 3. ANIMASI TOTEM (SLIDESHOW)
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", function() {
+            const totemScreen = document.getElementById('totem-screen');
+            
+            if (totemScreen) {
+                // Mengambil daftar gambar dari atribut HTML dan memecahnya menjadi Array
+                const imageString = totemScreen.getAttribute('data-images');
+                const images = imageString ? imageString.split(',') : [];
+                
+                let currentIndex = 0;
+
+                // Hanya jalankan animasi jika gambar lebih dari 1
+                if (images.length > 1) {
+                    setInterval(() => {
+                        // Pudarkan gambar saat ini
+                        totemScreen.style.opacity = '0'; 
+                        
+                        // Tunggu transisi selesai (500ms), lalu ganti src
+                        setTimeout(() => {
+                            currentIndex = (currentIndex + 1) % images.length;
+                            totemScreen.src = images[currentIndex];
+                            
+                            // Tampilkan kembali setelah gambar termuat
+                            totemScreen.onload = () => {
+                                totemScreen.style.opacity = '1';
+                            };
+                        }, 500); 
+                    }, 4000); // Ganti gambar setiap 4 detik
+                }
+            }
+        });
     </script>
 </body>
 </html>

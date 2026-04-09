@@ -1,172 +1,201 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>${pageTitle!"Detail Artikel - Graha Pusat Literasi"}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<#-- =======================================================
+     ARTICLES-DETAILS.FTL - TRUE FRAGMENT (KOMPATIBEL HOME.FTL)
+     Murni komponen visual tanpa bentrokan scale/skrip parent.
+     ======================================================= -->
+
+<#if !article??>
+    <#-- Fallback Dummy Data -->
+    <#assign article = {
+        "id": 1,
+        "title": "Memori Milik Kita",
+        "content": "<p>Perpustakaan bukan sekadar ruang penyimpanan, melainkan tempat di mana ingatan bersama dirawat dan diberi makna. Di Graha Pusat Literasi, ingatan itu hidup melalui koleksi konten lokal—rekaman tentang sejarah, budaya, dan identitas Magetan yang tumbuh bersama masyarakatnya.</p><br><p>Beragam jejak masa lalu tersimpan dan dapat diperjelajahi di sini. Naskah-naskah lama, artefak bersejarah, hingga karya para penulis dan budayawan daerah hadir sebagai cerita yang saling terhubung.</p><br><p>Untuk membantu perjalanan itu, Graha Pusat Literasi menghadirkan katalog sebagai pemandu awal yang tertata rapi. Melalui katalog, pengunjung dapat menelusuri koleksi secara mandiri, bergerak dari satu informasi ke informasi lain dengan tenang, tanpa merasa terburu-buru atau kebingungan.</p>",
+        "img": "/assets/images/placeholder-hero.jpg"
+    }>
+</#if>
+
+<style>
+    /* ========================================================
+       KODE CSS MURNI UNTUK KOMPONEN ARTIKEL
+       ======================================================== */
+    /* Kertas Krem Cair (Mengikuti 100% wadah parent di home.ftl) */
+    .detail-kertas-krem {
+        width: 100%; 
+        min-height: 100%; 
+        background-color: #FAF6ED; 
+        position: relative; 
+        box-sizing: border-box;
+        overflow: hidden; /* Mencegah elemen keluar batas */
+    }
+
+    /* Latar Batik */
+    .detail-batik-bg {
+        position: absolute; inset: 0;
+        background-image: url('${batikPath!"/assets/images/batikspring.png"}'); 
+        background-size: 500px; opacity: 0.15; mix-blend-mode: multiply;
+        pointer-events: none; z-index: 1; 
+    }
+
+    .detail-content-wrapper {
+        position: relative; z-index: 10;
+        padding: 0 70px 120px 70px; display: flex; flex-direction: column;
+    }
+
+    /* Header & Navigasi Natural */
+    .detail-header-group {
+        width: 100%; text-align: center; margin-top: 60px; margin-bottom: 50px;
+    }
+
+    .detail-back-link-center {
+        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        color: #3B5998; font-family: 'Lato', sans-serif; font-size: 20px; font-weight: bold;
+        text-decoration: none; margin-bottom: 24px; transition: color 0.2s ease-in-out;
+    }
+    .detail-back-link-center:hover { color: #ef4444; }
+
+    .detail-article-title-main {
+        font-family: 'Gelasio', serif; color: #3B5998;
+        font-size: 46px; font-weight: bold; line-height: 1.3;
+        max-width: 90%; margin: 0 auto;
+    }
+
+    /* Gambar & Teks */
+    .detail-main-img { 
+        width: 100%; height: 480px; object-fit: cover; 
+        border-radius: 20px; margin-bottom: 60px; 
+        background-color: #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
     
-    <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    .detail-body-text { 
+        font-family: 'Gelasio', serif; color: #3B5998; 
+        font-size: 24px; font-weight: bold; line-height: 1.8; 
+        text-align: center; width: 100%; margin-bottom: 60px;
+    }
+    .detail-body-text p { margin-bottom: 28px; margin-top: 0; }
 
-        /* KANVAS UTAMA */
-        #article-canvas {
-            width: 1080px; height: 1920px;
-            background-color: #f5f5f4; 
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 120px rgba(0,0,0,0.6);
-            transform-origin: center center;
-        }
+    /* Seksi Komentar */
+    .detail-comment-section {
+        width: 100%; background-color: #DCD9D1; border-radius: 30px; 
+        padding: 50px; display: flex; flex-direction: column; gap: 24px;
+    }
 
-        /* TOMBOL KELUAR: Dinamis Menghilang */
-        .close-btn {
-            position: absolute; top: 40px; right: 50px;
-            font-size: 60px; color: #1F1F1F;
-            cursor: pointer; z-index: 1000; font-family: 'Inter', sans-serif;
-            transition: opacity 0.4s ease, visibility 0.4s;
-        }
+    .detail-input-field {
+        width: 100%; background: white; border-radius: 16px;
+        padding: 20px 24px; font-family: 'Lato', sans-serif; font-size: 20px;
+        border: none; outline: none; color: #333;
+    }
+    .detail-input-field::placeholder, .detail-textarea-field::placeholder { color: #4A4A4A; font-weight: bold; }
 
-        /* AREA GULIR */
-        .content-scroll {
-            flex: 1; overflow-y: auto;
-            padding: 50px 32px; z-index: 10;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
-        }
-        .content-scroll::-webkit-scrollbar { display: none; }
+    .detail-textarea-field {
+        width: 100%; height: 160px; background: white; border-radius: 16px;
+        padding: 24px; font-family: 'Lato', sans-serif; font-size: 20px;
+        border: none; resize: none; outline: none; color: #333;
+    }
 
-        /* WRAPPER KONTEN PUTIH */
-        .article-wrapper {
-            background-color: #ffffff; border-radius: 32px;
-            padding: 60px 40px; display: flex; flex-direction: column;
-            align-items: center; gap: 40px;
-            margin-bottom: 50px;
-        }
+    /* Daftar Komentar */
+    .detail-comment-list-wrapper {
+        margin-top: 60px; width: 100%;
+        border-top: 2px solid rgba(0,0,0,0.1); padding-top: 50px;
+    }
+    
+    .detail-comment-item { 
+        display: flex; align-items: flex-start; gap: 20px;
+        background: #ffffff; padding: 24px 30px; border-radius: 24px;
+        margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .detail-avatar-box {
+        font-size: 20px; color: white; background: #3B5998; 
+        display: flex; align-items: center; justify-content: center;
+        width: 55px; height: 55px; border-radius: 50%; flex-shrink: 0;
+    }
+    
+    .detail-comment-content { display: flex; flex-direction: column; gap: 6px; }
+    .detail-user-name { font-family: 'Lato', sans-serif; font-size: 18px; color: #3B5998; font-weight: bold; }
+    .detail-user-text { font-family: 'Gelasio', serif; font-size: 22px; color: #334155; line-height: 1.5; font-weight: 500; }
+</style>
 
-        .back-link { font-family: 'Lato', sans-serif; color: #7dd3fc; font-size: 24px; text-decoration: none; }
-        .article-title { font-family: 'Gelasio', serif; color: rgba(51, 65, 85, 0.75); font-size: 48px; font-weight: bold; text-align: center; }
-        .main-img { width: 100%; height: 450px; object-fit: cover; border-radius: 16px; }
+<div class="detail-kertas-krem" id="article-detail-container">
+    
+    <div class="detail-batik-bg"></div>
 
-        /* TEKS ARTIKEL: Indigo-800 */
-        .body-text { 
-            font-family: 'Gelasio', serif; color: #3730a3; font-size: 26px; 
-            font-weight: bold; line-height: 1.8; text-align: center; 
-        }
+    <div class="detail-content-wrapper">
+        
+        <div class="detail-header-group">
+            <a href="javascript:void(0)" onclick="closeDetailOverlay()" class="detail-back-link-center">
+                <i class="fas fa-arrow-left"></i> Kembali ke daftar berita
+            </a>
+            <h1 class="detail-article-title-main">${(article.title)!"Judul Artikel"}</h1>
+        </div>
+        
+        <#if article.img?? && article.img?has_content>
+            <img src="${article.img}" class="detail-main-img" alt="${article.title!''}">
+        <#elseif (article.id > 0)>
+            <img src="/admin/articles/image/${article.id?c}" class="detail-main-img" onerror="this.style.display='none'">
+        <#else>
+            <div class="detail-main-img flex items-center justify-center">
+                <i class="fas fa-image text-8xl text-slate-400"></i>
+            </div>
+        </#if>
 
-        /* SEKSI KOMENTAR */
-        .comment-section {
-            width: 100%; background-color: #d4d4d8; border-radius: 24px;
-            padding: 40px; display: flex; flex-direction: column; gap: 30px;
-        }
-        .input-field {
-            width: 100%; background: white; border-radius: 16px;
-            padding: 20px; font-family: 'Gelasio', serif; font-size: 24px;
-            border: none; text-align: center;
-        }
-        .textarea-field {
-            width: 100%; height: 200px; background: white; border-radius: 16px;
-            padding: 20px; font-family: 'Lato', sans-serif; font-size: 24px;
-            border: none; text-align: center; resize: none;
-        }
+        <div class="detail-body-text">
+            ${(article.content)!"Isi artikel belum tersedia."?no_esc}
+        </div>
 
-        .comment-item { display: flex; gap: 20px; align-items: flex-start; margin-top: 20px; }
-        .avatar { width: 60px; height: 60px; border-radius: 50%; background: #e5e7eb; flex-shrink: 0; }
-        .user-name { font-family: 'Lato', sans-serif; font-size: 22px; color: #1F1F1F; }
-        .user-text { font-family: 'Gelasio', serif; font-size: 24px; font-weight: bold; color: #1F1F1F; }
-    </style>
-</head>
-<body>
-
-    <div id="article-canvas">
-        <div id="dynamicCloseBtn" class="close-btn" onclick="window.history.back()">x</div>
-
-        <div id="scrollArea" class="content-scroll">
-            
-            <div class="article-wrapper">
-                <a href="${backUrl!"/articles"}" class="back-link">&lt; Kembali ke daftar berita</a>
+        <div class="detail-comment-section">
+            <form action="#" method="POST" style="display: flex; flex-direction: column; gap: 24px;" onsubmit="alert('Komentar Aktif setelah backend tersambung.'); return false;">
+                <input type="hidden" name="articleId" value="${(article.id)!''}"/>
+                <input type="email" name="email" placeholder="Email" class="detail-input-field" required>
+                <input type="password" name="password" placeholder="Password" class="detail-input-field">
                 
-                <h1 class="article-title">${articleTitle!"Judul Artikel"}</h1>
-                
-                <#if articleImage??>
-                    <img src="${articleImage}" class="main-img" alt="Header">
-                <#else>
-                    <img src="https://placehold.co/752x421" class="main-img">
-                </#if>
-
-                <div class="body-text">
-                    ${articleContent!"Isi artikel tidak ditemukan."}
+                <div style="position: relative;">
+                    <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="detail-textarea-field" required></textarea>
+                    <button type="submit" style="position: absolute; bottom: 24px; right: 24px; background: transparent; border: none; font-size: 32px; color: #1a1a1a; cursor: pointer; transition: transform 0.2s;">
+                        <i class="fa-regular fa-paper-plane hover:text-[#3B5998]"></i>
+                    </button>
                 </div>
+            </form>
+        </div>
 
-                <#-- SEKSI KOMENTAR -->
-                <div class="comment-section">
-                    <#if commentSuccess??>
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            ${commentSuccess}
+        <div class="detail-comment-list-wrapper">
+            <#if comments?? && comments?size gt 0>
+                <#list comments as c>
+                    <div class="detail-comment-item">
+                        <div class="detail-avatar-box">
+                            <#if c.avatar??><img src="${c.avatar}" class="rounded-full w-full h-full"><#else><i class="fas fa-user"></i></#if>
                         </div>
-                    </#if>
-                    <#if commentError??>
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            ${commentError}
+                        <div class="detail-comment-content">
+                            <div class="detail-user-name">${c.userName}</div>
+                            <div class="detail-user-text">${c.text}</div>
                         </div>
-                    </#if>
-                    <form action="${commentAction!"/comment/submit"}" method="POST" class="flex flex-col gap-6">
-                        <input type="hidden" name="articleId" value="${articleId!''}"/>
-                        <input type="hidden" name="source" value="${commentSource!''}"/>
-                        <input type="hidden" name="redirectUrl" value="${redirectUrl!''}"/>
-                        <input type="text" name="name" placeholder="Nama" class="input-field" required>
-                        <input type="email" name="email" placeholder="Email (opsional)" class="input-field">
-                        <div class="relative">
-                            <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="textarea-field" required></textarea>
-                            <button type="submit" class="absolute bottom-4 right-4 text-indigo-800 text-3xl"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </form>
-
-                    <div class="mt-8 space-y-6">
-                        <#if comments??>
-                            <#list comments as c>
-                                <div class="comment-item">
-                                    <div class="avatar">
-                                        <#if c.avatar??><img src="${c.avatar}" class="rounded-full w-full h-full"></#if>
-                                    </div>
-                                    <div class="text-left">
-                                        <div class="user-name">${c.userName}</div>
-                                        <div class="user-text">${c.text}</div>
-                                    </div>
-                                </div>
-                            </#list>
-                        </#if>
+                    </div>
+                </#list>
+            <#else>
+                <div class="detail-comment-item">
+                    <div class="detail-avatar-box"><i class="fas fa-user"></i></div>
+                    <div class="detail-comment-content">
+                        <div class="detail-user-name">Nama</div>
+                        <div class="detail-user-text">Isi komentar Anda akan tampil di sini.</div>
                     </div>
                 </div>
-            </div>
-
+            </#if>
         </div>
+
     </div>
+</div>
 
-    <script>
-        const scrollArea = document.getElementById('scrollArea');
-        const closeBtn = document.getElementById('dynamicCloseBtn');
-
-        scrollArea.addEventListener('scroll', () => {
-            if (scrollArea.scrollTop > 80) {
-                closeBtn.style.opacity = '0';
-                closeBtn.style.visibility = 'hidden';
-            } else {
-                closeBtn.style.opacity = '1';
-                closeBtn.style.visibility = 'visible';
-            }
-        });
-
-        function scaleCanvas() {
-            const canvas = document.getElementById('article-canvas');
-            const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-            canvas.style.transform = "scale(" + scale + ")";
+<script>
+    // FUNGSI NAVIGASI: Kembali ke daftar berita dengan aman
+    function closeDetailOverlay() {
+        // Logika ini bergantung pada bagaimana backend Anda merender halaman.
+        // Jika detail dipanggil via AJAX, cukup sembunyikan wadah detailnya:
+        const detailContainer = document.getElementById('article-detail-container');
+        if(detailContainer) {
+            // Opsi 1: Sembunyikan elemen ini jika di-load dalam satu halaman (SPA)
+            detailContainer.style.display = 'none';
+        } else {
+            // Opsi 2: Jika terpaksa harus pindah URL, gunakan history back
+            window.history.back();
         }
-        window.addEventListener('load', scaleCanvas);
-        window.addEventListener('resize', scaleCanvas);
-    </script>
-</body>
-</html>
+    }
+</script>
