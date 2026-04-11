@@ -1,3 +1,8 @@
+<#-- =======================================================
+     HOME-ALT.FTL - KIOSK MAIN INTERFACE (LANTAI 2)
+     Fitur: Hotspot Animasi, Smart Overlay System, Safe Recovery
+     ======================================================= -->
+
 <#-- Konfigurasi Path & URL -->
 <#assign basePath = (basePath!"/images/frontoffice")>
 <#assign pageTitle = "Lantai 2 - Graha Pusat Literasi Magetan">
@@ -6,7 +11,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
     <title>${pageTitle}</title>
     
@@ -18,7 +23,7 @@
     <style>
         /* --- OPTIMASI VISUAL & KETAJAMAN --- */
         body { 
-            background-color: #1a1a1a; margin: 0; height: 100vh; overflow: hidden; 
+            background-color: #1a1a1a; margin: 0; height: 100vh; width: 100vw; overflow: hidden; 
             font-family: 'Lato', sans-serif; position: relative; 
             -webkit-font-smoothing: antialiased;
         }
@@ -77,7 +82,7 @@
 
         /* --- SISTEM OVERLAY / MODAL (STANDAR KIOSK 864x1536) --- */
         .overlay-mask { 
-            position: absolute; /* WAJIB ABSOLUTE agar tidak rusak kena scale */
+            position: absolute; 
             inset: 0; 
             background: rgba(0,0,0,0.85); 
             display: none; justify-content: center; align-items: center; 
@@ -95,7 +100,7 @@
 
         /* Menyembunyikan Scrollbar Bawaan namun tetap bisa discroll */
         .content-scroll { 
-            padding: 0; /* PENTING: Padding 0 agar komponen anak bisa full-bleed */
+            padding: 0; 
             overflow-y: auto; flex-grow: 1; 
             scrollbar-width: none; scroll-behavior: smooth;
         }
@@ -111,17 +116,17 @@
 <body>
 
     <div id="homepage-canvas">
-        <img src="${basePath}/Latar2.png" alt="Interior Lantai 2" class="bg-illustration layer-bg" fetchpriority="high">
+        <img src="${basePath}/Latar2.png" alt="Interior Lantai 2" class="bg-illustration layer-bg" fetchpriority="high" onerror="this.src='https://placehold.co/1080x1920/F7F3EE/333?text=Background+Lantai+2'">
 
         <#-- 1. RAK ATAS (Koleksi -> Buka Overlay) -->
         <button class="hotspot w-[992px] h-[502px] left-[75px] top-[152px] layer-belakang" onclick="openOverlay('section-collections')">
-            <img src="${basePath}/rak2.png" alt="Rak Atas" decoding="async" class="w-full h-full object-contain">
+            <img src="${basePath}/rak2.png" alt="Rak Atas" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </button>
 
         <#-- 2. SOUNDPROOF POD (Audio -> Buka Overlay) -->
         <button class="hotspot w-[488px] h-[647px] left-[499px] top-[765px] layer-belakang" onclick="openOverlay('section-audio')">
             <div class="absolute inset-0 z-5">
-                <img src="${basePath}/headphone2.png" alt="Soundproof Pod" decoding="async" class="w-full h-full object-contain">
+                <img src="${basePath}/headphone2.png" alt="Soundproof Pod" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
             </div>
             <div class="absolute inset-0 z-6 overflow-hidden">
                 <div class="scanner-line"></div> 
@@ -129,25 +134,25 @@
         </button>
 
         <#-- 3. RAK SAMPING (Statis) -->
-        <img src="${basePath}/rakkanan.png" class="absolute w-[80px] h-[690px] left-[987px] top-[722px] layer-tengah pointer-events-none" alt="Rak Samping" decoding="async">
+        <img src="${basePath}/rakkanan.png" class="absolute w-[80px] h-[690px] left-[987px] top-[722px] layer-tengah pointer-events-none" alt="Rak Samping" decoding="async" onerror="this.style.display='none'">
 
         <#-- 4. AREA BACA (Fasilitas -> Buka Overlay) -->
         <button class="hotspot w-[676.20px] h-[518.65px] left-[301px] top-[1181px] layer-tengah" onclick="openOverlay('section-facilities')">
-            <img src="${basePath}/meja2.png" alt="Area Baca" decoding="async" class="w-full h-full object-contain">
+            <img src="${basePath}/meja2.png" alt="Area Baca" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </button>
 
         <#-- 5. LIFT (Navigasi Beranda -> Pindah Halaman) -->
         <button class="hotspot w-[384px] h-[600px] left-[86px] top-[815px] layer-tengah" onclick="location.href='${berandaUrl! '/home'}'">
-            <img src="${basePath}/lift2.png" alt="Lift" decoding="async" class="w-full h-full object-contain">
+            <img src="${basePath}/lift2.png" alt="Lift" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </button>
         
         <#-- 6. KOTAK SUARA (Voting -> Buka Overlay) -->
         <button class="hotspot w-[240px] h-[384px] left-[857px] top-[1555px] layer-depan" onclick="openOverlay('section-voting')">
-            <img src="${basePath}/kotaksuara2.png" alt="Kotak Suara" decoding="async" class="w-full h-full object-contain">
+            <img src="${basePath}/kotaksuara2.png" alt="Kotak Suara" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </button>
 
         <#-- 7. TANAMAN (Statis) -->
-        <img src="${basePath}/tanaman1.png" class="absolute w-[320px] h-[674px] left-0 top-[1218px] layer-depan pointer-events-none" alt="Tanaman" decoding="async">
+        <img src="${basePath}/tanaman1.png" class="absolute w-[320px] h-[674px] left-0 top-[1218px] layer-depan pointer-events-none" alt="Tanaman" decoding="async" onerror="this.style.display='none'">
 
         <#-- ========================================================== -->
         <#-- SISTEM MODAL / OVERLAY WADAH FRAGMENT LANTAI 2 -->
@@ -158,10 +163,13 @@
             <div id="section-collections" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "collections.ftl"><#recover>
-                        <div class="p-20 text-center">
+                    <#attempt>
+                        <#include "collections.ftl">
+                    <#recover>
+                        <div class="p-20 text-center flex flex-col items-center justify-center h-full">
+                            <i class="fas fa-book-open text-6xl text-slate-300 mb-6"></i>
                             <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Katalog Koleksi</h2>
-                            <p class="text-xl text-slate-600">File collections.ftl belum ditemukan atau gagal dimuat.</p>
+                            <p class="text-xl text-slate-600">File <code class="bg-slate-200 px-2 rounded">collections.ftl</code> belum ditemukan di folder template atau gagal dimuat.</p>
                         </div>
                     </#attempt>
                 </div>
@@ -171,10 +179,13 @@
             <div id="section-audio" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "audio.ftl"><#recover>
-                        <div class="p-20 text-center">
+                    <#attempt>
+                        <#include "audio.ftl">
+                    <#recover>
+                        <div class="p-20 text-center flex flex-col items-center justify-center h-full">
+                            <i class="fas fa-headphones text-6xl text-slate-300 mb-6"></i>
                             <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Audio & Podcast</h2>
-                            <p class="text-xl text-slate-600">File audio.ftl belum ditemukan atau gagal dimuat.</p>
+                            <p class="text-xl text-slate-600">File <code class="bg-slate-200 px-2 rounded">audio.ftl</code> belum ditemukan di folder template atau gagal dimuat.</p>
                         </div>
                     </#attempt>
                 </div>
@@ -184,10 +195,13 @@
             <div id="section-facilities" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "facilities.ftl"><#recover>
-                        <div class="p-20 text-center">
+                    <#attempt>
+                        <#include "facilities.ftl">
+                    <#recover>
+                        <div class="p-20 text-center flex flex-col items-center justify-center h-full">
+                            <i class="fas fa-couch text-6xl text-slate-300 mb-6"></i>
                             <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Fasilitas Ruang Baca</h2>
-                            <p class="text-xl text-slate-600">File facilities.ftl belum ditemukan atau gagal dimuat.</p>
+                            <p class="text-xl text-slate-600">File <code class="bg-slate-200 px-2 rounded">facilities.ftl</code> belum ditemukan di folder template atau gagal dimuat.</p>
                         </div>
                     </#attempt>
                 </div>
@@ -197,10 +211,13 @@
             <div id="section-voting" class="overlay-container" onclick="event.stopPropagation()">
                 <div class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none" onclick="closeAllOverlays()">&times;</div>
                 <div class="content-scroll">
-                    <#attempt><#include "voting.ftl"><#recover>
-                        <div class="p-20 text-center">
+                    <#attempt>
+                        <#include "voting.ftl">
+                    <#recover>
+                        <div class="p-20 text-center flex flex-col items-center justify-center h-full">
+                            <i class="fas fa-box-archive text-6xl text-slate-300 mb-6"></i>
                             <h2 class="text-4xl font-bold text-[#3B5998] mb-4">Ruang Aspirasi</h2>
-                            <p class="text-xl text-slate-600">File voting.ftl belum ditemukan atau gagal dimuat.</p>
+                            <p class="text-xl text-slate-600">File <code class="bg-slate-200 px-2 rounded">voting.ftl</code> belum ditemukan di folder template atau gagal dimuat.</p>
                         </div>
                     </#attempt>
                 </div>
@@ -215,10 +232,21 @@
             document.getElementById('overlay-mask').style.display = 'flex'; 
             document.getElementById(id).style.display = 'flex'; 
         }
+        
         function closeAllOverlays() { 
             document.getElementById('overlay-mask').style.display = 'none'; 
             const containers = document.querySelectorAll('.overlay-container'); 
             containers.forEach(c => c.style.display = 'none'); 
+
+            // --- PEMBARUAN KRUSIAL: Mematikan audio saat overlay ditutup ---
+            // Mengecek apakah fungsi stopAudioFragment dari audio.ftl tersedia
+            if (typeof window.stopAudioFragment === "function") {
+                window.stopAudioFragment();
+            } 
+            // Fallback (Jaga-jaga jika memakai nama fungsi lama)
+            else if (typeof stopAudio === "function") {
+                stopAudio();
+            }
         }
 
         // --- Skala Dinamis Stabil (1080x1920) ---
