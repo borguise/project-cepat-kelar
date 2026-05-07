@@ -1,6 +1,6 @@
 <#-- =======================================================
      COLLECTIONS.FTL - PROPORTIONAL 3-COLUMN SPA
-     Fitur: Smart Centering (1 & 2 Items), 3-Column Grid
+     Fitur: Smart Centering, 3-Column Grid, NAMESPACE ISOLATED
      ======================================================= -->
 
 <style>
@@ -18,9 +18,14 @@
 
     /* MODAL FILTER UI */
     .coll-filter-overlay { 
-        position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
-        backdrop-filter: blur(8px); z-index: 9999; 
-        display: none; justify-content: center; align-items: center; 
+        position: absolute; 
+        inset: 0; 
+        background: rgba(0, 0, 0, 0.75); /* Latar belakang digelapkan sedikit (0.75) sebagai kompensasi */
+        /* backdrop-filter: blur(8px); <--- HAPUS ATAU HILANGKAN BARIS INI! */
+        z-index: 9999; 
+        display: none; 
+        justify-content: center; 
+        align-items: center; 
     }
     .coll-filter-card {
         width: 600px; background: #ffffff; border-radius: 32px; padding: 50px; position: relative;
@@ -46,26 +51,25 @@
     <div class="coll-scroll-area flex flex-col items-center">
         
         <#-- ================= BROWSE VIEW ================= -->
-        <div id="viewBrowse" class="w-full max-w-[800px] flex flex-col items-center">
+        <div id="collViewBrowse" class="w-full max-w-[800px] flex flex-col items-center">
             
-            <#-- Search Bar Sinkron -->
+            <#-- Search Bar -->
             <div class="w-full mb-[50px] mt-[150px] relative">
-                <form class="w-full h-[100px] bg-white rounded-[30px] flex items-center px-[40px] shadow-[0_10px_30px_rgba(0,0,0,0.08)]" onsubmit="handleSearch(event)">
+                <form class="w-full h-[100px] bg-white rounded-[30px] flex items-center px-[40px] shadow-[0_10px_30px_rgba(0,0,0,0.08)]" onsubmit="collHandleSearch(event)">
                     <button type="submit" class="bg-transparent border-none cursor-pointer">
                         <i class="fas fa-search text-[40px] text-slate-300 mr-6"></i>
                     </button>
-                    <input type="text" id="searchInput" class="flex-1 bg-transparent border-none outline-none text-center font-['Gelasio'] font-bold text-[34px] text-[#3730a3]" value="Cari Judul, Pengarang, Penerbit" autocomplete="off" onfocus="if(this.value=='Cari Judul, Pengarang, Penerbit')this.value=''">
-                    <i class="fas fa-sliders-h text-[45px] text-[#3730a3] ml-6 cursor-pointer hover:scale-110 transition-transform" onclick="toggleCollFilter()"></i>
+                    <input type="text" id="collSearchInput" class="flex-1 bg-transparent border-none outline-none text-center font-['Gelasio'] font-bold text-[34px] text-[#3730a3]" value="Cari Judul, Pengarang, Penerbit" autocomplete="off" onfocus="if(this.value=='Cari Judul, Pengarang, Penerbit')this.value=''">
+                    <i class="fas fa-sliders-h text-[45px] text-[#3730a3] ml-6 cursor-pointer hover:scale-110 transition-transform" onclick="collToggleFilter()"></i>
                 </form>
             </div>
 
-            <#-- Header Status -->
-            <#-- Header Pencarian (Dilengkapi Tombol Reset Estetik) -->
-            <div id="searchHeader" class="hidden w-full flex-col justify-center items-center mb-[40px] gap-3">
-                <div id="searchTitle" class="font-['Gelasio'] font-bold text-[36px] text-slate-700 text-center w-full truncate">
+            <#-- Header Pencarian -->
+            <div id="collSearchHeader" class="hidden w-full flex-col justify-center items-center mb-[40px] gap-3">
+                <div id="collSearchTitle" class="font-['Gelasio'] font-bold text-[36px] text-slate-700 text-center w-full truncate">
                     Hasil pencarian
                 </div>
-                <div class="font-['Lato'] text-[20px] font-bold text-sky-500 cursor-pointer flex items-center gap-2 hover:text-sky-600 active:scale-95 transition bg-sky-50 px-4 py-2 rounded-full border border-sky-100" onclick="resetToHome()">
+                <div class="font-['Lato'] text-[20px] font-bold text-sky-500 cursor-pointer flex items-center gap-2 hover:text-sky-600 active:scale-95 transition bg-sky-50 px-4 py-2 rounded-full border border-sky-100" onclick="collResetToHome()">
                     <i class="fas fa-times-circle"></i> Bersihkan pencarian
                 </div>
             </div>
@@ -73,11 +77,10 @@
             <#-- White Card (Wadah Grid) -->
             <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-sm min-h-[600px]">
                 
-                <#-- Grid Kontainer yang dinamis -->
-                <div id="gridContainer" class="grid grid-cols-3 gap-[50px_30px]"></div>
+                <div id="collGridContainer" class="grid grid-cols-3 gap-[50px_30px]"></div>
                 
                 <#-- Wadah Not Found -->
-                <div id="emptyContainer" class="hidden flex-col items-center justify-center min-h-[500px] text-center gap-[40px]">
+                <div id="collEmptyContainer" class="hidden flex-col items-center justify-center min-h-[500px] text-center gap-[40px]">
                     <div class="font-['Gelasio'] font-bold text-[46px] text-slate-800">Tidak Ditemukan</div>
                     <div class="w-[220px] h-[220px] rounded-full bg-slate-100 flex items-center justify-center text-slate-300 text-[110px] shadow-inner">
                         <i class="fas fa-search-minus"></i>
@@ -88,11 +91,10 @@
         </div>
 
         <#-- ================= DETAIL VIEW ================= -->
-        <div id="viewDetail" class="hidden w-full max-w-[800px] flex-col items-center mt-[150px]">
+        <div id="collViewDetail" class="hidden w-full max-w-[800px] flex-col items-center mt-[150px]">
             
-            <#-- Tombol Kembali di TENGAH -->
             <div class="w-full flex justify-center mb-[25px] relative z-20">
-                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition" onclick="goBack()">
+                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition" onclick="collGoBack()">
                     <i class="fas fa-chevron-left"></i> Kembali ke daftar koleksi
                 </div>
             </div>
@@ -100,12 +102,12 @@
             <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-xl flex flex-col gap-[50px] mb-[80px]">
                 <div class="flex items-start gap-[50px]">
                     <div class="w-[280px] h-[400px] shrink-0 rounded-[16px] overflow-hidden border-[4px] border-slate-100 shadow-lg bg-slate-100">
-                        <img id="dtlCover" src="" class="w-full h-full object-cover">
+                        <img id="collDtlCover" src="" class="w-full h-full object-cover">
                     </div>
                     <div class="flex-1 flex flex-col justify-center text-center mt-6">
-                        <h1 id="dtlTitle" class="font-['Gelasio'] font-bold text-[42px] leading-tight text-slate-900 mb-4">Judul</h1>
-                        <div id="dtlCall" class="font-['Gelasio'] font-bold text-[60px] text-[#3730a3]">000.000</div>
-                        <div id="dtlCat" class="font-['Gelasio'] font-bold text-[30px] text-slate-400 uppercase mt-2">Kategori</div>
+                        <h1 id="collDtlTitle" class="font-['Gelasio'] font-bold text-[42px] leading-tight text-slate-900 mb-4">Judul</h1>
+                        <div id="collDtlCall" class="font-['Gelasio'] font-bold text-[60px] text-[#3730a3]">000.000</div>
+                        <div id="collDtlCat" class="font-['Gelasio'] font-bold text-[30px] text-slate-400 uppercase mt-2">Kategori</div>
                     </div>
                 </div>
                 <div class="w-full">
@@ -113,15 +115,15 @@
                     <div class="flex flex-col gap-[20px]">
                         <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
                             <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Tajuk Pengarang</div>
-                            <div id="dtlAuthor" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
+                            <div id="collDtlAuthor" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
                         </div>
                         <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
                             <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Data Penerbit</div>
-                            <div id="dtlPub" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
+                            <div id="collDtlPub" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
                         </div>
                         <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
                             <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Data Fisik</div>
-                            <div id="dtlPhysical" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
+                            <div id="collDtlPhysical" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
                         </div>
                     </div>
                 </div>
@@ -130,16 +132,16 @@
     </div>
 
     <#-- MODAL FILTER -->
-    <div id="collFilterOverlay" class="coll-filter-overlay" onclick="toggleCollFilter()">
+    <div id="collFilterOverlay" class="coll-filter-overlay" onclick="collToggleFilter()">
         <div class="coll-filter-card" onclick="event.stopPropagation()">
-            <div class="coll-filter-close" onclick="toggleCollFilter()"><i class="fas fa-times"></i></div>
+            <div class="coll-filter-close" onclick="collToggleFilter()"><i class="fas fa-times"></i></div>
             <h2 class="coll-filter-title">Filter Kategori</h2>
-            <form onsubmit="applyFilterSearch(event)">
+            <form onsubmit="collApplyFilterSearch(event)">
                 <div class="coll-filter-grid">
-                    <label class="coll-filter-item"><input type="checkbox" id="chkJudul" checked><div class="coll-checkbox-ui"></div><span class="coll-label-text">Judul</span></label>
-                    <label class="coll-filter-item"><input type="checkbox" id="chkPengarang"><div class="coll-checkbox-ui"></div><span class="coll-label-text">Pengarang</span></label>
-                    <label class="coll-filter-item"><input type="checkbox" id="chkPenerbit"><div class="coll-checkbox-ui"></div><span class="coll-label-text">Penerbit</span></label>
-                    <label class="coll-filter-item"><input type="checkbox" id="chkIsbn"><div class="coll-checkbox-ui"></div><span class="coll-label-text">ISBN/Kategori</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkJudul" checked><div class="coll-checkbox-ui"></div><span class="coll-label-text">Judul</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkPengarang"><div class="coll-checkbox-ui"></div><span class="coll-label-text">Pengarang</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkPenerbit"><div class="coll-checkbox-ui"></div><span class="coll-label-text">Penerbit</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkIsbn"><div class="coll-checkbox-ui"></div><span class="coll-label-text">ISBN/Kategori</span></label>
                 </div>
                 <button type="submit" class="coll-btn-apply">Terapkan Filter</button>
             </form>
@@ -149,8 +151,8 @@
 </div>
 
 <script>
-    const basePath = "${basePath!"/images/frontoffice"}";
-    const dbBooks = [
+    const collBasePath = "${basePath!"/images/frontoffice"}";
+    const collDbBooks = [
         <#if bookList?? && bookList?has_content>
             <#list bookList as b>
             { id: ${b.id}, title: "${(b.title!'Tanpa Judul')?js_string}", callNum: "${(b.callNum!'000.000')?js_string}", category: "${(b.cat!'Koleksi')?js_string}", author: "${(b.author!'Anonim')?js_string}", publisher: "${(b.pub!'-')?js_string}", physical: "${(b.phys!'-')?js_string}", img: "/admin/collections/image/${b.id}" }<#if b?has_next>,</#if>
@@ -166,28 +168,38 @@
     ];
 
 <#noparse>
-    let currentBooks = [...dbBooks];
+    let collCurrentBooks = [...collDbBooks];
 
-    function navigateTo(view) {
-        document.getElementById('viewBrowse').classList.toggle('hidden', view !== 'home' && view !== 'search');
-        document.getElementById('viewDetail').classList.toggle('hidden', view !== 'detail');
+    function collNavigateTo(view) {
+        document.getElementById('collViewBrowse').classList.toggle('hidden', view !== 'home' && view !== 'search');
+        document.getElementById('collViewBrowse').classList.toggle('flex', view === 'home' || view === 'search');
+        document.getElementById('collViewDetail').classList.toggle('hidden', view !== 'detail');
+        document.getElementById('collViewDetail').classList.toggle('flex', view === 'detail');
+        
         if(view !== 'detail') {
-            document.getElementById('searchHeader').classList.toggle('hidden', view === 'home');
-            renderGrid();
+            document.getElementById('collSearchHeader').classList.toggle('hidden', view === 'home');
+            document.getElementById('collSearchHeader').classList.toggle('flex', view === 'search');
+            collRenderGrid();
         }
     }
 
-    function handleSearch(e) {
-        if(e) e.preventDefault();
-        const q = document.getElementById('searchInput').value.trim().toLowerCase();
-        if(q === '' || q === 'cari judul, pengarang, penerbit') { currentBooks = [...dbBooks]; navigateTo('home'); return; }
-        
-        const fJudul = document.getElementById('chkJudul').checked;
-        const fPengarang = document.getElementById('chkPengarang').checked;
-        const fPenerbit = document.getElementById('chkPenerbit').checked;
-        const fIsbn = document.getElementById('chkIsbn').checked;
+    function collResetToHome() {
+        document.getElementById('collSearchInput').value = 'Cari Judul, Pengarang, Penerbit';
+        collCurrentBooks = [...collDbBooks];
+        collNavigateTo('home');
+    }
 
-        currentBooks = dbBooks.filter(b => {
+    function collHandleSearch(e) {
+        if(e) e.preventDefault();
+        const q = document.getElementById('collSearchInput').value.trim().toLowerCase();
+        if(q === '' || q === 'cari judul, pengarang, penerbit') { collResetToHome(); return; }
+        
+        const fJudul = document.getElementById('collChkJudul').checked;
+        const fPengarang = document.getElementById('collChkPengarang').checked;
+        const fPenerbit = document.getElementById('collChkPenerbit').checked;
+        const fIsbn = document.getElementById('collChkIsbn').checked;
+
+        collCurrentBooks = collDbBooks.filter(b => {
             if(!fJudul && !fPengarang && !fPenerbit && !fIsbn) return false;
             let match = false;
             if (fJudul && b.title.toLowerCase().includes(q)) match = true;
@@ -196,16 +208,15 @@
             if (fIsbn && (b.callNum.toLowerCase().includes(q) || b.category.toLowerCase().includes(q))) match = true;
             return match;
         });
-        document.getElementById('searchTitle').innerText = 'Hasil pencarian "' + q + '"';
-        navigateTo('search');
+        document.getElementById('collSearchTitle').innerText = 'Hasil pencarian "' + q + '"';
+        collNavigateTo('search');
     }
 
-    // --- RENDER GRID DENGAN SMART CENTERING ---
-    function renderGrid() {
-        const grid = document.getElementById('gridContainer');
-        const empty = document.getElementById('emptyContainer');
+    function collRenderGrid() {
+        const grid = document.getElementById('collGridContainer');
+        const empty = document.getElementById('collEmptyContainer');
         
-        if(currentBooks.length === 0) { 
+        if(collCurrentBooks.length === 0) { 
             grid.classList.add('hidden'); 
             empty.classList.replace('hidden', 'flex'); 
             return; 
@@ -214,19 +225,14 @@
         grid.classList.remove('hidden'); 
         empty.classList.replace('flex', 'hidden');
         
-        const count = currentBooks.length;
+        const count = collCurrentBooks.length;
         
-        // Logika layout adaptif agar posisinya cantik
-        if (count === 1) {
-            grid.className = "flex justify-center pt-[20px]";
-        } else if (count === 2) {
-            grid.className = "flex justify-center gap-[60px] pt-[20px]";
-        } else {
-            grid.className = "grid grid-cols-3 gap-[50px_30px]";
-        }
+        if (count === 1) { grid.className = "flex justify-center pt-[20px]"; } 
+        else if (count === 2) { grid.className = "flex justify-center gap-[60px] pt-[20px]"; } 
+        else { grid.className = "grid grid-cols-3 gap-[50px_30px]"; }
         
-        grid.innerHTML = currentBooks.map(b => `
-            <div class="flex flex-col items-center gap-4 cursor-pointer group ${count <= 2 ? 'w-[220px]' : 'w-full'}" onclick="openDetail(${b.id})">
+        grid.innerHTML = collCurrentBooks.map(b => `
+            <div class="flex flex-col items-center gap-4 cursor-pointer group ${count <= 2 ? 'w-[220px]' : 'w-full'}" onclick="collOpenDetail(${b.id})">
                 <div class="w-full aspect-[2/3] rounded-[16px] overflow-hidden border border-slate-200 bg-white shadow-sm group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300 shrink-0">
                     <img src="${b.img}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600/ffffff/3730a3?text=Cover'">
                 </div>
@@ -238,23 +244,23 @@
         `).join('');
     }
 
-    function openDetail(id) {
-        const b = dbBooks.find(x => x.id === id);
+    function collOpenDetail(id) {
+        const b = collDbBooks.find(x => x.id === id);
         if(!b) return;
-        document.getElementById('dtlTitle').innerText = b.title;
-        document.getElementById('dtlCall').innerText = b.callNum;
-        document.getElementById('dtlCat').innerText = b.category;
-        document.getElementById('dtlAuthor').innerText = b.author;
-        document.getElementById('dtlPub').innerText = b.publisher;
-        document.getElementById('dtlPhysical').innerText = b.physical;
-        document.getElementById('dtlCover').src = b.img;
-        navigateTo('detail');
+        document.getElementById('collDtlTitle').innerText = b.title;
+        document.getElementById('collDtlCall').innerText = b.callNum;
+        document.getElementById('collDtlCat').innerText = b.category;
+        document.getElementById('collDtlAuthor').innerText = b.author;
+        document.getElementById('collDtlPub').innerText = b.publisher;
+        document.getElementById('collDtlPhysical').innerText = b.physical;
+        document.getElementById('collDtlCover').src = b.img;
+        collNavigateTo('detail');
     }
 
-    function goBack() { handleSearch(); }
-    function toggleCollFilter() { const m = document.getElementById('collFilterOverlay'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
-    function applyFilterSearch(e) { e.preventDefault(); toggleCollFilter(); handleSearch(e); }
+    function collGoBack() { collHandleSearch(); }
+    function collToggleFilter() { const m = document.getElementById('collFilterOverlay'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+    function collApplyFilterSearch(e) { e.preventDefault(); collToggleFilter(); collHandleSearch(e); }
 
-    setTimeout(() => navigateTo('home'), 150);
+    setTimeout(() => collNavigateTo('home'), 150);
 </#noparse>
 </script>
