@@ -1,6 +1,6 @@
 <#-- =======================================================
-     COLLECTIONS.FTL - PROPORTIONAL 3-COLUMN SPA
-     Fitur: Smart Centering, 3-Column Grid, NAMESPACE ISOLATED
+     COLLECTIONS.FTL - KIOSK SPA (FINAL MASTERPIECE)
+     Fitur: Smart Grid, Anti-Bug Filter, Namespace Isolated
      ======================================================= -->
 
 <style>
@@ -8,7 +8,7 @@
     .coll-scroll-area::-webkit-scrollbar { display: none; }
     .coll-scroll-area { scrollbar-width: none; overflow-y: auto; height: 100%; width: 100%; padding-bottom: 100px; position: relative; z-index: 10;}
     
-    /* Latar Belakang Batik */
+    /* Latar Belakang Batik Khas Magetan */
     .coll-batik-layer {
         position: absolute; inset: 0;
         background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
@@ -16,32 +16,35 @@
         pointer-events: none; z-index: 1;
     }
 
-    /* MODAL FILTER UI */
+    /* MODAL FILTER UI (Sudah kebal dari Bug Chromium "4 Kotak") */
     .coll-filter-overlay { 
-        position: absolute; 
+        position: absolute; /* Wajib absolute agar tidak mengecil di Kiosk */
         inset: 0; 
-        background: rgba(0, 0, 0, 0.75); /* Latar belakang digelapkan sedikit (0.75) sebagai kompensasi */
-        /* backdrop-filter: blur(8px); <--- HAPUS ATAU HILANGKAN BARIS INI! */
+        background: rgba(0, 0, 0, 0.75); /* Warna hitam transparan elegan */
+        /* backdrop-filter: blur(8px); Dihapus untuk mencegah bug grafis Kiosk */
         z-index: 9999; 
-        display: none; 
-        justify-content: center; 
-        align-items: center; 
+        display: none; justify-content: center; align-items: center; 
     }
+    
     .coll-filter-card {
         width: 600px; background: #ffffff; border-radius: 32px; padding: 50px; position: relative;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.4);
     }
-    .coll-filter-close { position: absolute; top: 35px; right: 40px; font-size: 40px; color: #94a3b8; cursor: pointer; }
+    .coll-filter-close { position: absolute; top: 35px; right: 40px; font-size: 40px; color: #94a3b8; cursor: pointer; transition: color 0.2s; }
+    .coll-filter-close:hover { color: #3730a3; }
     .coll-filter-title { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; color: #1e293b; text-align: center; margin-bottom: 55px; }
     .coll-filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 45px 25px; margin-bottom: 60px; }
     .coll-filter-item { display: flex; align-items: center; gap: 20px; cursor: pointer; }
     .coll-checkbox-ui { width: 45px; height: 45px; border: 3px solid #cbd5e1; border-radius: 14px; display: flex; justify-content: center; align-items: center; background: #f8fafc; transition: all 0.2s ease; flex-shrink: 0; }
+    
     .coll-filter-item input { display: none; }
-    .coll-filter-item input:checked + .coll-checkbox-ui { background-color: #3730a3; border-color: #3730a3; }
+    .coll-filter-item input:checked + .coll-checkbox-ui { background-color: #3730a3; border-color: #3730a3; box-shadow: 0 5px 15px rgba(55, 48, 163, 0.35); }
     .coll-checkbox-ui::after { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: white; font-size: 22px; display: none; }
     .coll-filter-item input:checked + .coll-checkbox-ui::after { display: block; }
+    
     .coll-label-text { font-family: 'Inter', sans-serif; font-size: 26px; color: #334155; font-weight: 500; }
-    .coll-btn-apply { width: 100%; padding: 25px; background-color: #3730a3; color: white; border: none; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 30px; font-weight: 700; cursor: pointer; }
+    .coll-btn-apply { width: 100%; padding: 25px; background-color: #3730a3; color: white; border: none; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 30px; font-weight: 700; cursor: pointer; transition: transform 0.1s; }
+    .coll-btn-apply:active { transform: scale(0.98); }
 </style>
 
 <div class="w-full h-full bg-[#f7f0cb] relative overflow-hidden font-['Inter']">
@@ -53,23 +56,25 @@
         <#-- ================= BROWSE VIEW ================= -->
         <div id="collViewBrowse" class="w-full max-w-[800px] flex flex-col items-center">
             
-            <#-- Search Bar -->
+            <#-- Search Bar dengan Ikon Pohon -->
             <div class="w-full mb-[50px] mt-[150px] relative">
                 <form class="w-full h-[100px] bg-white rounded-[30px] flex items-center px-[40px] shadow-[0_10px_30px_rgba(0,0,0,0.08)]" onsubmit="collHandleSearch(event)">
                     <button type="submit" class="bg-transparent border-none cursor-pointer">
                         <i class="fas fa-search text-[40px] text-slate-300 mr-6"></i>
                     </button>
                     <input type="text" id="collSearchInput" class="flex-1 bg-transparent border-none outline-none text-center font-['Gelasio'] font-bold text-[34px] text-[#3730a3]" value="Cari Judul, Pengarang, Penerbit" autocomplete="off" onfocus="if(this.value=='Cari Judul, Pengarang, Penerbit')this.value=''">
-                    <i class="fas fa-sliders-h text-[45px] text-[#3730a3] ml-6 cursor-pointer hover:scale-110 transition-transform" onclick="collToggleFilter()"></i>
+                    
+                    <#-- Ikon Pohon Cemara yang Estetik -->
+                    <i class="fas fa-tree text-[50px] text-[#065f46] ml-6 cursor-pointer hover:scale-110 transition-transform" onclick="collToggleFilter()"></i>
                 </form>
             </div>
 
-            <#-- Header Pencarian -->
+            <#-- Header Pencarian (Dilengkapi Tombol Reset Estetik) -->
             <div id="collSearchHeader" class="hidden w-full flex-col justify-center items-center mb-[40px] gap-3">
                 <div id="collSearchTitle" class="font-['Gelasio'] font-bold text-[36px] text-slate-700 text-center w-full truncate">
                     Hasil pencarian
                 </div>
-                <div class="font-['Lato'] text-[20px] font-bold text-sky-500 cursor-pointer flex items-center gap-2 hover:text-sky-600 active:scale-95 transition bg-sky-50 px-4 py-2 rounded-full border border-sky-100" onclick="collResetToHome()">
+                <div class="font-['Lato'] text-[20px] font-bold text-sky-500 cursor-pointer flex items-center gap-2 hover:text-sky-600 active:scale-95 transition bg-sky-50 px-5 py-2 rounded-full border border-sky-100 shadow-sm" onclick="collResetToHome()">
                     <i class="fas fa-times-circle"></i> Bersihkan pencarian
                 </div>
             </div>
@@ -77,6 +82,7 @@
             <#-- White Card (Wadah Grid) -->
             <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-sm min-h-[600px]">
                 
+                <#-- Grid Kontainer yang dinamis -->
                 <div id="collGridContainer" class="grid grid-cols-3 gap-[50px_30px]"></div>
                 
                 <#-- Wadah Not Found -->
@@ -93,8 +99,9 @@
         <#-- ================= DETAIL VIEW ================= -->
         <div id="collViewDetail" class="hidden w-full max-w-[800px] flex-col items-center mt-[150px]">
             
+            <#-- Tombol Kembali di TENGAH -->
             <div class="w-full flex justify-center mb-[25px] relative z-20">
-                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition" onclick="collGoBack()">
+                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition bg-white px-6 py-3 rounded-full shadow-sm" onclick="collGoBack()">
                     <i class="fas fa-chevron-left"></i> Kembali ke daftar koleksi
                 </div>
             </div>
@@ -131,7 +138,7 @@
         </div>
     </div>
 
-    <#-- MODAL FILTER -->
+    <#-- ================= MODAL FILTER (CHECKBOX) ================= -->
     <div id="collFilterOverlay" class="coll-filter-overlay" onclick="collToggleFilter()">
         <div class="coll-filter-card" onclick="event.stopPropagation()">
             <div class="coll-filter-close" onclick="collToggleFilter()"><i class="fas fa-times"></i></div>
@@ -152,6 +159,8 @@
 
 <script>
     const collBasePath = "${basePath!"/images/frontoffice"}";
+    
+    <#-- INJEKSI DATA DATABASE (Dengan Fallback Dummy Putih Biru) -->
     const collDbBooks = [
         <#if bookList?? && bookList?has_content>
             <#list bookList as b>
@@ -183,12 +192,14 @@
         }
     }
 
+    // Mengembalikan ke tampilan Home awal
     function collResetToHome() {
         document.getElementById('collSearchInput').value = 'Cari Judul, Pengarang, Penerbit';
         collCurrentBooks = [...collDbBooks];
         collNavigateTo('home');
     }
 
+    // Mengeksekusi Pencarian
     function collHandleSearch(e) {
         if(e) e.preventDefault();
         const q = document.getElementById('collSearchInput').value.trim().toLowerCase();
@@ -208,10 +219,12 @@
             if (fIsbn && (b.callNum.toLowerCase().includes(q) || b.category.toLowerCase().includes(q))) match = true;
             return match;
         });
-        document.getElementById('collSearchTitle').innerText = 'Hasil pencarian "' + q + '"';
+        
+        document.getElementById('collSearchTitle').innerText = 'Hasil pencarian "' + document.getElementById('collSearchInput').value + '"';
         collNavigateTo('search');
     }
 
+    // Membuat Grid Adaptif (Smart Centering)
     function collRenderGrid() {
         const grid = document.getElementById('collGridContainer');
         const empty = document.getElementById('collEmptyContainer');
@@ -227,9 +240,14 @@
         
         const count = collCurrentBooks.length;
         
-        if (count === 1) { grid.className = "flex justify-center pt-[20px]"; } 
-        else if (count === 2) { grid.className = "flex justify-center gap-[60px] pt-[20px]"; } 
-        else { grid.className = "grid grid-cols-3 gap-[50px_30px]"; }
+        // Logika layout adaptif agar posisinya cantik jika hasil sedikit
+        if (count === 1) { 
+            grid.className = "flex justify-center pt-[20px]"; 
+        } else if (count === 2) { 
+            grid.className = "flex justify-center gap-[60px] pt-[20px]"; 
+        } else { 
+            grid.className = "grid grid-cols-3 gap-[50px_30px]"; 
+        }
         
         grid.innerHTML = collCurrentBooks.map(b => `
             <div class="flex flex-col items-center gap-4 cursor-pointer group ${count <= 2 ? 'w-[220px]' : 'w-full'}" onclick="collOpenDetail(${b.id})">
@@ -261,6 +279,7 @@
     function collToggleFilter() { const m = document.getElementById('collFilterOverlay'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
     function collApplyFilterSearch(e) { e.preventDefault(); collToggleFilter(); collHandleSearch(e); }
 
+    // Init awal
     setTimeout(() => collNavigateTo('home'), 150);
 </#noparse>
 </script>
