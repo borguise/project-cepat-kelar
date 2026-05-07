@@ -16,9 +16,14 @@
        MODAL FILTER CHECKBOX UI (DESAIN BARU)
        ======================================================== */
     .aud-filter-overlay { 
-        position: absolute; inset: 0; background: rgba(0,0,0,0.5); 
-        backdrop-filter: blur(8px); z-index: 9999; 
-        display: none; justify-content: center; align-items: center; 
+        position: absolute; 
+        inset: 0; 
+        background: rgba(0, 0, 0, 0.75); /* Warna digelapkan menjadi 0.75 */
+        /* backdrop-filter: blur(8px); dihapus sepenuhnya */
+        z-index: 9999; 
+        display: none; 
+        justify-content: center; 
+        align-items: center; 
     }
     
     .aud-filter-card {
