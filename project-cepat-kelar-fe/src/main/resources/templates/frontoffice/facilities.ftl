@@ -1,5 +1,6 @@
 <#-- =======================================================
      FASILITAS.FTL - KOMPONEN OVERLAY MURNI (FRAGMENT)
+     Fitur: Carousel Interaktif, Image Path Fixed
      ======================================================= -->
 
 <style>
@@ -120,36 +121,36 @@
                             </div>
                         </#list>
                     <#else>
-                        <#-- Konten Fallback/Statis -->
+                        <#-- Konten Fallback/Statis (Path Gambar Sudah Diperbaiki) -->
                         <div class="fas-carousel-slide">
                             <h2 class="fas-slide-judul">Ruang Baca Okky</h2>
-                            <img src="okky.jpeg" class="fas-slide-img" alt="Ruang Baca Okky" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Okky'">
+                            <img src="/images/frontoffice/ruangokky.png" class="fas-slide-img" alt="Ruang Baca Okky" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Okky'">
                             <p class="fas-slide-caption">Sebuah ruang yang didedikasi Okky Madasari berisikan koleksi pilihannya</p>
                         </div>
                         <div class="fas-carousel-slide">
                             <h2 class="fas-slide-judul">Ruang Baca Umum</h2>
-                            <img src="bacaumum.jpg" class="fas-slide-img" alt="Ruang Baca Umum" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Umum'">
+                            <img src="/images/frontoffice/rbu.png" class="fas-slide-img" alt="Ruang Baca Umum" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Umum'">
                             <p class="fas-slide-caption">Sebuah aula bagi pengunjung untuk memanfaatkan koleksi dengan nyaman dan tenang.</p>
                         </div>
                         <div class="fas-carousel-slide">
                             <h2 class="fas-slide-judul">Ruang Baca Anak</h2>
-                            <img src="anak.jpeg" class="fas-slide-img" alt="Ruang Baca Anak" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Anak'">
+                            <img src="/images/frontoffice/anak.jpeg" class="fas-slide-img" alt="Ruang Baca Anak" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Baca+Anak'">
                             <p class="fas-slide-caption">Sebuah ruangan yang disediakan untuk anak-anak bermain dan berliterasi dengan nyaman</p>
                         </div>
                         <div class="fas-carousel-slide">
                             <h2 class="fas-slide-judul">Ruang Pertemuan</h2>
-                            <img src="pertemuan.jpeg" class="fas-slide-img" alt="Ruang Pertemuan" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Pertemuan'">
+                            <img src="/images/frontoffice/ruangpertemuan.png" class="fas-slide-img" alt="Ruang Pertemuan" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Pertemuan'">
                             <p class="fas-slide-caption">Sebuah aula dengan fasilitas lengkap untuk kegiatan dengan kapasitas 300 orang.</p>
                         </div>
                         <div class="fas-carousel-slide">
                             <h2 class="fas-slide-judul">Ruang Komputer</h2>
-                            <img src="lab komputer.jpeg" class="fas-slide-img" alt="Ruang Komputer" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Komputer'">
+                            <img src="/images/frontoffice/computer.png" class="fas-slide-img" alt="Ruang Komputer" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Komputer'">
                             <p class="fas-slide-caption">Sebuah ruang khusus dengan unit komputer dan internet untuk digunakan pengunjung.</p>
                         </div>
                         <div class="fas-carousel-slide">
-                            <h2 class="fas-slide-judul">Ruang Laktasi</h2>
-                            <img src="laktasi.jpg" class="fas-slide-img" alt="Ruang Laktasi" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=Ruang+Laktasi'">
-                            <p class="fas-slide-caption">Sebuah ruang khusus bagi pengunjung yang membawa anak kecil untuk menikmati layanan perpustakaan</p>
+                            <h2 class="fas-slide-judul">Loker</h2>
+                            <img src="/images/frontoffice/loker.png" class="fas-slide-img" alt="loker" onerror="this.src='https://placehold.co/800x600/e2e8f0/64748b?text=loker'">
+                            <p class="fas-slide-caption">Tempat aman untuk menyimpan barang kesayangan selama di perpustakaan</p>
                         </div>
                     </#if>
                     
