@@ -4,7 +4,8 @@
 <style>
     .activities-wrapper { 
         background-color: white; 
-        padding: 40px 20px; 
+        /* PERBAIKAN: Jarak atas disesuaikan menjadi 80px agar elemen atas bernapas lega dan tidak sesak */
+        padding: 80px 20px 40px 20px; 
         font-family: 'Inter', sans-serif; 
         min-height: 100%; 
         display: flex; 
@@ -12,7 +13,19 @@
         align-items: center;
     }
     
-    .main-title { font-size: 32px; font-weight: 900; color: #000; text-align: center; margin-bottom: 30px; line-height: 1.2; }
+    /* PERBAIKAN UTAMA: Perbaikan line-height agar teks tidak terpotong & max-width sebagai safe zone dari tombol silang */
+    .main-title { 
+        font-size: 32px; 
+        font-weight: 900; 
+        color: #000; 
+        text-align: center; 
+        margin-bottom: 35px; 
+        line-height: 1.4; /* Mengatasi teks terpotong di bagian bawah */
+        max-width: 700px; /* Mencegah teks melebar terlalu ke kanan-kiri mendekati tombol silang */
+        padding: 0 40px; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
     
     .tab-container { display: flex; justify-content: center; margin-bottom: 40px; }
     .tab-box { display: flex; background: #3B5998; border-radius: 12px; padding: 5px; }
@@ -84,8 +97,8 @@
                     <img src="${basePath}/komputer.png" class="unit-img">
                     <div class="unit-text"><h2 class="unit-title">Lab Komputer</h2><p class="unit-desc">Akses informasi digital dan riset untuk pengunjung.</p><a href="#" class="unit-link">Jelajahi.</a></div>
                 <#elseif i==7>
-                    <img src="${basePath}/laktasi.jpg" class="unit-img">
-                    <div class="unit-text"><h2 class="unit-title">Ruang Laktasi</h2><p class="unit-desc">Fasilitas nyaman untuk ibu dan anak.</p><a href="#" class="unit-link">Lihat fasilitas.</a></div>
+                    <img src="${basePath}/rack.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Layanan Loker</h2><p class="unit-desc">Perhatian khusus untuk Sahabat Literasi.</p><a href="#" class="unit-link">Lihat fasilitas.</a></div>
                 <#else>
                     <img src="${basePath}/bangunan-copy-0.jpg" class="unit-img">
                     <div class="unit-text"><h2 class="unit-title">Pemanfaatan Ruang</h2><p class="unit-desc">Area serbaguna untuk diskusi dan kegiatan komunitas.</p><a href="#" class="unit-link">Jelajahi.</a></div>

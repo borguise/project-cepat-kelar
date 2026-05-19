@@ -117,10 +117,10 @@
             <div class="thin-separator"></div>
 
             <div class="service-unit reverse">
-                <img src="${basePath}/laktasi.jpg" class="service-img" alt="Layanan Ruang Laktasi" onerror="this.src='${basePath}/layanan_baca.png'">
+                <img src="${basePath}/rack.jpg" class="service-img" alt="Layanan Loker" onerror="this.src='${basePath}/layanan_baca.png'">
                 <div class="service-text">
-                    <h2 class="service-title">Layanan Ruang Laktasi</h2>
-                    <p class="service-desc">Ruang nyaman dan privat bagi ibu dan anak di tengah aktivitas literasi.</p>
+                    <h2 class="service-title">Layanan Loker</h2>
+                    <p class="service-desc">Perhatian khusus untuk Sahabat Literasi.</p>
                     <a href="#" class="service-link">Baca ceritanya di sini.</a>
                 </div>
             </div>
