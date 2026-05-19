@@ -3,7 +3,7 @@
 
 <style>
     .profile-overlay-wrapper {
-        background-color: #f7f0cb; /* Cream Figma */
+        background-color: #f7f0cb; 
         padding: 0 110px 100px 110px;
         font-family: 'Gelasio', serif;
         position: relative;
@@ -77,10 +77,12 @@
                 <h2 class="text-[#6B8A7A] text-[34px] font-bold font-['Gelasio'] uppercase tracking-[0.4em] mb-4">Visi & Misi</h2>
                 <div class="title-line-short"></div>
                 <div class="space-y-10 px-4">
-                    <p class="font-['Gelasio'] text-[36px] font-bold ink-text-color leading-snug">“Masyarakat Magetan yang SMART semakin mantap dan lebih sejahtera”</p>
+                    <#-- PERBAIKAN: Mengganti kutip lengkung dengan kutip lurus standar -->
+                    <p class="font-['Gelasio'] text-[36px] font-bold ink-text-color leading-snug">"Masyarakat Magetan yang SMART semakin mantap dan lebih sejahtera"</p>
                     <div class="font-['Lato'] text-[26px] text-slate-700 leading-relaxed">
-                        <p>• Meningkatkan percepatan dan perluasan pembentukan sumber daya manusia yang SMART.</p>
-                        <p>• Mengembangkan penyelenggaraan tata pemerintahan yang baik dan manajemen pemerintahan yang bersih, profesional dan adil.</p>
+                        <#-- PERBAIKAN: Mengganti simbol bullet dengan kode HTML &bull; -->
+                        <p>&bull; Meningkatkan percepatan dan perluasan pembentukan sumber daya manusia yang SMART.</p>
+                        <p>&bull; Mengembangkan penyelenggaraan tata pemerintahan yang baik dan manajemen pemerintahan yang bersih, profesional dan adil.</p>
                     </div>
                 </div>
             </div>
