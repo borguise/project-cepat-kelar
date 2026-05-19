@@ -136,14 +136,14 @@
         <#-- 3. RAK SAMPING (Statis) -->
         <img src="${basePath}/rakkanan.png" class="absolute w-[80px] h-[690px] left-[987px] top-[722px] layer-tengah pointer-events-none" alt="Rak Samping" decoding="async" onerror="this.style.display='none'">
 
-        <#-- 4. AREA BACA (Fasilitas -> Buka Overlay) -->
-        <button class="hotspot w-[676.20px] h-[518.65px] left-[301px] top-[1181px] layer-tengah" onclick="openOverlay('section-facilities')">
-            <img src="${basePath}/meja2.png" alt="Area Baca" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
+        <#-- 5. LIFT (DIPINDAH KE LAYER-BELAKANG) -->
+        <button class="hotspot w-[384px] h-[600px] left-[86px] top-[815px] layer-belakang" onclick="location.href='${berandaUrl! '/home'}'">
+            <img src="${basePath}/lift2.png" alt="Lift" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </button>
 
-        <#-- 5. LIFT (Navigasi Beranda -> Pindah Halaman) -->
-        <button class="hotspot w-[384px] h-[600px] left-[86px] top-[815px] layer-tengah" onclick="location.href='${berandaUrl! '/home'}'">
-            <img src="${basePath}/lift2.png" alt="Lift" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
+        <#-- 4. AREA BACA (DIPINDAH KE LAYER-DEPAN) -->
+        <button class="hotspot w-[676.20px] h-[518.65px] left-[301px] top-[1181px] layer-depan" onclick="openOverlay('section-facilities')">
+            <img src="${basePath}/meja2.png" alt="Area Baca" decoding="async" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </button>
         
         <#-- 6. KOTAK SUARA (Voting -> Buka Overlay) -->
