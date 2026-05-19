@@ -43,16 +43,18 @@
     .faq-content { overflow: hidden; }
 </style>
 
-<div class="relative min-h-full -mx-[50px] -my-[50px] px-[50px] py-[70px] flex flex-col">
+<div class="relative min-h-full w-full px-[50px] py-[70px] flex flex-col">
     
     <div class="absolute inset-0 z-0 pointer-events-none opacity-30 mix-blend-multiply" 
          style="background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); background-size: 400px; background-repeat: repeat;">
     </div>
 
-    <div class="relative z-10 flex flex-col flex-grow w-full max-w-4xl mx-auto">
+    <#-- PERBAIKAN: Menambahkan justify-center di sini agar seluruh blok berada di tengah -->
+    <div class="relative z-10 flex flex-col flex-grow justify-center w-full max-w-4xl mx-auto py-10">
         
-        <div class="text-center mb-16 mt-8">
-            <h2 class="text-[54px] font-bold text-[#475569] font-['Gelasio'] mb-8 tracking-wide">
+        <#-- HEADER DENGAN MARGIN BAWAH PROPORSIONAL (mb-12) -->
+        <div class="text-center mb-12">
+            <h2 class="text-[54px] font-bold text-[#475569] font-['Gelasio'] mb-6 tracking-wide">
                 ${mainTitle!"Highlights"}
             </h2>
             <p class="text-[22px] text-[#475569] font-['Gelasio'] font-bold max-w-3xl mx-auto leading-[1.8]">
@@ -60,7 +62,8 @@
             </p>
         </div>
 
-        <div class="flex-grow w-full flex flex-col gap-6">
+        <#-- WADAH FAQ (Menghapus flex-grow agar tidak mendorong header/footer) -->
+        <div class="w-full flex flex-col gap-6">
             
             <#-- LOGIKA DATABASE MENGGUNAKAN FREEMARKER -->
             <#if faqs?? && faqs?has_content>
@@ -148,15 +151,16 @@
             </#if>
         </div>
 
-        <div class="mt-16 text-center pb-8">
-            <p class="text-[22px] font-bold text-[#475569] font-['Gelasio'] max-w-2xl mx-auto leading-relaxed mb-10">
+        <#-- FOOTER DENGAN MARGIN ATAS PROPORSIONAL (mt-12) -->
+        <div class="mt-12 text-center pb-4">
+            <p class="text-[22px] font-bold text-[#475569] font-['Gelasio'] max-w-2xl mx-auto leading-relaxed mb-8">
                 ${footerDesc!"Masih belum menemukan jawaban yang kamu suka? atau kamu memrlukan informasi tambahan? Jangan khawatir kamu bisa menghubungi kami langsung lewat sini:"}
             </p>
             <div class="flex justify-center gap-10">
-                <a href="${whatsappLink!"#"}" class="w-[70px] h-[70px] rounded-full border-2 border-[#475569] flex items-center justify-center text-[#475569] hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all">
+                <a href="${whatsappLink!"https://wa.me/6285706380204"}" target="_blank" rel="noopener noreferrer" class="w-[70px] h-[70px] rounded-full border-2 border-[#475569] flex items-center justify-center text-[#475569] hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all">
                     <i class="fab fa-whatsapp text-4xl"></i>
                 </a>
-                <a href="${instagramLink!"#"}" class="w-[70px] h-[70px] rounded-full border-2 border-[#475569] flex items-center justify-center text-[#475569] hover:bg-[#E1306C] hover:text-white hover:border-[#E1306C] transition-all">
+                <a href="${instagramLink!"https://www.instagram.com/magetan_library/"}" target="_blank" rel="noopener noreferrer" class="w-[70px] h-[70px] rounded-full border-2 border-[#475569] flex items-center justify-center text-[#475569] hover:bg-[#E1306C] hover:text-white hover:border-[#E1306C] transition-all">
                     <i class="fab fa-instagram text-4xl"></i>
                 </a>
             </div>
