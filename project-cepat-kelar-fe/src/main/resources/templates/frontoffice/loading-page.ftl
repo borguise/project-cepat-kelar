@@ -78,9 +78,8 @@
 
     <div id="loading-canvas">
         
-        <#-- AREA TENGAH: PANDUAN (Posisi diturunkan sesuai permintaan) -->
+        <#-- AREA TENGAH: PANDUAN -->
         <div class="z-content flex-1 flex flex-col items-center justify-center text-center px-10 transform translate-y-[85px]">
-            <#-- Judul dinamis (Default: Panduan) -->
             <h1 class="text-[#2A325F] text-[100px] font-bold font-lato tracking-[25px] uppercase drop-shadow-sm mb-6">
                 ${content.title!"Panduan"}
             </h1>
@@ -93,7 +92,7 @@
             </p>
         </div>
 
-        <#-- AREA BAWAH: SALAM LITERASI (Posisi ditingkatkan agar pas di kapas) -->
+        <#-- AREA BAWAH: SALAM LITERASI -->
         <div class="z-content mt-auto mb-[420px] flex flex-col items-center">
             <div class="bg-[#6B8A7A] bg-opacity-85 py-5 px-14 shadow-lg rounded-sm transition-transform hover:scale-105">
                 <span class="text-white text-4xl font-gelasio tracking-[8px] uppercase">
@@ -105,6 +104,7 @@
     </div>
 
     <script>
+        // Logika Menyesuaikan Skala Layar
         function updateLayout() {
             const canvas = document.getElementById('loading-canvas');
             const windowHeight = window.innerHeight;
@@ -114,6 +114,21 @@
         }
         window.addEventListener('load', updateLayout);
         window.addEventListener('resize', updateLayout);
+
+        // ==============================================================
+        // TAMBAHAN BARU: LOGIKA PINDAH HALAMAN OTOMATIS (AUTO-REDIRECT)
+        // ==============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Waktu tunggu dalam milidetik (3000 = 3 detik). 
+            // Cukup untuk membaca panduan sebelum halaman berpindah.
+            const waktuTunggu = 3000; 
+
+            setTimeout(() => {
+                // Perintahkan browser pindah ke rute home setelah waktu habis
+                // Pastikan /home sesuai dengan rute @GetMapping halaman utama Anda di Spring Boot
+                window.location.href = '/home'; 
+            }, waktuTunggu);
+        });
     </script>
 
 </body>
