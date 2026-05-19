@@ -74,8 +74,32 @@
         }
         .close-overlay:hover { background: #ef4444; }
         
-        .content-scroll { padding: 0; overflow-y: auto; flex-grow: 1; scrollbar-width: none; }
-        .content-scroll::-webkit-scrollbar { display: none; }
+        /* --- KUSTOMISASI SCROLL BAR ESTETIK (REVISI CHROME) --- */
+        .content-scroll, .aesthetic-scroll {
+            scrollbar-width: none; 
+        }
+        
+        .overlay-container *::-webkit-scrollbar {
+            width: 8px; 
+            background-color: transparent; 
+        }
+
+        .overlay-container *::-webkit-scrollbar-track {
+            background-color: transparent; 
+            border-radius: 10px;
+        }
+
+        .overlay-container *::-webkit-scrollbar-thumb {
+            background-color: rgba(71, 85, 105, 0.3); 
+            border-radius: 10px;
+            border: 2px solid transparent; 
+            background-clip: padding-box;
+            transition: background-color 0.3s ease;
+        }
+
+        .overlay-container *::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(71, 85, 105, 0.6); 
+        }
     </style>
 </head>
 <body>
@@ -148,10 +172,10 @@
                 </div>
             </div>
 
-            <#-- Overlay Agenda -->
-            <div id="section-events" class="overlay-container !bg-white !p-0 !border-0" onclick="event.stopPropagation()">
+            <#-- Overlay Agenda (Perbaikan Background bg-[#f7f0cb]) -->
+            <div id="section-events" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
                 <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[1000] hover:text-red-500">X</div>
-                <div class="h-full w-full overflow-y-auto scrollbar-hide">
+                <div class="h-full w-full overflow-y-auto aesthetic-scroll">
                     <#attempt><#include "events.ftl"><#recover><p class="p-10">Gagal memuat agenda.</p></#attempt>
                 </div>
             </div>
@@ -159,15 +183,15 @@
             <#-- Overlay Profil (Figura) -->
             <div id="section-profile" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
                 <div onclick="closeAllOverlays()" class="absolute top-10 right-12 text-[60px] font-light cursor-pointer text-[#334155] hover:text-red-500 transition-colors z-[1000]">&times;</div>
-                <div class="h-full w-full overflow-y-auto scrollbar-hide">
+                <div class="h-full w-full overflow-y-auto aesthetic-scroll">
                     <#attempt><#include "profile.ftl"><#recover><p class="p-10">Gagal memuat profil.</p></#attempt>
                 </div>
             </div>
 
-            <#-- Overlay Artikel (Troli) - Telah disesuaikan untuk articles.ftl terbaru -->
+            <#-- Overlay Artikel (Troli) -->
             <div id="section-articles" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
                 <div onclick="closeAllOverlays()" id="gplArticleCloseBtn" class="absolute top-8 right-10 text-[60px] font-bold cursor-pointer text-[#1e293b] hover:text-red-600 transition-all z-[1000] leading-none">&times;</div>
-                <div class="h-full w-full overflow-y-auto scrollbar-hide" id="article-scroll-area">
+                <div class="h-full w-full overflow-y-auto aesthetic-scroll" id="article-scroll-area">
                     <#attempt><#include "articles.ftl"><#recover><p class="p-10 text-center font-bold text-red-500 mt-20">Gagal memuat artikel.</p></#attempt>
                 </div>
             </div>
@@ -211,29 +235,24 @@
             const totemScreen = document.getElementById('totem-screen');
             
             if (totemScreen) {
-                // Mengambil daftar gambar dari atribut HTML dan memecahnya menjadi Array
                 const imageString = totemScreen.getAttribute('data-images');
                 const images = imageString ? imageString.split(',') : [];
                 
                 let currentIndex = 0;
 
-                // Hanya jalankan animasi jika gambar lebih dari 1
                 if (images.length > 1) {
                     setInterval(() => {
-                        // Pudarkan gambar saat ini
                         totemScreen.style.opacity = '0'; 
                         
-                        // Tunggu transisi selesai (500ms), lalu ganti src
                         setTimeout(() => {
                             currentIndex = (currentIndex + 1) % images.length;
                             totemScreen.src = images[currentIndex];
                             
-                            // Tampilkan kembali setelah gambar termuat
                             totemScreen.onload = () => {
                                 totemScreen.style.opacity = '1';
                             };
                         }, 500); 
-                    }, 4000); // Ganti gambar setiap 4 detik
+                    }, 4000); 
                 }
             }
         });
