@@ -74,8 +74,11 @@
         }
         .close-overlay:hover { background: #ef4444; }
         
-        /* --- KUSTOMISASI SCROLL BAR ESTETIK (REVISI CHROME) --- */
+        /* --- KUSTOMISASI SCROLL BAR ESTETIK --- */
         .content-scroll, .aesthetic-scroll {
+            padding: 0; 
+            overflow-y: auto; /* PENTING: Mengembalikan fungsi scroll */
+            flex-grow: 1; /* PENTING: Mencegah kotak mengerut */
             scrollbar-width: none; 
         }
         
@@ -107,7 +110,7 @@
     <div id="homepage-canvas">
         <img src="${basePath}/bg.png" alt="Interior Library" class="bg-illustration" fetchpriority="high">
 
-        <#-- 1. TOTEM HIGHLIGHT (Dengan Atribut data-images untuk JS) -->
+        <#-- 1. TOTEM HIGHLIGHT -->
         <button class="hotspot w-[198px] h-[531px] left-[30px] top-[1300px]" onclick="openOverlay('section-highlights')">
             <div class="absolute bg-[#4A4A4A] z-[4] skew-y-[-26deg] rounded-[2px] flex items-center justify-center" 
                  style="top: 10%; left: 10%; width: 90%; height: 80%;">
@@ -146,7 +149,7 @@
             <img src="${basePath}/figura.png" alt="Figura">
         </button>
 
-        <#-- 6. TROLI (Membuka Overlay Artikel) -->
+        <#-- 6. TROLI -->
         <button class="hotspot w-80 h-80 left-[825px] top-[1427px]" onclick="openOverlay('section-articles')">
             <img src="${basePath}/troli.png" alt="Troli">
         </button>
@@ -172,7 +175,7 @@
                 </div>
             </div>
 
-            <#-- Overlay Agenda (Perbaikan Background bg-[#f7f0cb]) -->
+            <#-- Overlay Agenda -->
             <div id="section-events" class="overlay-container !bg-[#f7f0cb] !p-0 !border-0" onclick="event.stopPropagation()">
                 <div onclick="closeAllOverlays()" class="absolute top-8 right-10 text-[28px] font-bold cursor-pointer text-black z-[1000] hover:text-red-500">X</div>
                 <div class="h-full w-full overflow-y-auto aesthetic-scroll">
