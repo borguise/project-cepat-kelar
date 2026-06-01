@@ -1,201 +1,106 @@
 <#-- =======================================================
-     ARTICLES-DETAILS.FTL - TRUE FRAGMENT (KOMPATIBEL HOME.FTL)
-     Murni komponen visual tanpa bentrokan scale/skrip parent.
+     ARTICLE-DETAIL.FTL - KODE TERPADU (FIGMA UI + KOMENTAR DINAMIS)
+     Murni HTML & CSS Internal, Anti Error 500
      ======================================================= -->
-
-<#if !article??>
-    <#-- Fallback Dummy Data -->
-    <#assign article = {
-        "id": 1,
-        "title": "Memori Milik Kita",
-        "content": "<p>Perpustakaan bukan sekadar ruang penyimpanan, melainkan tempat di mana ingatan bersama dirawat dan diberi makna. Di Graha Pusat Literasi, ingatan itu hidup melalui koleksi konten lokal—rekaman tentang sejarah, budaya, dan identitas Magetan yang tumbuh bersama masyarakatnya.</p><br><p>Beragam jejak masa lalu tersimpan dan dapat diperjelajahi di sini. Naskah-naskah lama, artefak bersejarah, hingga karya para penulis dan budayawan daerah hadir sebagai cerita yang saling terhubung.</p><br><p>Untuk membantu perjalanan itu, Graha Pusat Literasi menghadirkan katalog sebagai pemandu awal yang tertata rapi. Melalui katalog, pengunjung dapat menelusuri koleksi secara mandiri, bergerak dari satu informasi ke informasi lain dengan tenang, tanpa merasa terburu-buru atau kebingungan.</p>",
-        "img": "/assets/images/placeholder-hero.jpg"
-    }>
-</#if>
-
 <style>
-    /* ========================================================
-       KODE CSS MURNI UNTUK KOMPONEN ARTIKEL
-       ======================================================== */
-    /* Kertas Krem Cair (Mengikuti 100% wadah parent di home.ftl) */
-    .detail-kertas-krem {
-        width: 100%; 
-        min-height: 100%; 
-        background-color: #FAF6ED; 
-        position: relative; 
-        box-sizing: border-box;
-        overflow: hidden; /* Mencegah elemen keluar batas */
-    }
+    /* Mengimpor font secara paksa khusus untuk fragment ini */
+    @import url('https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-    /* Latar Batik */
-    .detail-batik-bg {
-        position: absolute; inset: 0;
-        background-image: url('${batikPath!"/assets/images/batikspring.png"}'); 
-        background-size: 500px; opacity: 0.15; mix-blend-mode: multiply;
-        pointer-events: none; z-index: 1; 
-    }
-
-    .detail-content-wrapper {
-        position: relative; z-index: 10;
-        padding: 0 70px 120px 70px; display: flex; flex-direction: column;
-    }
-
-    /* Header & Navigasi Natural */
-    .detail-header-group {
-        width: 100%; text-align: center; margin-top: 60px; margin-bottom: 50px;
-    }
-
-    .detail-back-link-center {
-        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-        color: #3B5998; font-family: 'Lato', sans-serif; font-size: 20px; font-weight: bold;
-        text-decoration: none; margin-bottom: 24px; transition: color 0.2s ease-in-out;
-    }
-    .detail-back-link-center:hover { color: #ef4444; }
-
-    .detail-article-title-main {
-        font-family: 'Gelasio', serif; color: #3B5998;
-        font-size: 46px; font-weight: bold; line-height: 1.3;
-        max-width: 90%; margin: 0 auto;
-    }
-
-    /* Gambar & Teks */
-    .detail-main-img { 
-        width: 100%; height: 480px; object-fit: cover; 
-        border-radius: 20px; margin-bottom: 60px; 
-        background-color: #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
+    .fg-wrapper { width: 100%; display: flex; flex-direction: column; padding: 20px 40px 60px 40px; box-sizing: border-box; }
     
-    .detail-body-text { 
-        font-family: 'Gelasio', serif; color: #3B5998; 
-        font-size: 24px; font-weight: bold; line-height: 1.8; 
-        text-align: center; width: 100%; margin-bottom: 60px;
-    }
-    .detail-body-text p { margin-bottom: 28px; margin-top: 0; }
+    /* Tipografi & Gambar */
+    .fg-title { font-family: 'Gelasio', serif; color: #3B5998; font-size: 42px; font-weight: bold; text-align: center; margin-bottom: 30px; line-height: 1.2; }
+    .fg-image { width: 100%; height: 400px; object-fit: cover; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .fg-content { font-family: 'Lato', sans-serif; color: #334155; font-size: 20px; line-height: 1.8; text-align: justify; margin-bottom: 50px; }
+    .fg-content p { margin-bottom: 20px; }
 
-    /* Seksi Komentar */
-    .detail-comment-section {
-        width: 100%; background-color: #DCD9D1; border-radius: 30px; 
-        padding: 50px; display: flex; flex-direction: column; gap: 24px;
-    }
-
-    .detail-input-field {
-        width: 100%; background: white; border-radius: 16px;
-        padding: 20px 24px; font-family: 'Lato', sans-serif; font-size: 20px;
-        border: none; outline: none; color: #333;
-    }
-    .detail-input-field::placeholder, .detail-textarea-field::placeholder { color: #4A4A4A; font-weight: bold; }
-
-    .detail-textarea-field {
-        width: 100%; height: 160px; background: white; border-radius: 16px;
-        padding: 24px; font-family: 'Lato', sans-serif; font-size: 20px;
-        border: none; resize: none; outline: none; color: #333;
-    }
+    /* Area Formulir Komentar (Sesuai Figma) */
+    .fg-comment-box { background-color: #E2E8F0; border-radius: 24px; padding: 40px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 20px; }
+    .fg-input { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
+    .fg-input::placeholder { color: #94A3B8; }
+    
+    .fg-textarea-wrapper { position: relative; width: 100%; }
+    .fg-textarea { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; height: 120px; resize: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
+    .fg-textarea::placeholder { color: #94A3B8; text-align: center; line-height: 80px; }
+    
+    .fg-submit-btn { position: absolute; bottom: 15px; right: 20px; background: transparent; border: none; font-size: 24px; color: #3B5998; cursor: pointer; transition: transform 0.2s; }
+    .fg-submit-btn:hover { transform: scale(1.1); }
 
     /* Daftar Komentar */
-    .detail-comment-list-wrapper {
-        margin-top: 60px; width: 100%;
-        border-top: 2px solid rgba(0,0,0,0.1); padding-top: 50px;
-    }
-    
-    .detail-comment-item { 
-        display: flex; align-items: flex-start; gap: 20px;
-        background: #ffffff; padding: 24px 30px; border-radius: 24px;
-        margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    
-    .detail-avatar-box {
-        font-size: 20px; color: white; background: #3B5998; 
-        display: flex; align-items: center; justify-content: center;
-        width: 55px; height: 55px; border-radius: 50%; flex-shrink: 0;
-    }
-    
-    .detail-comment-content { display: flex; flex-direction: column; gap: 6px; }
-    .detail-user-name { font-family: 'Lato', sans-serif; font-size: 18px; color: #3B5998; font-weight: bold; }
-    .detail-user-text { font-family: 'Gelasio', serif; font-size: 22px; color: #334155; line-height: 1.5; font-weight: 500; }
+    .fg-comment-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+    .fg-comment-item { display: flex; gap: 20px; align-items: flex-start; }
+    .fg-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #3B5998; color: white; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; overflow: hidden; }
+    .fg-comment-text-area { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+    .fg-comment-name { font-family: 'Lato', sans-serif; font-size: 16px; font-weight: bold; color: #3B5998; }
+    .fg-comment-isi { font-family: 'Lato', sans-serif; font-size: 16px; color: #475569; line-height: 1.5; }
 </style>
 
-<div class="detail-kertas-krem" id="article-detail-container">
+<div class="fg-wrapper">
     
-    <div class="detail-batik-bg"></div>
+    <#-- 1. Judul & Gambar Utama -->
+    <h1 class="fg-title">Memori Milik Kita</h1>
+    <img src="https://picsum.photos/seed/magetan1/1080/600" alt="Memori Milik Kita" class="fg-image">
 
-    <div class="detail-content-wrapper">
+    <#-- 2. Konten Artikel -->
+    <div class="fg-content">
+        <p>Literasi tidak berhenti pada membaca, Di Graha Pusat Literasi, literasi bergerak lebih jauh: menjadi aksi, eksperimen, dan penciptaan makna. Melalui ruang lab komputer, pengunjung diajak melangkah dari rasa ingin tahu menuju pengalaman memahami informasi secara aktif.</p>
         
-        <div class="detail-header-group">
-            <a href="javascript:void(0)" onclick="closeDetailOverlay()" class="detail-back-link-center">
-                <i class="fas fa-arrow-left"></i> Kembali ke daftar berita
-            </a>
-            <h1 class="detail-article-title-main">${(article.title)!"Judul Artikel"}</h1>
+        <p>Ketika jawaban tidak selalu tersedia di rak koleksi, lab komputer menjadi ruang terbuka untuk menjelajah. Di sini, pengunjung dapat mengakses beragam sumber informasi melalui internet, menelusuri topik yang dibutuhkan, memperluas sudut pandang, dan menemukan referensi dalam berbagai bentuk—tidak hanya tulisan, tetapi juga visual dan audio digital lainnya.</p>
+
+        <p>Suasana yang nyaman dan fasilitas yang tersedia memberi kebebasan bagi pengunjung untuk belajar sesuai ritmenya sendiri. Proses mencari informasi menjadi pengalaman yang menyenangkan: mencoba, menemukan, dan mengelola pengetahuan secara mandiri. Dari sinilah literasi berubah menjadi keterampilan yang hidup dan relevan dengan kebutuhan masa kini.</p>
+
+        <p>Lab komputer di Graha Pusat Literasi hadir sebagai jembatan—menghubungkan pengetahuan dengan praktik, dan mengajak setiap pengunjung menjadi dari informasi ... sebuah lompatan awal untuk melangkah.</p>
+    </div>
+
+    <#-- 3. Formulir Komentar (Aktif & Bisa Diketik) -->
+    <form action="/submit-comment" method="POST" class="fg-comment-box">
+        <#-- Menyisipkan ID Artikel secara diam-diam agar Java tahu komentar ini untuk artikel mana -->
+        <input type="hidden" name="articleId" value="${(article.id)!''}">
+        
+        <input type="email" name="email" placeholder="Email" class="fg-input" required>
+        <input type="password" name="password" placeholder="Password" class="fg-input">
+        
+        <div class="fg-textarea-wrapper">
+            <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="fg-textarea" required></textarea>
+            <button type="submit" class="fg-submit-btn">
+                <i class="fa-regular fa-paper-plane"></i>
+            </button>
         </div>
+    </form>
+
+    <#-- 4. Daftar Komentar Dinamis (Anti Error 500) -->
+    <div class="fg-comment-list">
+        <#-- Jaring Pengaman: Jika 'comments' belum dikirim backend, jadikan array kosong agar aman -->
+        <#assign safeComments = comments![]>
         
-        <#if article.img?? && article.img?has_content>
-            <img src="${article.img}" class="detail-main-img" alt="${article.title!''}">
-        <#elseif (article.id > 0)>
-            <img src="/admin/articles/image/${article.id?c}" class="detail-main-img" onerror="this.style.display='none'">
+        <#if safeComments?size gt 0>
+            <#-- Loop jika ada komentar dari database -->
+            <#list safeComments as c>
+                <div class="fg-comment-item">
+                    <div class="fg-avatar">
+                        <#if c.avatar?? && c.avatar?has_content>
+                            <img src="${c.avatar}" style="width: 100%; height: 100%; object-fit: cover;" alt="User">
+                        <#else>
+                            <i class="fa-solid fa-user"></i>
+                        </#if>
+                    </div>
+                    <div class="fg-comment-text-area">
+                        <div class="fg-comment-name">${(c.userName)!"Anonim"}</div>
+                        <div class="fg-comment-isi">${(c.text)!"..."}</div>
+                    </div>
+                </div>
+            </#list>
         <#else>
-            <div class="detail-main-img flex items-center justify-center">
-                <i class="fas fa-image text-8xl text-slate-400"></i>
+            <#-- Tampilan Default jika belum ada komentar sama sekali -->
+            <div class="fg-comment-item">
+                <div class="fg-avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="fg-comment-text-area">
+                    <div class="fg-comment-name">Admin Graha Pusat Literasi</div>
+                    <div class="fg-comment-isi">Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan pendapat Anda!</div>
+                </div>
             </div>
         </#if>
-
-        <div class="detail-body-text">
-            ${(article.content)!"Isi artikel belum tersedia."?no_esc}
-        </div>
-
-        <div class="detail-comment-section">
-            <form action="#" method="POST" style="display: flex; flex-direction: column; gap: 24px;" onsubmit="alert('Komentar Aktif setelah backend tersambung.'); return false;">
-                <input type="hidden" name="articleId" value="${(article.id)!''}"/>
-                <input type="email" name="email" placeholder="Email" class="detail-input-field" required>
-                <input type="password" name="password" placeholder="Password" class="detail-input-field">
-                
-                <div style="position: relative;">
-                    <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="detail-textarea-field" required></textarea>
-                    <button type="submit" style="position: absolute; bottom: 24px; right: 24px; background: transparent; border: none; font-size: 32px; color: #1a1a1a; cursor: pointer; transition: transform 0.2s;">
-                        <i class="fa-regular fa-paper-plane hover:text-[#3B5998]"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <div class="detail-comment-list-wrapper">
-            <#if comments?? && comments?size gt 0>
-                <#list comments as c>
-                    <div class="detail-comment-item">
-                        <div class="detail-avatar-box">
-                            <#if c.avatar??><img src="${c.avatar}" class="rounded-full w-full h-full"><#else><i class="fas fa-user"></i></#if>
-                        </div>
-                        <div class="detail-comment-content">
-                            <div class="detail-user-name">${c.userName}</div>
-                            <div class="detail-user-text">${c.text}</div>
-                        </div>
-                    </div>
-                </#list>
-            <#else>
-                <div class="detail-comment-item">
-                    <div class="detail-avatar-box"><i class="fas fa-user"></i></div>
-                    <div class="detail-comment-content">
-                        <div class="detail-user-name">Nama</div>
-                        <div class="detail-user-text">Isi komentar Anda akan tampil di sini.</div>
-                    </div>
-                </div>
-            </#if>
-        </div>
-
     </div>
-</div>
 
-<script>
-    // FUNGSI NAVIGASI: Kembali ke daftar berita dengan aman
-    function closeDetailOverlay() {
-        // Logika ini bergantung pada bagaimana backend Anda merender halaman.
-        // Jika detail dipanggil via AJAX, cukup sembunyikan wadah detailnya:
-        const detailContainer = document.getElementById('article-detail-container');
-        if(detailContainer) {
-            // Opsi 1: Sembunyikan elemen ini jika di-load dalam satu halaman (SPA)
-            detailContainer.style.display = 'none';
-        } else {
-            // Opsi 2: Jika terpaksa harus pindah URL, gunakan history back
-            window.history.back();
-        }
-    }
-</script>
+</div>

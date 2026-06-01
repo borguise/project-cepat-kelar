@@ -3,6 +3,7 @@ package com.project.cepat.kelar.fe.controller.frontoffice;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class FrontofficeController {
@@ -18,6 +19,12 @@ public class FrontofficeController {
     @GetMapping("/landing-page")
     public String landingPageAlias() {
         return "frontoffice/landing-page";
+    }
+
+    // --- TAMBAHAN KITA: Rute alias untuk /loading agar sesuai dengan tombol JavaScript ---
+    @GetMapping("/loading")
+    public String loadingAlias() {
+        return "frontoffice/loading-page";
     }
 
     @GetMapping("/home")
@@ -87,5 +94,11 @@ public class FrontofficeController {
     @GetMapping("/filter")
     public String filter() {
         return "frontoffice/filter";
+    }
+
+    // --- TAMBAHAN KITA: Rute Sementara untuk UI Detail Artikel ---
+    @GetMapping("/articles-details/{id}")
+    public String articleDetail(@PathVariable("id") String id) {
+        return "frontoffice/article-detail";
     }
 }
