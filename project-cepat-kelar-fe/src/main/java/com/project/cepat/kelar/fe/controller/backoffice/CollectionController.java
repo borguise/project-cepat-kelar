@@ -1,5 +1,7 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
+import java.util.Base64;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.cepat.kelar.common.controller.BaseController;
 import com.project.cepat.kelar.jpa.model.Collection;
 import com.project.cepat.kelar.service.backoffice.CollectionService;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/admin/collections")
@@ -51,13 +50,14 @@ public class CollectionController extends BaseController {
             @RequestParam(value = "stock", required = false) String stockRaw,
             @RequestParam(value = "callNumber", required = false) String callNumber,
             @RequestParam(value = "status", required = false) String status,
-            HttpServletRequest request,
+            @RequestParam(value = "coverImageBase64", required = false) String coverImageBase64,
+            @RequestParam(value = "coverFileName", required = false) String coverFileName,
+            @RequestParam(value = "coverFile", required = false) MultipartFile coverFile,
             RedirectAttributes redirectAttributes) {
         Long parsedId = null;
         try {
             parsedId = parseLongOrNull(idRaw, "id");
             Integer stock = parseIntegerOrNull(stockRaw, "stock");
-            MultipartFile coverFile = resolveCoverFile(request);
 
             if (title == null || title.isBlank()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Judul buku wajib diisi.");
@@ -74,6 +74,20 @@ public class CollectionController extends BaseController {
 
             Collection saved = collectionService.saveFromForm(parsedId, subject, title, author, publisher, publishCity,
                     publishYear, physicalDescription, isbn, stock, callNumber, status, coverFile);
+
+            if ((coverFile == null || coverFile.isEmpty()) && coverImageBase64 != null && !coverImageBase64.isBlank()) {
+                try {
+                    byte[] imageBytes = Base64.getDecoder().decode(coverImageBase64);
+                    if (imageBytes.length > 0) {
+                        saved.setCoverImage((coverFileName == null || coverFileName.isBlank()) ? "cover-upload.jpg" : coverFileName);
+                        saved.setCoverImageData(imageBytes);
+                        saved = collectionService.save(saved);
+                    }
+                } catch (IllegalArgumentException decodeError) {
+                    logger.warn("Invalid base64 image payload for collection {}: {}", saved.getId(), decodeError.getMessage());
+                }
+            }
+
             logger.info("Collection saved with ID: {}", saved.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Koleksi buku berhasil disimpan!");
             return "redirect:/admin/collections";
@@ -116,13 +130,6 @@ public class CollectionController extends BaseController {
         }
     }
 
-    private MultipartFile resolveCoverFile(HttpServletRequest request) {
-        if (request instanceof MultipartHttpServletRequest multipartRequest) {
-            return multipartRequest.getFile("coverFile");
-        }
-        return null;
-    }
-
     @GetMapping("/delete/{id}")
     public String deleteCollection(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -144,9 +151,9 @@ public class CollectionController extends BaseController {
         try {
             if (collectionService != null) {
                 Collection book = collectionService.getById(id);
-                if (book != null && book.getCoverImageData() != null) {
+                if (book != null && book.getCoverImageData() != null && book.getCoverImageData().length > 0) {
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.IMAGE_JPEG);
+                    headers.setContentType(resolveMediaType(book.getCoverImage()));
                     headers.setContentLength(book.getCoverImageData().length);
                     return new ResponseEntity<>(book.getCoverImageData(), headers, HttpStatus.OK);
                 }
@@ -156,5 +163,22 @@ public class CollectionController extends BaseController {
             logger.error("Error loading collection cover image: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private MediaType resolveMediaType(String fileName) {
+        if (fileName == null) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+        String lower = fileName.toLowerCase();
+        if (lower.endsWith(".png")) {
+            return MediaType.IMAGE_PNG;
+        }
+        if (lower.endsWith(".gif")) {
+            return MediaType.IMAGE_GIF;
+        }
+        if (lower.endsWith(".webp")) {
+            return MediaType.parseMediaType("image/webp");
+        }
+        return MediaType.IMAGE_JPEG;
     }
 }

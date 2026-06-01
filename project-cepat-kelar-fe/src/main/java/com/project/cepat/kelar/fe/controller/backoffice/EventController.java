@@ -93,9 +93,9 @@ public class EventController extends BaseController {
 		try {
 			if (eventService != null) {
 				Event event = eventService.getById(id);
-				if (event != null && event.getPosterImageData() != null) {
+				if (event != null && event.getPosterImageData() != null && event.getPosterImageData().length > 0) {
 					HttpHeaders headers = new HttpHeaders();
-					headers.setContentType(MediaType.IMAGE_JPEG);
+					headers.setContentType(resolveMediaType(event.getPosterImage()));
 					headers.setContentLength(event.getPosterImageData().length);
 					return new ResponseEntity<>(event.getPosterImageData(), headers, HttpStatus.OK);
 				}
@@ -105,5 +105,22 @@ public class EventController extends BaseController {
 			logger.error("Error loading event image: {}", e.getMessage(), e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	private MediaType resolveMediaType(String fileName) {
+		if (fileName == null) {
+			return MediaType.APPLICATION_OCTET_STREAM;
+		}
+		String lower = fileName.toLowerCase();
+		if (lower.endsWith(".png")) {
+			return MediaType.IMAGE_PNG;
+		}
+		if (lower.endsWith(".gif")) {
+			return MediaType.IMAGE_GIF;
+		}
+		if (lower.endsWith(".webp")) {
+			return MediaType.parseMediaType("image/webp");
+		}
+		return MediaType.IMAGE_JPEG;
 	}
 }

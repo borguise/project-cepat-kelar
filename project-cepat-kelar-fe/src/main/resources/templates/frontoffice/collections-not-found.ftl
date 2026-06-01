@@ -87,25 +87,25 @@
                     
                     <label class="f-layer left-[14px] top-[65px]">
                         <input type="checkbox" name="fJudul" ${(fJudul?? && fJudul)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Judul</div>
                     </label>
 
                     <label class="f-layer left-[175px] top-[65px]">
                         <input type="checkbox" name="fPenerbit" ${(fPenerbit?? && fPenerbit)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Penerbit</div>
                     </label>
 
                     <label class="f-layer left-[15px] top-[115px]">
                         <input type="checkbox" name="fIsbn" ${(fIsbn?? && fIsbn)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Isbn</div>
                     </label>
 
                     <label class="f-layer left-[174px] top-[115px]">
                         <input type="checkbox" name="fPenulis" ${(fPenulis?? && fPenulis)?string('checked', '')}>
-                        <div class="check-box"><span class="check-mark">✓</span></div>
+                        <div class="check-box"><span class="check-mark">OK</span></div>
                         <div class="ml-2 text-2xl font-['Inter']">Penulis</div>
                     </label>
                 </form>
@@ -129,7 +129,7 @@
 
         <div class="content-area">
             <div id="searchHeading" class="font-['Gelasio'] font-bold text-slate-700/75 text-[36px] text-center mb-24 w-[800px]">
-                Ini hasil pencarian “${keyword!"Sepak bola"}”
+                Ini hasil pencarian "${keyword!"Sepak bola"}"
             </div>
 
             <div class="no-result-card">
@@ -158,7 +158,7 @@
         function executeSearch(event) {
             event.preventDefault();
             const query = searchInput.value || "${keyword!"Sepak bola"}";
-            searchHeading.innerText = `Ini hasil pencarian “` + query + `”`;
+            searchHeading.innerText = `Ini hasil pencarian "` + query + `"`;
             console.log("Mencari data untuk:", query);
         }
 

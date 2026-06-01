@@ -25,7 +25,7 @@
       <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 gap-8">
           <form action="/admin/events" method="GET" class="relative w-[600px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
             <input type="text" name="query" value="${(query)!''}" placeholder="Ketik Nama atau Status Kegiatan disini" class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
-           <button type="submit" class="text-xl text-stone-400">🔍</button>
+           <button type="submit" class="text-sm font-semibold text-stone-500">Search</button>
         </form>
         
         <a href="/admin/events/new" class="h-12 bg-[#bef264] text-indigo-900 px-8 flex items-center justify-center rounded-xl shadow-md font-bold text-base hover:bg-lime-400 transition-all active:scale-95 text-center">
@@ -58,9 +58,9 @@
                     </span>
                   </td>
                   <td class="px-4">
-                    <div class="flex justify-center gap-6 text-2xl">
-                      <a href="/admin/events/edit/${event.id?c}" title="Edit">✏️</a>
-                      <a href="/admin/events/delete/${event.id?c}" onclick="return confirm('Hapus agenda: ${event.name}?')" title="Hapus">🗑️</a>
+                    <div class="flex justify-center gap-3 text-xs font-semibold">
+                      <a href="/admin/events/edit/${event.id?c}" title="Edit">Edit</a>
+                      <a href="/admin/events/delete/${event.id?c}" onclick="return confirm('Hapus agenda: ${event.name}?')" title="Hapus">Delete</a>
                     </div>
                   </td>
                 </tr>
@@ -76,11 +76,11 @@
         <div class="px-12 py-8 bg-slate-50 border-t border-black/10 flex justify-between items-center text-slate-500">
             <span>Menampilkan ${totalAgenda} Data Agenda</span>
             <div class="flex gap-4 items-center">
-                <button class="hover:text-indigo-600 font-bold transition">« Sebelumnya</button>
+                <button class="hover:text-indigo-600 font-semibold text-sm transition">Prev</button>
                 <div class="flex gap-2">
                     <span class="w-10 h-10 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-md cursor-pointer">1</span>
                 </div>
-                <button class="hover:text-indigo-600 font-bold transition">Selanjutnya »</button>
+                <button class="hover:text-indigo-600 font-semibold text-sm transition">Next</button>
             </div>
         </div>
       </div> 

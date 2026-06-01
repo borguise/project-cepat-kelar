@@ -9,9 +9,26 @@
         <h2 class="text-3xl font-bold font-gelasio text-slate-800 italic">Editor Rekaman Audio</h2>
       </div>
 
+      <#if successMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${successMessage}</span>
+          </div>
+        </div>
+      </#if>
+      <#if errorMessage??>
+        <div class="max-w-6xl w-full mx-auto px-4">
+          <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl" role="alert">
+            <span class="block sm:inline">${errorMessage}</span>
+          </div>
+        </div>
+      </#if>
+
       <form id="audio-form" action="/admin/audio/save" method="POST" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
         <input type="hidden" name="id" value="${(audio.id)!''}">
+        <input type="hidden" name="coverImageBase64" id="audioCoverImageBase64" value="">
+        <input type="hidden" name="coverFileName" id="audioCoverFileName" value="">
 
         <div class="flex flex-col lg:flex-row gap-10">
           <div class="flex-1 space-y-5">
@@ -43,15 +60,16 @@
 
           <div class="lg:w-56 flex flex-col items-center justify-center pt-8">
             <div class="w-52 h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white hover:border-indigo-400 transition-all group overflow-hidden relative">
-              <#if audio?? && audio.coverUrl?? && audio.coverUrl?has_content>
-                <img src="${(audio.coverUrl)!''}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
+              <img id="audioCoverPreview" src="" class="w-full h-full object-cover hidden" alt="Preview cover audio">
+              <#if coverUrl?? && coverUrl?has_content>
+                <img id="audioExistingCover" src="${coverUrl}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
               <#else>
-                <div class="text-center p-4">
-                  <span class="block text-2xl mb-1 group-hover:scale-110 transition">🖼️</span>
+                <div id="audioCoverPlaceholder" class="text-center p-4">
+                  <span class="block text-2xl mb-1 group-hover:scale-110 transition">Image</span>
                   <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Cover</span>
                 </div>
               </#if>
-              <input type="file" id="coverFileInput" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer">
+              <input type="file" id="coverFileInput" name="coverFile" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
             </div>
           </div>
         </div>
@@ -102,15 +120,44 @@
 
       <script>
         document.addEventListener('DOMContentLoaded', function() {
-          const form = document.getElementById('audio-form');
           const fileInput = document.getElementById('coverFileInput');
-          
-          form.addEventListener('submit', function(e) {
-            if (fileInput.files && fileInput.files.length > 0) {
-              form.setAttribute('enctype', 'multipart/form-data');
-            } else {
-              form.removeAttribute('enctype');
+          const preview = document.getElementById('audioCoverPreview');
+          const existing = document.getElementById('audioExistingCover');
+          const placeholder = document.getElementById('audioCoverPlaceholder');
+          const base64Input = document.getElementById('audioCoverImageBase64');
+          const fileNameInput = document.getElementById('audioCoverFileName');
+
+          if (!fileInput || !preview) {
+            return;
+          }
+
+          fileInput.addEventListener('change', function() {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) return;
+
+            const objectUrl = URL.createObjectURL(file);
+            preview.src = objectUrl;
+            preview.classList.remove('hidden');
+
+            if (existing) {
+              existing.classList.add('hidden');
             }
+            if (placeholder) {
+              placeholder.classList.add('hidden');
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+              const dataUrl = String(ev.target && ev.target.result ? ev.target.result : '');
+              const commaIndex = dataUrl.indexOf(',');
+              if (commaIndex >= 0 && base64Input) {
+                base64Input.value = dataUrl.substring(commaIndex + 1);
+              }
+              if (fileNameInput) {
+                fileNameInput.value = file.name || 'cover-upload.jpg';
+              }
+            };
+            reader.readAsDataURL(file);
           });
         });
       </script> 

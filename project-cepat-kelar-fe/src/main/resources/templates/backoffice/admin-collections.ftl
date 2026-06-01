@@ -27,12 +27,12 @@
       <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 gap-6">
         <form action="/admin/collections" method="GET" class="relative w-[500px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
            <input type="text" name="query" value="${query!''}" placeholder="Ketik Judul, Pengarang..." class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
-           <button type="submit" class="text-xl text-stone-400">🔍</button>
+           <button type="submit" class="text-sm font-semibold text-stone-500">Search</button>
         </form>
 
         <div id="filterContainer" onclick="toggleFilter(event)" class="relative w-56 h-12 bg-white rounded-xl shadow-lg flex items-center justify-between px-6 border border-stone-100 cursor-pointer">
            <span class="font-gelasio text-base text-black">Semua Kategori</span>
-           <span class="text-xs">▼</span>
+           <span class="text-xs">v</span>
 
            <div id="filterOverlay" class="hidden absolute top-14 left-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-[100] flex flex-col gap-3">
              <label class="flex items-center gap-3 cursor-pointer group">
@@ -88,10 +88,10 @@
                   <td class="px-4 leading-tight border-r border-black/10">${buku.publisher!'-'}, ${buku.publishYear!'-'}</td>
                   <td class="italic px-4 border-r border-black/10">${(buku.stock!0)} eks</td>
                   <td class="px-4">
-                    <div class="flex justify-center gap-6 text-xl">
+                    <div class="flex justify-center gap-3 text-xs font-semibold">
                       <#-- Navigasi Edit menggunakan ID dinamis -->
-                      <a href="/admin/collections/edit/${buku.id}" class="hover:scale-110 transition">✏️</a>
-                      <a href="/admin/collections/delete/${buku.id}" onclick="return confirm('Hapus buku ini?')" class="hover:scale-110 transition">🗑️</a>
+                      <a href="/admin/collections/edit/${buku.id}" class="hover:scale-110 transition">Edit</a>
+                      <a href="/admin/collections/delete/${buku.id}" onclick="return confirm('Hapus buku ini?')" class="hover:scale-110 transition">Delete</a>
                     </div>
                   </td>
                 </tr>
@@ -108,8 +108,8 @@
           <span>Menampilkan ${totalKoleksi} Koleksi</span>
             <div class="flex gap-4 items-center">
                 <#-- Logika Paginasi bisa ditambahkan di sini -->
-                <button class="hover:text-indigo-600 font-bold transition">« Sebelumnya</button>
-                <button class="hover:text-indigo-600 font-bold transition">Selanjutnya »</button>
+                <button class="hover:text-indigo-600 font-semibold text-sm transition">Prev</button>
+                <button class="hover:text-indigo-600 font-semibold text-sm transition">Next</button>
             </div>
         </div>
       </div> 

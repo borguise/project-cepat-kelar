@@ -8,9 +8,11 @@
         <h2 class="text-3xl font-bold font-gelasio text-slate-800 italic">Manajemen Pemilihan</h2>
       </div>
 
-      <form action="/admin/voting/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
+    <form action="/admin/voting/save" method="POST" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
-                <input type="hidden" name="id" value="${(voting.id)!''}">
+            <input type="hidden" name="id" value="${(voting.id)!''}">
+            <input type="hidden" name="posterImageBase64" id="votingPosterImageBase64" value="">
+            <input type="hidden" name="posterFileName" id="votingPosterFileName" value="">
 
         <div class="space-y-5">
             <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Kegiatan Pemilihan</h3>
@@ -35,15 +37,16 @@
             <div class="lg:w-56 flex flex-col items-center gap-3">
                 <label class="label-elegant">Unggah foto / Poster</label>
                 <div class="w-52 h-52 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white transition-all group shadow-sm relative overflow-hidden">
-                    <#if voting?? && voting.posterUrl?? && voting.posterUrl?has_content>
-                        <img src="${(voting.posterUrl)!''}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
+                    <img id="votingPosterPreview" src="" class="w-full h-full object-cover hidden" alt="Preview poster voting">
+                    <#if posterUrl?? && posterUrl?has_content>
+                        <img id="votingExistingPoster" src="${posterUrl}" class="w-full h-full object-cover" onerror="this.classList.add('hidden')">
                     <#else>
-                        <div class="text-center p-4">
-                            <span class="block text-2xl mb-1 group-hover:scale-110 transition">🖼️</span>
+                        <div id="votingPosterPlaceholder" class="text-center p-4">
+                            <span class="block text-2xl mb-1 group-hover:scale-110 transition">Image</span>
                             <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Gambar</span>
                         </div>
                     </#if>
-                    <input type="file" name="posterFile" class="absolute inset-0 opacity-0 cursor-pointer">
+                    <input type="file" id="posterFileInput" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
                 </div>
             </div>
 
@@ -92,8 +95,8 @@
                                 <td class="text-sm">${entry.summary}</td>
                                 <td>
                                     <div class="flex justify-center gap-3 text-xl">
-                                        <button type="button" title="Edit" class="hover:scale-110 transition">✏️</button>
-                                        <button type="button" title="Hapus" class="hover:scale-110 transition text-red-400">🗑️</button>
+                                        <button type="button" title="Edit" class="hover:scale-110 transition">Edit</button>
+                                        <button type="button" title="Hapus" class="hover:scale-110 transition text-red-400">Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -115,6 +118,50 @@
         </div>
 
       </form> 
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('posterFileInput');
+            const preview = document.getElementById('votingPosterPreview');
+            const existing = document.getElementById('votingExistingPoster');
+            const placeholder = document.getElementById('votingPosterPlaceholder');
+            const base64Input = document.getElementById('votingPosterImageBase64');
+            const fileNameInput = document.getElementById('votingPosterFileName');
+
+            if (!fileInput || !preview) {
+                return;
+            }
+
+            fileInput.addEventListener('change', function() {
+                const file = fileInput.files && fileInput.files[0];
+                if (!file) return;
+
+                const objectUrl = URL.createObjectURL(file);
+                preview.src = objectUrl;
+                preview.classList.remove('hidden');
+
+                if (existing) {
+                    existing.classList.add('hidden');
+                }
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const dataUrl = String(ev.target && ev.target.result ? ev.target.result : '');
+                    const commaIndex = dataUrl.indexOf(',');
+                    if (commaIndex >= 0 && base64Input) {
+                        base64Input.value = dataUrl.substring(commaIndex + 1);
+                    }
+                    if (fileNameInput) {
+                        fileNameInput.value = file.name || 'poster-upload.jpg';
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+      </script>
 
     </div>
 

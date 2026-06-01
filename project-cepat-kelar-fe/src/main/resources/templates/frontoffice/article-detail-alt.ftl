@@ -77,11 +77,22 @@
             border: none; text-align: center; resize: none; outline: none;
         }
 
+        .comments-feed-box {
+            width: 100%;
+            max-height: 360px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #d1d5db;
+        }
+
         .comment-item { display: flex; gap: 20px; align-items: flex-start; margin-top: 25px; width: 100%; }
         .user-icon { width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; color: #1F1F1F; font-size: 24px; }
         .comment-details { flex: 1; text-align: left; display: flex; gap: 30px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 16px; }
         .user-name { font-family: 'Lato', sans-serif; font-size: 24px; color: #1F1F1F; min-width: 120px; }
         .user-msg { font-family: 'Gelasio', serif; font-size: 26px; font-weight: bold; color: #1F1F1F; flex: 1; }
+        .user-date { font-family: 'Lato', sans-serif; font-size: 16px; color: #6b7280; }
     </style>
 </head>
 <body>
@@ -128,29 +139,29 @@
                         </button>
                     </div>
 
-                    <div class="mt-10 space-y-4">
-                        <#if comments??>
+                </form>
+
+                <div class="comment-box-grey mt-6">
+                    <h3 class="font-gelasio text-2xl font-bold text-slate-700">Komentar Publik</h3>
+                    <div class="comments-feed-box">
+                        <#if comments?? && (comments?size gt 0)>
                             <#list comments as c>
                                 <div class="comment-item">
                                     <div class="user-icon"><i class="fas fa-user"></i></div>
-                                    <div class="comment-details">
-                                        <span class="user-name">${c.userName}</span>
-                                        <span class="user-msg">${c.text}</span>
+                                    <div class="comment-details flex-col gap-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="user-name">${c.userName!"Anonymous"}</span>
+                                            <span class="user-date">${c.date!""}</span>
+                                        </div>
+                                        <span class="user-msg">${c.text!""}</span>
                                     </div>
                                 </div>
                             </#list>
                         <#else>
-                            <#-- Tampilan Default jika belum ada komentar -->
-                            <div class="comment-item">
-                                <div class="user-icon"><i class="fas fa-user"></i></div>
-                                <div class="comment-details">
-                                    <span class="user-name">Nama</span>
-                                    <span class="user-msg">isi komentar</span>
-                                </div>
-                            </div>
+                            <div class="text-center text-gray-400 italic py-8">Belum ada komentar yang dipublish.</div>
                         </#if>
                     </div>
-                </form>
+                </div>
 
                 <div class="w-full h-px bg-gray-400 opacity-30 mt-10"></div>
             </div>

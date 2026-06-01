@@ -67,12 +67,13 @@
           <label class="font-gelasio text-2xl text-black">Poster kegiatan</label>
           <label class="w-full py-10 border-2 border-dashed border-stone-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-slate-50 transition relative overflow-hidden min-h-44">
             <#if eventItem?? && eventItem.posterImage?? && eventItem.posterImage?has_content>
-              <img src="/admin/events/image/${eventItem.id?c}" class="absolute inset-0 w-full h-full object-cover" onerror="this.classList.add('hidden'); document.getElementById('eventPosterPlaceholder').classList.remove('hidden');">
+              <img id="eventPosterPreview" src="/admin/events/image/${eventItem.id?c}" class="absolute inset-0 w-full h-full object-cover" onerror="this.classList.add('hidden'); document.getElementById('eventPosterPlaceholder').classList.remove('hidden');">
               <span id="eventPosterPlaceholder" class="hidden text-indigo-800 text-sm font-lato z-10">Klik untuk upload gambar</span>
             <#else>
+              <img id="eventPosterPreview" src="" class="absolute inset-0 w-full h-full object-cover hidden">
               <span id="eventPosterPlaceholder" class="text-indigo-800 text-sm font-lato z-10">Klik untuk upload gambar</span>
             </#if>
-            <input type="file" name="poster" class="hidden">
+            <input id="posterInput" type="file" name="poster" class="hidden" accept="image/*">
           </label>
         </div>
 
@@ -80,7 +81,7 @@
           <label class="font-gelasio text-2xl text-black">Deskripsi Kegiatan</label>
           <textarea id="autoExpand" name="description" placeholder="Keterangan" required
                     oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"
-                    class="w-full min-h-[160px] py-12 border border-stone-200 rounded-2xl px-10 font-lato text-xl text-indigo-800 text-center focus:ring-4 focus:ring-indigo-50 transition-all resize-none overflow-hidden placeholder:text-stone-300">${(eventItem.description)!''}</textarea>
+                    class="w-full min-h-[160px] py-12 border border-stone-200 rounded-2xl px-10 font-lato text-xl text-indigo-800 text-center focus:ring-4 focus:ring-indigo-50 transition-all resize-none overflow-hidden placeholder:text-stone-300">${(eventItem.eventDescription)!''}</textarea>
         </div>
 
         <div class="flex justify-center mt-6">
@@ -101,6 +102,9 @@
     const eventDateDateInput = document.querySelector('input[name="eventDateDate"]');
     const eventDateTimeInput = document.querySelector('input[name="eventDateTime"]');
     const eventDateCombined = document.getElementById('eventDateCombined');
+    const posterInput = document.getElementById('posterInput');
+    const posterPreview = document.getElementById('eventPosterPreview');
+    const posterPlaceholder = document.getElementById('eventPosterPlaceholder');
 
     form.addEventListener('submit', function(e) {
       const date = eventDateDateInput.value;
@@ -109,6 +113,19 @@
         eventDateCombined.value = date + 'T' + time;
       }
     });
+
+    if (posterInput && posterPreview && posterPlaceholder) {
+      posterInput.addEventListener('change', function() {
+        const file = this.files && this.files[0];
+        if (!file) {
+          return;
+        }
+        const objectUrl = URL.createObjectURL(file);
+        posterPreview.src = objectUrl;
+        posterPreview.classList.remove('hidden');
+        posterPlaceholder.classList.add('hidden');
+      });
+    }
   </script>
 
 </@layout.backofficeLayout>
