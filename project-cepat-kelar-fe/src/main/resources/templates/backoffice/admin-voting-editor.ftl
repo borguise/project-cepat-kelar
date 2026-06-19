@@ -57,7 +57,14 @@
                 </div>
                 <div>
                     <label class="label-elegant">Keterangan singkat</label>
-                    <textarea name="description" placeholder="Deskripsi Singkat / Informasi" class="input-premium h-28 resize-none py-3">${(voting.description)!''}</textarea>
+                    <textarea name="description" placeholder="Deskripsi Singkat / Informasi" class="input-premium w-full h-28 resize-none py-3">${(voting.description)!''}</textarea>
+                    
+                    <!-- Wrapper baru untuk memisahkan tombol dan memberi jarak estetik -->
+                    <div class="flex justify-end mt-5 mb-2">
+                        <button type="button" class="bg-[#bef264] hover:bg-lime-400 text-indigo-900 font-bold px-6 py-2 rounded-xl shadow-md transition-all active:scale-95 text-sm font-lato">
+                            + Tambah Entri Pemilihan
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -67,9 +74,6 @@
         <div class="space-y-5">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Daftar item poin pemilihan</h3>
-                <button type="button" class="bg-[#bef264] hover:bg-lime-400 text-indigo-900 font-bold px-6 py-2 rounded-xl shadow-md transition-all active:scale-95 text-sm font-lato">
-                    + Tambah Entri Pemilihan
-                </button>
             </div>
             
             <div class="border border-slate-100 rounded-2xl overflow-hidden shadow-sm">

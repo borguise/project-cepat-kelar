@@ -1,131 +1,95 @@
-<#-- 1. Penanda Halaman Aktif -->
 <#assign activePage = "komentar">
 <#import "/layout/backoffice_layout.ftl" as layout>
 
 <@layout.backofficeLayout title="Admin - Moderasi Komentar" activePage=activePage adminName=adminName>
       
-      <div class="max-w-6xl w-full mx-auto px-4">
-        <h2 class="text-3xl font-bold font-gelasio text-black italic">Moderasi Komentar Artikel & Berita</h2>
+      <div class="w-full max-w-5xl mx-auto px-4 mb-6">
+        <h2 class="text-xl font-bold font-gelasio text-black">Moderasi Komentar Artikel & Berita</h2>
       </div>
 
-      <div class="w-full max-w-2xl mx-auto relative group">
-        <form action="/admin/comments" method="GET">
+      <div class="w-full max-w-5xl mx-auto px-4 mb-8 flex justify-center">
+        <form action="/admin/comments" method="GET" class="w-full max-w-2xl relative">
           <input type="text" name="search" placeholder="Ketik Sumber Komentar disini" 
                  value="${searchKeyword!''}"
-                   class="w-full py-4 px-10 bg-white rounded-xl shadow-[0px_4px_15px_rgba(0,0,0,0.1)] border border-stone-100 outline-none font-gelasio text-lg text-center">
-                 <button type="submit" class="absolute right-6 top-1/2 -translate-y-1/2 text-indigo-600 hover:text-indigo-800 text-sm font-semibold">Search</button>
+                 class="w-full py-4 px-6 pr-14 bg-white rounded-xl shadow-[0px_2px_10px_rgba(0,0,0,0.05)] border border-slate-100 outline-none font-lato text-center focus:ring-2 focus:ring-indigo-100">
+          
+          <button type="submit" class="absolute right-5 top-1/2 transform -translate-y-1/2 text-[#4338ca] hover:scale-125 transition-transform duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
         </form>
       </div>
 
-      <div class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-[0px_10px_30px_rgba(243,237,237,1.0)] border border-stone-100 overflow-hidden mb-12 flex flex-col">
-        <table class="w-full text-center border-collapse">
-          <thead>
-            <tr class="font-gelasio text-black text-xl border-b border-black bg-slate-50/20">
-              <th class="px-4 py-8 border-r border-black/10 w-48 font-bold">Pengirim</th>
-              <th class="px-4 py-8 border-r border-black/10 w-40 font-bold">Tanggal</th>
-              <th class="px-4 py-8 border-r border-black/10 font-bold">Isi Pesan</th>
-              <th class="px-4 py-8 border-r border-black/10 w-48 font-bold">Sumber</th>
-              <th class="px-4 py-8 border-r border-black/10 w-44 font-bold">Status</th>
-              <th class="px-6 py-8 font-bold">Aksi</th>
-            </tr>
-          </thead>
-          <tbody class="font-['Lato'] text-black text-base divide-y divide-black/10">
-            
-            <#-- LOGIKA LOOPING DATA DARI DATABASE -->
-            <#if comments?? && comments?size gt 0>
-              <#list comments as c>
-                <tr class="h-28 hover:bg-slate-50 transition" id="row-${c.id}">
-                  <td class="px-4 border-r border-black/10 font-bold">${c.sender}</td>
-                  <td class="px-4 border-r border-black/10 font-bold">${c.commentDate}</td>
-                  <td class="px-6 border-r border-black/10 text-sm italic font-bold text-left">${c.content}</td>
-                  <td class="px-4 border-r border-black/10 text-xs">${c.source}</td>
-                  <td class="px-4 border-r border-black/10 font-bold status-text <#if c.status == 'Hidden'>text-red-500<#else>text-green-600</#if>">
-                    ${c.status}
-                  </td>
-                  <td class="px-4">
-                    <div class="flex justify-center gap-4">
-                      <#-- Tombol Mata Berubah Sesuai Status Awal -->
-                      <button onclick="toggleEye(${c.id})" class="h-9 px-3 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition text-xs font-semibold">
-                        <span class="eye-icon text-xs font-semibold">
-                          <#if c.status == "Hidden">View<#else>Hidden</#if>
-                        </span>
-                      </button>
-                      <button onclick="confirmDelete(${c.id})" class="h-9 px-3 bg-slate-100 rounded-xl flex items-center justify-center hover:bg-red-600 transition text-xs font-semibold">Delete</button>
-                    </div>
-                  </td>
-                </tr>
-              </#list>
-            <#else>
-              <tr>
-                <td colspan="6" class="py-20 text-center italic text-stone-400">Belum ada komentar masuk.</td>
+      <div class="w-full max-w-5xl mx-auto px-4 mb-20">
+        <div class="w-full overflow-x-auto bg-white rounded-t-2xl shadow-[0px_5px_20px_rgba(243,237,237,1.0)] border border-stone-100">
+          <table class="w-full text-center border-collapse min-w-[900px]">
+            <thead>
+              <tr class="font-lato text-black text-sm border-b border-black">
+                <th class="px-6 py-6 border-r border-black/20 w-[15%] font-semibold text-center">Pengirim</th>
+                <th class="px-4 py-6 border-r border-black/20 font-semibold w-[15%]">Tanggal</th>
+                <th class="px-6 py-6 border-r border-black/20 font-semibold w-[30%]">Isi Pesan</th>
+                <th class="px-4 py-6 border-r border-black/20 font-semibold w-[15%]">Sumber</th>
+                <th class="px-4 py-6 border-r border-black/20 font-semibold w-[15%]">Status</th>
+                <th class="px-4 py-6 font-semibold w-[10%]">Aksi</th>
               </tr>
-            </#if>
+            </thead>
+            <tbody class="font-lato text-black text-sm divide-y divide-transparent">
+              
+              <#if comments?? && comments?size gt 0>
+                <#list comments as c>
+                  <tr class="h-24 hover:bg-slate-50 transition border-b border-black/5 last:border-b-0" id="row-${c.id}">
+                    <td class="px-6 border-r border-black/20 font-bold">${c.sender}</td>
+                    <td class="px-4 border-r border-black/20 font-bold">${c.commentDate}</td>
+                    <td class="px-6 border-r border-black/20 text-left font-bold text-slate-800">${c.content}</td>
+                    <td class="px-4 border-r border-black/20 text-slate-600">${c.source}</td>
+                    <td class="px-4 border-r border-black/20 font-medium status-text text-black">
+                      <#if c.status == 'Hidden'>Disembunyikan<#else>Tampil</#if>
+                    </td>
+                    <td class="px-4">
+                      <div class="flex justify-center gap-4 items-center">
+                        
+                        <button onclick="toggleEye(${c.id})" title="Ubah Status Tayang" class="text-black hover:text-[#4338ca] hover:scale-110 transition eye-btn">
+                          <#if c.status == 'Hidden'>
+                            <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                          <#else>
+                            <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                          </#if>
+                        </button>
 
-          </tbody>
-        </table>
+                        <button onclick="confirmDelete(${c.id})" title="Hapus Komentar" class="text-black hover:text-red-500 hover:scale-110 transition">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
 
-        <div class="px-12 py-8 bg-slate-50 border-t border-black/10 flex justify-between items-center text-slate-500">
-            <span>Menampilkan ${(comments?size)!0} dari ${(totalItems)!0} Komentar</span>
+                      </div>
+                    </td>
+                  </tr>
+                </#list>
+              <#else>
+                <tr>
+                  <td colspan="6" class="py-20 text-center italic text-stone-400">Belum ada komentar masuk.</td>
+                </tr>
+              </#if>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="w-full px-8 py-6 bg-white border border-t-0 border-stone-100 rounded-b-2xl shadow-[0px_5px_20px_rgba(243,237,237,1.0)] flex justify-between items-center text-slate-500 text-sm">
+            <span>Menampilkan ${(comments?size)!0} Komentar</span>
             <div class="flex gap-4 items-center">
-                <#if (currentPage!0) gt 0>
-                    <a href="/admin/comments?page=${(currentPage!0) - 1}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
-                       class="hover:text-indigo-600 font-semibold text-sm transition">Prev</a>
-                <#else>
-                    <span class="text-gray-300 font-semibold text-sm">Prev</span>
-                </#if>
+                <button class="hover:text-[#4338ca] font-semibold transition">Prev</button>
                 <div class="flex gap-2">
-                    <#list 0..<(totalPages!1) as i>
-                        <#if i == (currentPage!0)>
-                            <span class="w-10 h-10 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-md cursor-pointer">${i + 1}</span>
-                        <#else>
-                            <a href="/admin/comments?page=${i}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
-                               class="w-10 h-10 flex items-center justify-center bg-gray-200 text-gray-700 rounded-lg hover:bg-indigo-600 hover:text-white transition">${i + 1}</a>
-                        </#if>
-                    </#list>
+                    <span class="w-8 h-8 flex items-center justify-center bg-[#4338ca] text-white rounded-full cursor-pointer shadow-md">1</span>
                 </div>
-                <#if (currentPage!0) lt ((totalPages!1) - 1)>
-                    <a href="/admin/comments?page=${(currentPage!0) + 1}&size=10<#if searchKeyword??>&search=${searchKeyword}</#if>" 
-                       class="hover:text-indigo-600 font-semibold text-sm transition">Next</a>
-                <#else>
-                    <span class="text-gray-300 font-semibold text-sm">Next</span>
-                </#if>
+                <button class="hover:text-[#4338ca] font-semibold transition">Next</button>
             </div>
         </div>
       </div>
 
   <script>
     function toggleEye(id) {
-        // Call API to toggle status in database
-        fetch('/admin/comments/toggle/' + id, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Failed to toggle status');
-        })
-        .then(data => {
-            const row = document.getElementById('row-' + id);
-            const icon = row.querySelector('.eye-icon');
-            const statusText = row.querySelector('.status-text');
-
-            if (data.status === "Hidden") {
-              icon.innerText = "View";
-                statusText.innerText = "Hidden";
-                statusText.classList.replace('text-green-600', 'text-red-500');
-            } else {
-              icon.innerText = "Hidden";
-                statusText.innerText = "Published";
-                statusText.classList.replace('text-red-500', 'text-green-600');
-            }
-        })
-        .catch(error => {
-            alert('Gagal mengubah status komentar: ' + error.message);
-        });
+        if(confirm("Ubah status tayang komentar ini?")) {
+             window.location.href = "/admin/comments/toggle/" + id;
+        }
     }
 
     function confirmDelete(id) {

@@ -5,7 +5,7 @@
 
     <div class="w-full max-w-6xl mx-auto">      
       
-      <div class="max-w-6xl w-full mx-auto px-4">
+      <div class="max-w-6xl w-full mx-auto px-4 mb-6">
         <h2 class="text-3xl font-bold font-gelasio text-slate-800 italic">Editor Rekaman Audio</h2>
       </div>
 
@@ -30,9 +30,9 @@
         <input type="hidden" name="coverImageBase64" id="audioCoverImageBase64" value="">
         <input type="hidden" name="coverFileName" id="audioCoverFileName" value="">
 
-        <div class="flex flex-col lg:flex-row gap-10">
+        <div class="flex flex-col lg:flex-row gap-8">
           <div class="flex-1 space-y-5">
-            <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">I. Data Utama</h3>
+            <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Data Utama</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -58,7 +58,7 @@
             </div>
           </div>
 
-          <div class="lg:w-56 flex flex-col items-center justify-center pt-8">
+          <div class="lg:w-56 flex flex-col items-center justify-center pt-6">
             <div class="w-52 h-64 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white hover:border-indigo-400 transition-all group overflow-hidden relative">
               <img id="audioCoverPreview" src="" class="w-full h-full object-cover hidden" alt="Preview cover audio">
               <#if coverUrl?? && coverUrl?has_content>
@@ -77,7 +77,7 @@
         <hr class="border-slate-50">
 
         <div class="space-y-5">
-          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">II. Data Penerbit</h3>
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Data Penerbit</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label class="label-elegant">Label / Lembaga</label>
@@ -97,7 +97,7 @@
         <hr class="border-slate-50">
 
         <div class="space-y-5">
-          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">III. Data Fisik</h3>
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">  Data Fisik</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="label-elegant">Jumlah dan Jenis Media</label>

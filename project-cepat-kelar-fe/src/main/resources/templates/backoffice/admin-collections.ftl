@@ -1,132 +1,108 @@
 <#-- admin/koleksi.ftl -->
 <#assign activePage = "koleksi">
 <#import "/layout/backoffice_layout.ftl" as layout>
-<#assign totalKoleksi = (daftarBuku?size)!0>
+
+<#-- Perhitungan totalKoleksi -->
+<#assign totalKoleksi = (daftarBuku?? && daftarBuku?has_content)?then(daftarBuku?size, 0)>
 
 <@layout.backofficeLayout title="Admin - Katalog Koleksi | Graha Pusat Literasi" activePage=activePage adminName=adminName>
 
-      <div class="max-w-6xl w-full mx-auto px-4">
-        <h2 class="text-4xl font-bold font-gelasio text-black italic">Katalog Koleksi</h2>
+  <div class="max-w-6xl w-full mx-auto px-4 mb-4">
+    <h2 class="text-3xl font-bold font-gelasio text-slate-800">Katalog Koleksi</h2>
+  </div>
+
+  <#-- Notifikasi -->
+  <#if successMessage??><div class="max-w-6xl w-full mx-auto px-4 mb-3"><div class="bg-green-50 border border-green-200 text-green-700 px-6 py-3 rounded-xl text-sm">${successMessage}</div></div></#if>
+  <#if errorMessage??><div class="max-w-6xl w-full mx-auto px-4 mb-3"><div class="bg-red-50 border border-red-200 text-red-700 px-6 py-3 rounded-xl text-sm">${errorMessage}</div></div></#if>
+
+  <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 mb-5 gap-3">
+    <form action="/admin/collections" method="GET" class="relative w-full max-w-xl">
+      <input type="text" name="query" value="${query!''}" placeholder="Cari Judul, Pengarang, atau No. Panggil..." 
+             class="w-full h-11 pl-6 pr-20 bg-white rounded-xl shadow-sm border border-slate-200 outline-none font-lato text-sm focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all">
+      <button type="submit" class="absolute right-4 top-3 text-slate-400 hover:text-indigo-600 font-semibold text-sm">Cari</button>
+    </form>
+
+    <div id="filterContainer" class="relative w-48">
+      <button onclick="toggleFilter(event)" class="w-full h-11 bg-white rounded-xl shadow-sm border border-slate-200 px-4 flex items-center justify-between font-gelasio text-sm text-slate-700">
+        <span>Semua Kategori</span>
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+      </button>
+      
+      <div id="filterOverlay" class="hidden absolute top-12 left-0 w-full bg-white rounded-xl shadow-xl border border-slate-100 p-2 z-[100] flex flex-col gap-1">
+        <a href="/admin/collections" class="px-4 py-2 hover:bg-indigo-50 rounded text-sm font-lato text-slate-700 transition">Semua</a>
+        <a href="/admin/collections?cat=judul" class="px-4 py-2 hover:bg-indigo-50 rounded text-sm font-lato text-slate-700 transition">Judul</a>
+        <a href="/admin/collections?cat=pengarang" class="px-4 py-2 hover:bg-indigo-50 rounded text-sm font-lato text-slate-700 transition">Pengarang</a>
+        <a href="/admin/collections?cat=no_panggil" class="px-4 py-2 hover:bg-indigo-50 rounded text-sm font-lato text-slate-700 transition">No. Panggil</a>
+        <a href="/admin/collections?cat=subjek" class="px-4 py-2 hover:bg-indigo-50 rounded text-sm font-lato text-slate-700 transition">Subjek</a>
       </div>
+    </div>
+    
+    <a href="/admin/collections/new" class="h-11 bg-[#bef264] text-slate-900 px-6 flex items-center justify-center rounded-xl shadow-sm font-bold text-sm hover:bg-[#a3e635] transition-all whitespace-nowrap">
+      + Tambah Buku
+    </a>
+  </div>
 
-      <#if successMessage??>
-        <div class="max-w-6xl w-full mx-auto px-4">
-          <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl" role="alert">
-            <span class="block sm:inline">${successMessage}</span>
-          </div>
-        </div>
-      </#if>
-      <#if errorMessage??>
-        <div class="max-w-6xl w-full mx-auto px-4">
-          <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl" role="alert">
-            <span class="block sm:inline">${errorMessage}</span>
-          </div>
-        </div>
-      </#if>
-
-      <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 gap-6">
-        <form action="/admin/collections" method="GET" class="relative w-[500px] h-12 bg-white rounded-xl shadow-lg flex items-center px-6 border border-stone-100">
-           <input type="text" name="query" value="${query!''}" placeholder="Ketik Judul, Pengarang..." class="w-full bg-transparent outline-none font-gelasio text-lg text-center text-black">
-           <button type="submit" class="text-sm font-semibold text-stone-500">Search</button>
-        </form>
-
-        <div id="filterContainer" onclick="toggleFilter(event)" class="relative w-56 h-12 bg-white rounded-xl shadow-lg flex items-center justify-between px-6 border border-stone-100 cursor-pointer">
-           <span class="font-gelasio text-base text-black">Semua Kategori</span>
-           <span class="text-xs">v</span>
-
-           <div id="filterOverlay" class="hidden absolute top-14 left-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-[100] flex flex-col gap-3">
-             <label class="flex items-center gap-3 cursor-pointer group">
-               <input type="checkbox" checked class="w-4 h-4 accent-indigo-600 rounded border-slate-300">
-               <span class="font-lato text-sm font-bold text-black group-hover:text-indigo-600 transition">Semua</span>
-             </label>
-
-             <label class="flex items-center gap-3 cursor-pointer group border-t pt-2 border-slate-50">
-               <input type="checkbox" class="w-4 h-4 accent-indigo-600 rounded border-slate-300">
-               <span class="font-lato text-sm text-black group-hover:text-indigo-600 transition">Judul</span>
-             </label>
-
-             <label class="flex items-center gap-3 cursor-pointer group">
-               <input type="checkbox" class="w-4 h-4 accent-indigo-600 rounded border-slate-300">
-               <span class="font-lato text-sm text-black group-hover:text-indigo-600 transition">Pengarang</span>
-             </label>
-
-             <label class="flex items-center gap-3 cursor-pointer group">
-               <input type="checkbox" class="w-4 h-4 accent-indigo-600 rounded border-slate-300">
-               <span class="font-lato text-sm text-black group-hover:text-indigo-600 transition">No. Panggil</span>
-             </label>
-
-             <label class="flex items-center gap-3 cursor-pointer group">
-               <input type="checkbox" class="w-4 h-4 accent-indigo-600 rounded border-slate-300">
-               <span class="font-lato text-sm text-black group-hover:text-indigo-600 transition">Subjek</span>
-             </label>
-           </div>
-        </div>
-        
-        <a href="/admin/collections/new" class="h-12 bg-[#bef264] text-indigo-900 px-8 flex items-center justify-center rounded-xl shadow-md font-bold text-base hover:bg-lime-400 transition-all active:scale-95 text-center whitespace-nowrap">
-          + Tambah Buku Baru
-        </a>
-      </div>
-
-      <div class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-[0px_10px_30px_rgba(243,237,237,1.0)] border border-stone-100 overflow-hidden mb-12">
-        <table class="w-full text-center border-collapse table-fixed">
-          <thead>
-            <tr class="font-gelasio text-black text-xl border-b border-black/10 bg-slate-50/20">
-              <th class="font-bold text-center w-32 px-4 py-7 border-r border-black/10">Nomor Panggil</th>
-              <th class="font-bold text-center px-4 py-7 border-r border-black/10">Judul & Pengarang</th>
-              <th class="font-bold text-center px-4 py-7 border-r border-black/10">Penerbit</th>
-              <th class="font-bold text-center w-28 px-4 py-7 border-r border-black/10">Stok</th>
-              <th class="font-bold text-center w-32 px-6 py-7">Aksi</th>
-            </tr>
-          </thead>
-          <tbody class="font-['Lato'] text-black text-sm text-center divide-y divide-black/10">
-            <#-- MAPPING DATA BUKU DARI BACKEND -->
-            <#if daftarBuku?? && (daftarBuku?size > 0)>
-              <#list daftarBuku as buku>
-                <tr class="hover:bg-slate-50 transition h-20">
-                  <td class="font-bold px-4 border-r border-black/10">${buku.callNumber!'-'}</td>
-                  <td class="px-6 leading-tight border-r border-black/10">${buku.title!'-'} - ${buku.author!'-'}</td>
-                  <td class="px-4 leading-tight border-r border-black/10">${buku.publisher!'-'}, ${buku.publishYear!'-'}</td>
-                  <td class="italic px-4 border-r border-black/10">${(buku.stock!0)} eks</td>
-                  <td class="px-4">
-                    <div class="flex justify-center gap-3 text-xs font-semibold">
-                      <#-- Navigasi Edit menggunakan ID dinamis -->
-                      <a href="/admin/collections/edit/${buku.id}" class="hover:scale-110 transition">Edit</a>
-                      <a href="/admin/collections/delete/${buku.id}" onclick="return confirm('Hapus buku ini?')" class="hover:scale-110 transition">Delete</a>
-                    </div>
-                  </td>
-                </tr>
-              </#list>
-            <#else>
-              <tr>
-                <td colspan="5" class="py-20 text-center text-slate-400 italic">Belum ada data koleksi tersedia.</td>
+  <div class="w-full max-w-6xl mx-auto px-4 mb-6">
+    <div class="w-full bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
+      
+      <#-- Tabel 6 Kolom Proporsional Rata Tengah -->
+      <table class="w-full border-collapse table-fixed text-center">
+        <thead>
+          <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+            <th class="w-[15%] px-4 py-5 font-bold text-center">No. Panggil</th>
+            <th class="w-[25%] px-4 py-5 font-bold text-center">Judul</th>
+            <th class="w-[20%] px-4 py-5 font-bold text-center">Pengarang</th>
+            <th class="w-[15%] px-4 py-5 font-bold text-center">Penerbit</th>
+            <th class="w-[10%] px-4 py-5 font-bold text-center">Stok</th>
+            <th class="w-[15%] px-4 py-5 font-bold text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-slate-100">
+          <#if daftarBuku?? && (daftarBuku?size > 0)>
+            <#list daftarBuku as buku>
+              <tr class="hover:bg-slate-50 transition-colors duration-200">
+                <td class="px-2 py-5 text-sm font-bold text-indigo-600 truncate text-center">${buku.callNumber!'-'}</td>
+                <td class="px-4 py-5 text-sm font-bold text-slate-800 truncate text-center" title="${buku.title!''}">${buku.title!'-'}</td>
+                <td class="px-4 py-5 text-sm text-slate-600 truncate text-center" title="${buku.author!''}">${buku.author!'-'}</td>
+                <td class="px-2 py-5 text-sm text-slate-500 truncate text-center">${buku.publisher!'-'}</td>
+                <td class="px-2 py-5 text-sm font-medium text-slate-700 text-center">${(buku.stock!0)}</td>
+                <td class="px-2 py-5">
+                  <div class="flex justify-center items-center gap-3 text-slate-400 text-xs font-bold">
+                    <a href="/admin/collections/edit/${buku.id}" class="hover:text-indigo-600 transition">Edit</a>
+                    <a href="/admin/collections/delete/${buku.id}" onclick="return confirm('Hapus buku ini?')" class="hover:text-red-500 transition">Delete</a>
+                  </div>
+                </td>
               </tr>
-            </#if>
-          </tbody>
-        </table>
+            </#list>
+          <#else>
+            <tr><td colspan="6" class="py-16 text-center text-slate-400 italic">Belum ada data koleksi tersedia.</td></tr>
+          </#if>
+        </tbody>
+      </table>
 
-        <div class="px-12 py-8 bg-slate-50 border-t border-black/10 flex justify-between items-center text-slate-500">
-          <span>Menampilkan ${totalKoleksi} Koleksi</span>
-            <div class="flex gap-4 items-center">
-                <#-- Logika Paginasi bisa ditambahkan di sini -->
-                <button class="hover:text-indigo-600 font-semibold text-sm transition">Prev</button>
-                <button class="hover:text-indigo-600 font-semibold text-sm transition">Next</button>
-            </div>
-        </div>
-      </div> 
+      <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-slate-500 text-xs">
+          <span>Menampilkan ${totalKoleksi} Data</span>
+          <div class="flex gap-1 items-center">
+             <a href="?page=${(currentPage!1) - 1}" class="px-2 py-1 hover:bg-slate-200 rounded transition ${((currentPage!1) <= 1)?string('pointer-events-none opacity-50', '')}">Prev</a>
+             <span class="px-3 py-1 bg-indigo-600 text-white rounded-lg shadow-sm font-medium">${currentPage!1}</span>
+             <a href="?page=${(currentPage!1) + 1}" class="px-2 py-1 hover:bg-slate-200 rounded transition">Next</a>
+          </div>
+      </div>
+
+    </div>
+  </div> 
 
   <script>
-    function toggleFilter(e) {
-      e.stopPropagation();
-      const overlay = document.getElementById('filterOverlay');
-      if (overlay) overlay.classList.toggle('hidden');
+    function toggleFilter(event) {
+        event.stopPropagation();
+        document.getElementById('filterOverlay').classList.toggle('hidden');
     }
-
     window.onclick = function(event) {
-      const overlay = document.getElementById('filterOverlay');
-      if (overlay && !event.target.closest('#filterContainer')) {
-        overlay.classList.add('hidden');
-      }
+        const overlay = document.getElementById('filterOverlay');
+        const container = document.getElementById('filterContainer');
+        if (overlay && !container.contains(event.target)) {
+            overlay.classList.add('hidden');
+        }
     }
   </script>
-
 </@layout.backofficeLayout>
