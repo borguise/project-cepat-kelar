@@ -85,7 +85,8 @@
                     <div class="faq-body">
                         <div class="faq-content">
                             <div class="faq-answer-box">
-                                <p class="faq-answer-text">Pendaftaran sangat mudah dan gratis. Anda hanya perlu datang ke meja resepsionis di Lantai 1 dengan membawa KTP, KIA, atau Kartu Pelajar. Prosesnya hanya memakan waktu 10 menit.</p>
+                                <p class="faq-answer-text">Setiap perjalanan literasi dimulai dari satu langkah sederhana. Cukup bawa KTP, KIA, atau KK, lengkapi formulir pendaftaran, lalu abadikan senyum terbaikmu untuk kartu anggota. Setelah itu, pintu menuju ribuan koleksi dan berbagai layanan perpustakaan terbuka untukmu.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -99,7 +100,9 @@
                     <div class="faq-body">
                         <div class="faq-content">
                             <div class="faq-answer-box">
-                                <p class="faq-answer-text">Sekolah atau instansi dapat mengirimkan surat permohonan kunjungan ke email resmi kami atau menyerahkannya langsung ke petugas resepsionis minimal 3 hari sebelum jadwal kunjungan.</p>
+                                <p class="faq-answer-text">Momen belajar, berbagi cerita, dan menjelajahi pengetahuan sering kali terasa lebih berkesan ketika dilakukan bersama. Jika kamu berencana datang bersama sekolah, komunitas, instansi, atau kelompok lainnya, kami menyarankan untuk menghubungi kami paling lambat satu minggu sebelum jadwal kunjungan.
+                                Kamu dapat mengirimkan surat yang ditujukan kepada Kepala Dinas Kearsipan dan Perpustakaan Kabupaten Magetan atau menghubungi kontak resmi yang tersedia. Cukup sertakan informasi mengenai tanggal kunjungan, jumlah peserta, serta tujuan kegiatan agar kami dapat mempersiapkan fasilitas dan pendampingan yang sesuai. Dengan persiapan yang baik, setiap kunjungan dapat berlangsung lebih nyaman, terarah, dan menyenangkan bagi seluruh peserta.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -113,7 +116,10 @@
                     <div class="faq-body">
                         <div class="faq-content">
                             <div class="faq-answer-box">
-                                <p class="faq-answer-text">Kami menyediakan area baca yang nyaman, akses Wi-Fi gratis, Soundproof Pod untuk audiobook, ruang koleksi khusus Sejarah Magetan, serta Kotak Suara untuk menyalurkan aspirasi literasi Anda.</p>
+                                <p class="faq-answer-text">
+                                Graha Pusat Literasi bukan hanya tempat untuk membaca, tetapi juga ruang untuk belajar, berdiskusi, mencari inspirasi, dan mengembangkan ide. Beragam fasilitas tersedia untuk mendukung setiap tujuan kunjungan, mulai dari ruang baca umum, lab komputer, ruang pertemuan, hingga ruang baca anak yang ramah dan menyenangkan.
+                                Apa pun yang sedang kamu cari—pengetahuan, inspirasi, atau ruang untuk bertumbuh—kami berupaya menghadirkan lingkungan yang nyaman untuk menemanimu.
+                                </p>
                             </div>
                         </div>
                     </div>
