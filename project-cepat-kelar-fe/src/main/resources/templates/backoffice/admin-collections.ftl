@@ -2,7 +2,6 @@
 <#assign activePage = "koleksi">
 <#import "/layout/backoffice_layout.ftl" as layout>
 
-<#-- Perhitungan totalKoleksi -->
 <#assign totalKoleksi = (daftarBuku?? && daftarBuku?has_content)?then(daftarBuku?size, 0)>
 
 <@layout.backofficeLayout title="Admin - Katalog Koleksi | Graha Pusat Literasi" activePage=activePage adminName=adminName>
@@ -11,7 +10,6 @@
     <h2 class="text-3xl font-bold font-gelasio text-slate-800">Katalog Koleksi</h2>
   </div>
 
-  <#-- Notifikasi -->
   <#if successMessage??><div class="max-w-6xl w-full mx-auto px-4 mb-3"><div class="bg-green-50 border border-green-200 text-green-700 px-6 py-3 rounded-xl text-sm">${successMessage}</div></div></#if>
   <#if errorMessage??><div class="max-w-6xl w-full mx-auto px-4 mb-3"><div class="bg-red-50 border border-red-200 text-red-700 px-6 py-3 rounded-xl text-sm">${errorMessage}</div></div></#if>
 
@@ -44,8 +42,6 @@
 
   <div class="w-full max-w-6xl mx-auto px-4 mb-6">
     <div class="w-full bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
-      
-      <#-- Tabel 6 Kolom Proporsional Rata Tengah -->
       <table class="w-full border-collapse table-fixed text-center">
         <thead>
           <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
@@ -67,9 +63,17 @@
                 <td class="px-2 py-5 text-sm text-slate-500 truncate text-center">${buku.publisher!'-'}</td>
                 <td class="px-2 py-5 text-sm font-medium text-slate-700 text-center">${(buku.stock!0)}</td>
                 <td class="px-2 py-5">
-                  <div class="flex justify-center items-center gap-3 text-slate-400 text-xs font-bold">
-                    <a href="/admin/collections/edit/${buku.id}" class="hover:text-indigo-600 transition">Edit</a>
-                    <a href="/admin/collections/delete/${buku.id}" onclick="return confirm('Hapus buku ini?')" class="hover:text-red-500 transition">Delete</a>
+                  <div class="flex justify-center items-center gap-3 text-slate-400">
+                    <a href="/admin/collections/edit/${buku.id}" title="Edit" class="text-indigo-600 hover:text-indigo-800 transition">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </a>
+                    <a href="/admin/collections/delete/${buku.id}" onclick="return confirm('Hapus buku ini?')" title="Hapus" class="text-red-500 hover:text-red-700 transition">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </a>
                   </div>
                 </td>
               </tr>
@@ -88,7 +92,6 @@
              <a href="?page=${(currentPage!1) + 1}" class="px-2 py-1 hover:bg-slate-200 rounded transition">Next</a>
           </div>
       </div>
-
     </div>
   </div> 
 
