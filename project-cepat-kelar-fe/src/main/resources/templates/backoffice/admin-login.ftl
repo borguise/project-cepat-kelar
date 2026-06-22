@@ -27,9 +27,9 @@
     <form action="/login" method="POST" class="w-full space-y-6">
         
         <div class="flex flex-col gap-2">
-            <label class="text-black text-xl font-normal font-['Gelasio']">Email</label>
-            <input type="email" name="username" id="username" 
-                   placeholder="Masukkan alamat email Anda disini" 
+            <label class="text-black text-xl font-normal font-['Gelasio']">Email atau Username</label>
+            <input type="text" name="username" id="username" 
+                   placeholder="Masukkan alamat email atau username Anda" 
                    class="w-full h-12 px-4 rounded-lg bg-white border border-gray-200 shadow-md text-indigo-800 text-lg font-['Lato'] focus:ring-2 focus:ring-indigo-800 outline-none"
                    required>
         </div>
