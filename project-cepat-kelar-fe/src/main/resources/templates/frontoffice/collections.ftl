@@ -1,234 +1,285 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>${pageTitle!"Koleksi Literasi - Graha Pusat Literasi"}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<#-- =======================================================
+     COLLECTIONS.FTL - KIOSK SPA (FINAL MASTERPIECE)
+     Fitur: Smart Grid, Anti-Bug Filter, Namespace Isolated
+     ======================================================= -->
+
+<style>
+    /* Menyembunyikan Scrollbar tapi tetap bisa digulir */
+    .coll-scroll-area::-webkit-scrollbar { display: none; }
+    .coll-scroll-area { scrollbar-width: none; overflow-y: auto; height: 100%; width: 100%; padding-bottom: 100px; position: relative; z-index: 10;}
     
-    <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    /* Latar Belakang Batik Khas Magetan */
+    .coll-batik-layer {
+        position: absolute; inset: 0;
+        background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
+        background-size: 520px; opacity: 0.12; mix-blend-mode: multiply;
+        pointer-events: none; z-index: 1;
+    }
 
-        /* KANVAS UTAMA: Cream Figma #f7f0cb */
-        #koleksi-canvas {
-            width: 864px; height: 1536px;
-            background-color: #f7f0cb; 
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 120px rgba(0,0,0,0.6);
-            transform-origin: center center;
-        }
+    /* MODAL FILTER UI (Sudah kebal dari Bug Chromium "4 Kotak") */
+    .coll-filter-overlay { 
+        position: absolute; /* Wajib absolute agar tidak mengecil di Kiosk */
+        inset: 0; 
+        background: rgba(0, 0, 0, 0.75); /* Warna hitam transparan elegan */
+        /* backdrop-filter: blur(8px); Dihapus untuk mencegah bug grafis Kiosk */
+        z-index: 9999; 
+        display: none; justify-content: center; align-items: center; 
+    }
+    
+    .coll-filter-card {
+        width: 600px; background: #ffffff; border-radius: 32px; padding: 50px; position: relative;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .coll-filter-close { position: absolute; top: 35px; right: 40px; font-size: 40px; color: #94a3b8; cursor: pointer; transition: color 0.2s; }
+    .coll-filter-close:hover { color: #3730a3; }
+    .coll-filter-title { font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; color: #1e293b; text-align: center; margin-bottom: 55px; }
+    .coll-filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 45px 25px; margin-bottom: 60px; }
+    .coll-filter-item { display: flex; align-items: center; gap: 20px; cursor: pointer; }
+    .coll-checkbox-ui { width: 45px; height: 45px; border: 3px solid #cbd5e1; border-radius: 14px; display: flex; justify-content: center; align-items: center; background: #f8fafc; transition: all 0.2s ease; flex-shrink: 0; }
+    
+    .coll-filter-item input { display: none; }
+    .coll-filter-item input:checked + .coll-checkbox-ui { background-color: #3730a3; border-color: #3730a3; box-shadow: 0 5px 15px rgba(55, 48, 163, 0.35); }
+    .coll-checkbox-ui::after { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: white; font-size: 22px; display: none; }
+    .coll-filter-item input:checked + .coll-checkbox-ui::after { display: block; }
+    
+    .coll-label-text { font-family: 'Inter', sans-serif; font-size: 26px; color: #334155; font-weight: 500; }
+    .coll-btn-apply { width: 100%; padding: 25px; background-color: #3730a3; color: white; border: none; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 30px; font-weight: 700; cursor: pointer; transition: transform 0.1s; }
+    .coll-btn-apply:active { transform: scale(0.98); }
+</style>
 
-        .batik-overlay {
-            position: absolute; inset: 0;
-            background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
-            background-size: 520px;
-            opacity: 0.5; mix-blend-mode: multiply;
-            pointer-events: none; z-index: 1;
-        }
+<div class="w-full h-full bg-[#f7f0cb] relative overflow-hidden font-['Inter']">
+    
+    <div class="coll-batik-layer"></div>
 
-        .close-btn {
-            position: absolute; top: 40px; right: 50px;
-            font-size: 60px; color: #1F1F1F;
-            cursor: pointer; z-index: 1000; font-family: 'Inter', sans-serif;
-            transition: opacity 0.4s ease;
-        }
-
-        /* TOP BAR: Search Box dengan Pemicu Aktif */
-        .top-bar-fixed {
-            position: absolute; width: 100%; top: 150px; left: 0;
-            padding: 0 52px; z-index: 30;
-        }
-        .search-box {
-            background: white; border-radius: 20px; height: 90px;
-            display: flex; align-items: center; padding: 0 35px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-        }
-        .search-input {
-            width: 100%; border: none; outline: none; font-family: 'Gelasio', serif;
-            font-size: 34px; color: #334155; background: transparent; text-align: center;
-        }
-        .search-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; }
-
-        /* AREA GULIR */
-        .scroll-area {
-            flex: 1; overflow-y: auto;
-            padding: 0 52px; z-index: 10;
-            scrollbar-width: none;
-            display: flex; flex-direction: column;
-        }
-        .scroll-area::-webkit-scrollbar { display: none; }
-        .vertical-spacer { height: 320px; flex-shrink: 0; }
-
-        /* WRAPPER PUTIH TUNGGAL ADAPTIF */
-        .white-wrapper {
-            background-color: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            padding: 55px 40px; 
-            margin-bottom: 150px;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.03);
-            min-height: 900px;
-            display: flex; flex-direction: column;
-        }
-
-        /* LOGIKA CENTERING UNTUK HASIL SEDIKIT */
-        .adaptive-container { flex: 1; display: flex; flex-direction: column; }
-        .centered-state { justify-content: center; align-items: center; }
-
-        .collection-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 50px 30px; width: 100%;
-        }
-
-        /* MODAL FILTER: Ukuran Proporsional */
-        #filterModal { 
-            position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); 
-            z-index: 2000; display: none; justify-content: center; align-items: center; 
-        }
-        .OverlayFilter { 
-            width: 580px; height: 380px; 
-            background-color: white; border-radius: 28px; 
-            position: relative; padding: 50px; 
-        }
-
-        /* KARTU BUKU */
-        .book-card { display: flex; flex-direction: column; align-items: center; text-decoration: none; cursor: pointer; }
-        .book-cover {
-            width: 100%; aspect-ratio: 2/3; background-color: #f1f5f9;
-            border-radius: 20px; margin-bottom: 22px; overflow: hidden;
-            border: 1px solid #e2e8f0; box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-        }
-        .book-title { font-family: 'Gelasio', serif; font-size: 32px; font-weight: bold; color: #3730a3; text-align: center; line-height: 1.2; }
+    <div class="coll-scroll-area flex flex-col items-center">
         
-        /* PAGINASI */
-        .pagination-footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-    </style>
-</head>
-<body>
+        <#-- ================= BROWSE VIEW ================= -->
+        <div id="collViewBrowse" class="w-full max-w-[800px] flex flex-col items-center">
+            
+            <#-- Search Bar dengan Ikon Pohon -->
+            <div class="w-full mb-[50px] mt-[150px] relative">
+                <form class="w-full h-[100px] bg-white rounded-[30px] flex items-center px-[40px] shadow-[0_10px_30px_rgba(0,0,0,0.08)]" onsubmit="collHandleSearch(event)">
+                    <button type="submit" class="bg-transparent border-none cursor-pointer">
+                        <i class="fas fa-search text-[40px] text-slate-300 mr-6"></i>
+                    </button>
+                    <input type="text" id="collSearchInput" class="flex-1 bg-transparent border-none outline-none text-center font-['Gelasio'] font-bold text-[34px] text-[#3730a3]" value="Cari Judul, Pengarang, Penerbit" autocomplete="off" onfocus="if(this.value=='Cari Judul, Pengarang, Penerbit')this.value=''">
+                    
+                    <#-- Ikon Pohon Cemara yang Estetik -->
+                    <i class="fas fa-tree text-[50px] text-[#065f46] ml-6 cursor-pointer hover:scale-110 transition-transform" onclick="collToggleFilter()"></i>
+                </form>
+            </div>
 
-    <div id="koleksi-canvas">
-        <div class="batik-overlay"></div>
-        <div id="dynamicCloseBtn" class="close-btn" onclick="window.history.back()">x</div>
+            <#-- Header Pencarian (Dilengkapi Tombol Reset Estetik) -->
+            <div id="collSearchHeader" class="hidden w-full flex-col justify-center items-center mb-[40px] gap-3">
+                <div id="collSearchTitle" class="font-['Gelasio'] font-bold text-[36px] text-slate-700 text-center w-full truncate">
+                    Hasil pencarian
+                </div>
+                <div class="font-['Lato'] text-[20px] font-bold text-sky-500 cursor-pointer flex items-center gap-2 hover:text-sky-600 active:scale-95 transition bg-sky-50 px-5 py-2 rounded-full border border-sky-100 shadow-sm" onclick="collResetToHome()">
+                    <i class="fas fa-times-circle"></i> Bersihkan pencarian
+                </div>
+            </div>
 
-        <div class="top-bar-fixed">
-            <form action="${searchAction!"/search"}" method="GET" id="searchForm" class="search-box">
-                <button type="submit" class="search-btn">
-                    <i class="fas fa-search text-gray-300 mr-5 text-3xl"></i>
-                </button>
+            <#-- White Card (Wadah Grid) -->
+            <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-sm min-h-[600px]">
                 
-                <input type="text" name="keyword" value="${keyword!""}" placeholder="Cari judul, penulis, ..." class="search-input" autocomplete="off">
+                <#-- Grid Kontainer yang dinamis -->
+                <div id="collGridContainer" class="grid grid-cols-3 gap-[50px_30px]"></div>
                 
-                <i class="fas fa-tree text-green-800 text-4xl ml-4 cursor-pointer" onclick="toggleFilter()"></i>
+                <#-- Wadah Not Found -->
+                <div id="collEmptyContainer" class="hidden flex-col items-center justify-center min-h-[500px] text-center gap-[40px]">
+                    <div class="font-['Gelasio'] font-bold text-[46px] text-slate-800">Tidak Ditemukan</div>
+                    <div class="w-[220px] h-[220px] rounded-full bg-slate-100 flex items-center justify-center text-slate-300 text-[110px] shadow-inner">
+                        <i class="fas fa-search-minus"></i>
+                    </div>
+                    <p class="font-['Lato'] text-[28px] text-slate-500 px-10">Coba gunakan kata kunci lain.</p>
+                </div>
+            </div>
+        </div>
+
+        <#-- ================= DETAIL VIEW ================= -->
+        <div id="collViewDetail" class="hidden w-full max-w-[800px] flex-col items-center mt-[150px]">
+            
+            <#-- Tombol Kembali di TENGAH -->
+            <div class="w-full flex justify-center mb-[25px] relative z-20">
+                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition bg-white px-6 py-3 rounded-full shadow-sm" onclick="collGoBack()">
+                    <i class="fas fa-chevron-left"></i> Kembali ke daftar koleksi
+                </div>
+            </div>
+
+            <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-xl flex flex-col gap-[50px] mb-[80px]">
+                <div class="flex items-start gap-[50px]">
+                    <div class="w-[280px] h-[400px] shrink-0 rounded-[16px] overflow-hidden border-[4px] border-slate-100 shadow-lg bg-slate-100">
+                        <img id="collDtlCover" src="" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1 flex flex-col justify-center text-center mt-6">
+                        <h1 id="collDtlTitle" class="font-['Gelasio'] font-bold text-[42px] leading-tight text-slate-900 mb-4">Judul</h1>
+                        <div id="collDtlCall" class="font-['Gelasio'] font-bold text-[60px] text-[#3730a3]">000.000</div>
+                        <div id="collDtlCat" class="font-['Gelasio'] font-bold text-[30px] text-slate-400 uppercase mt-2">Kategori</div>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <h2 class="font-['Gelasio'] font-bold text-[38px] text-slate-900 mb-[30px] border-b-4 border-slate-100 pb-4 inline-block">Keterangan</h2>
+                    <div class="flex flex-col gap-[20px]">
+                        <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
+                            <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Tajuk Pengarang</div>
+                            <div id="collDtlAuthor" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
+                            <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Data Penerbit</div>
+                            <div id="collDtlPub" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
+                            <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Data Fisik</div>
+                            <div id="collDtlPhysical" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <#-- ================= MODAL FILTER (CHECKBOX) ================= -->
+    <div id="collFilterOverlay" class="coll-filter-overlay" onclick="collToggleFilter()">
+        <div class="coll-filter-card" onclick="event.stopPropagation()">
+            <div class="coll-filter-close" onclick="collToggleFilter()"><i class="fas fa-times"></i></div>
+            <h2 class="coll-filter-title">Filter Kategori</h2>
+            <form onsubmit="collApplyFilterSearch(event)">
+                <div class="coll-filter-grid">
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkJudul" checked><div class="coll-checkbox-ui"></div><span class="coll-label-text">Judul</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkPengarang"><div class="coll-checkbox-ui"></div><span class="coll-label-text">Pengarang</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkPenerbit"><div class="coll-checkbox-ui"></div><span class="coll-label-text">Penerbit</span></label>
+                    <label class="coll-filter-item"><input type="checkbox" id="collChkIsbn"><div class="coll-checkbox-ui"></div><span class="coll-label-text">ISBN/Kategori</span></label>
+                </div>
+                <button type="submit" class="coll-btn-apply">Terapkan Filter</button>
             </form>
         </div>
-
-        <div id="scrollArea" class="scroll-area">
-            <div class="vertical-spacer"></div>
-
-            <div class="white-wrapper">
-                <#-- JUDUL HASIL PENCARIAN -->
-                <h2 class="font-['Gelasio'] font-bold text-4xl text-slate-500/70 text-center mb-12">
-                    Ini hasil pencarian “${keyword!"Sepak bola"}”
-                </h2>
-
-                <#assign resultCount = (bookList??)?then(bookList?size, 0)>
-
-                <div class="adaptive-container ${(resultCount <= 3)?string('centered-state', '')}">
-                    
-                    <#if resultCount == 0>
-                        <#-- TAMPILAN: TIDAK DITEMUKAN -->
-                        <div class="flex flex-col items-center text-center gap-10">
-                            <h3 class="font-['Gelasio'] font-bold text-black text-[44px]">Pencarian Tidak Ditemukan</h3>
-                            <i class="fas fa-search text-zinc-200 text-[180px]"></i>
-                            <p class="font-['Lato'] text-[#9ca3af] text-[32px] px-10">Coba periksa kembali ejaan atau gunakan kata kunci lain.</p>
-                        </div>
-
-                    <#elseif resultCount == 1>
-                        <#-- TAMPILAN: 1 ITEM (BESAR) -->
-                        <#list bookList as book>
-                        <div class="flex flex-col items-center">
-                            <div class="w-[450px] aspect-[2/3] rounded-3xl overflow-hidden mb-8 shadow-2xl border border-zinc-100">
-                                <a href="/collections/detail?id=${book.id}">
-                                    <img src="/admin/collections/image/${book.id}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600'">
-                                </a>
-                            </div>
-                            <span class="book-title text-5xl">${book.title!''}</span>
-                        </div>
-                        </#list>
-
-                    <#elseif resultCount <= 3>
-                        <#-- TAMPILAN: 2-3 ITEM (TENGAH) -->
-                        <div class="grid grid-cols-${resultCount} gap-12 w-full justify-center">
-                            <#list bookList as book>
-                            <a class="book-card" href="/collections/detail?id=${book.id}">
-                                <div class="book-cover w-[210px]"><img src="/admin/collections/image/${book.id}" onerror="this.src='https://placehold.co/400x600'"></div>
-                                <span class="book-title">${book.title!''}</span>
-                            </a>
-                            </#list>
-                        </div>
-
-                    <#else>
-                        <#-- TAMPILAN: MATCH BANYAK (GRID) -->
-                        <div class="collection-grid">
-                            <#list bookList as book>
-                            <a class="book-card" href="/collections/detail?id=${book.id}">
-                                <div class="book-cover"><img src="/admin/collections/image/${book.id}" onerror="this.src='https://placehold.co/400x600'"></div>
-                                <span class="book-title">${book.title!''}</span>
-                            </a>
-                            </#list>
-                        </div>
-                    </#if>
-                </div>
-
-                <#-- PAGINASI: HANYA MUNCUL JIKA HASIL BANYAK -->
-                <#if resultCount gt 3>
-                <div class="pagination-footer">
-                    <a href="?keyword=${keyword!""}&page=${currentPage-1}" class="bg-zinc-100 text-zinc-500 px-8 py-4 rounded-xl font-bold text-xl">← Sblmnya</a>
-                    <div class="text-zinc-400 font-['Inter'] text-xl font-semibold">Hal <span class="text-[#3730a3]">${currentPage!1}</span> dari ${totalPages!5}</div>
-                    <a href="?keyword=${keyword!""}&page=${currentPage+1}" class="bg-[#3730a3] text-white px-8 py-4 rounded-xl font-bold text-xl shadow-lg">Brkutnya →</a>
-                </div>
-                </#if>
-            </div>
-        </div>
     </div>
 
-    <div id="filterModal">
-        <div class="OverlayFilter">
-            <div class="absolute right-[25px] top-[20px] cursor-pointer text-3xl font-bold" onclick="toggleFilter()">X</div>
-            <h1 class="font-['Inter'] font-bold text-[42px] text-center mb-10">Filter Kategori</h1>
-            <div class="grid grid-cols-2 gap-8">
-                <div class="flex items-center gap-4"><div class="w-8 h-8 bg-zinc-100 rounded border"></div><span class="text-2xl font-['Inter']">Judul</span></div>
-                <div class="flex items-center gap-4"><div class="w-8 h-8 bg-zinc-100 rounded border"></div><span class="text-2xl font-['Inter']">Penerbit</span></div>
-                <div class="flex items-center gap-4"><div class="w-8 h-8 bg-zinc-100 rounded border"></div><span class="text-2xl font-['Inter']">Isbn</span></div>
-                <div class="flex items-center gap-4"><div class="w-8 h-8 bg-zinc-100 rounded border"></div><span class="text-2xl font-['Inter']">Penulis</span></div>
-            </div>
-        </div>
-    </div>
+</div>
 
-    <script>
-        const scrollArea = document.getElementById('scrollArea');
-        const closeBtn = document.getElementById('dynamicCloseBtn');
+<script>
+    const collBasePath = "${basePath!"/images/frontoffice"}";
+    
+    <#-- INJEKSI DATA DATABASE (Dengan Fallback Dummy Putih Biru) -->
+    const collDbBooks = [
+        <#if bookList?? && bookList?has_content>
+            <#list bookList as b>
+            { id: ${b.id}, title: "${(b.title!'Tanpa Judul')?js_string}", callNum: "${(b.callNum!'000.000')?js_string}", category: "${(b.cat!'Koleksi')?js_string}", author: "${(b.author!'Anonim')?js_string}", publisher: "${(b.pub!'-')?js_string}", physical: "${(b.phys!'-')?js_string}", img: "/admin/collections/image/${b.id}" }<#if b?has_next>,</#if>
+            </#list>
+        <#else>
+            { id: 1, title: "Seni Memahami Literasi Magetan", callNum: "899.221", category: "Buku Umum", author: "Pemerintah Kab. Magetan", publisher: "Graha Literasi, 2024", physical: "xiv, 250 hlm ; 24 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+1" },
+            { id: 2, title: "Sejarah Gunung Lawu", callNum: "959.8", category: "Sejarah", author: "Dinas Kebudayaan", publisher: "Pustaka Jawa, 2021", physical: "200 hlm ; 21 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+2" },
+            { id: 3, title: "Kumpulan Puisi Pring Sedapur", callNum: "811.1", category: "Sastra", author: "Seniman Lokal", publisher: "Indie Press, 2023", physical: "120 hlm ; 19 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+3" },
+            { id: 4, title: "Ensiklopedia Magetan", callNum: "030.1", category: "Referensi", author: "Tim Riset", publisher: "Pemkab, 2022", physical: "500 hlm ; 30 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+4" },
+            { id: 5, title: "Pesona Wisata Telaga Sarangan", callNum: "910.2", category: "Travel", author: "Pariwisata", publisher: "Graha, 2024", physical: "80 hlm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+5" },
+            { id: 6, title: "Batik Pring Sedapur", callNum: "746.6", category: "Seni Budaya", author: "Kreator Magetan", publisher: "Pemkab, 2023", physical: "150 hlm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+6" }
+        </#if>
+    ];
 
-        function toggleFilter() {
-            const m = document.getElementById('filterModal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+<#noparse>
+    let collCurrentBooks = [...collDbBooks];
+
+    function collNavigateTo(view) {
+        document.getElementById('collViewBrowse').classList.toggle('hidden', view !== 'home' && view !== 'search');
+        document.getElementById('collViewBrowse').classList.toggle('flex', view === 'home' || view === 'search');
+        document.getElementById('collViewDetail').classList.toggle('hidden', view !== 'detail');
+        document.getElementById('collViewDetail').classList.toggle('flex', view === 'detail');
+        
+        if(view !== 'detail') {
+            document.getElementById('collSearchHeader').classList.toggle('hidden', view === 'home');
+            document.getElementById('collSearchHeader').classList.toggle('flex', view === 'search');
+            collRenderGrid();
         }
+    }
 
-        scrollArea.addEventListener('scroll', () => {
-            closeBtn.style.opacity = scrollArea.scrollTop > 80 ? '0' : '1';
+    // Mengembalikan ke tampilan Home awal
+    function collResetToHome() {
+        document.getElementById('collSearchInput').value = 'Cari Judul, Pengarang, Penerbit';
+        collCurrentBooks = [...collDbBooks];
+        collNavigateTo('home');
+    }
+
+    // Mengeksekusi Pencarian
+    function collHandleSearch(e) {
+        if(e) e.preventDefault();
+        const q = document.getElementById('collSearchInput').value.trim().toLowerCase();
+        if(q === '' || q === 'cari judul, pengarang, penerbit') { collResetToHome(); return; }
+        
+        const fJudul = document.getElementById('collChkJudul').checked;
+        const fPengarang = document.getElementById('collChkPengarang').checked;
+        const fPenerbit = document.getElementById('collChkPenerbit').checked;
+        const fIsbn = document.getElementById('collChkIsbn').checked;
+
+        collCurrentBooks = collDbBooks.filter(b => {
+            if(!fJudul && !fPengarang && !fPenerbit && !fIsbn) return false;
+            let match = false;
+            if (fJudul && b.title.toLowerCase().includes(q)) match = true;
+            if (fPengarang && b.author.toLowerCase().includes(q)) match = true;
+            if (fPenerbit && b.publisher.toLowerCase().includes(q)) match = true;
+            if (fIsbn && (b.callNum.toLowerCase().includes(q) || b.category.toLowerCase().includes(q))) match = true;
+            return match;
         });
+        
+        document.getElementById('collSearchTitle').innerText = 'Hasil pencarian "' + document.getElementById('collSearchInput').value + '"';
+        collNavigateTo('search');
+    }
 
-        function scaleCanvas() {
-            const canvas = document.getElementById('koleksi-canvas');
-            const scale = Math.min(window.innerWidth / 864, window.innerHeight / 1536);
-            canvas.style.transform = "scale(" + scale + ")";
+    // Membuat Grid Adaptif (Smart Centering)
+    function collRenderGrid() {
+        const grid = document.getElementById('collGridContainer');
+        const empty = document.getElementById('collEmptyContainer');
+        
+        if(collCurrentBooks.length === 0) { 
+            grid.classList.add('hidden'); 
+            empty.classList.replace('hidden', 'flex'); 
+            return; 
         }
-        window.addEventListener('load', scaleCanvas);
-        window.addEventListener('resize', scaleCanvas);
-    </script>
-</body>
-</html>
+        
+        grid.classList.remove('hidden'); 
+        empty.classList.replace('flex', 'hidden');
+        
+        const count = collCurrentBooks.length;
+        
+        // Logika layout adaptif agar posisinya cantik jika hasil sedikit
+        if (count === 1) { 
+            grid.className = "flex justify-center pt-[20px]"; 
+        } else if (count === 2) { 
+            grid.className = "flex justify-center gap-[60px] pt-[20px]"; 
+        } else { 
+            grid.className = "grid grid-cols-3 gap-[50px_30px]"; 
+        }
+        
+        grid.innerHTML = collCurrentBooks.map(b => `
+            <div class="flex flex-col items-center gap-4 cursor-pointer group ${count <= 2 ? 'w-[220px]' : 'w-full'}" onclick="collOpenDetail(${b.id})">
+                <div class="w-full aspect-[2/3] rounded-[16px] overflow-hidden border border-slate-200 bg-white shadow-sm group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300 shrink-0">
+                    <img src="${b.img}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600/ffffff/3730a3?text=Cover'">
+                </div>
+                <div class="w-full text-center px-2">
+                    <div class="font-['Gelasio'] text-[24px] font-bold text-[#3730a3] leading-snug line-clamp-2">${b.title}</div>
+                    <div class="font-['Inter'] text-[16px] text-slate-400 mt-1 uppercase tracking-widest truncate">${b.category}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function collOpenDetail(id) {
+        const b = collDbBooks.find(x => x.id === id);
+        if(!b) return;
+        document.getElementById('collDtlTitle').innerText = b.title;
+        document.getElementById('collDtlCall').innerText = b.callNum;
+        document.getElementById('collDtlCat').innerText = b.category;
+        document.getElementById('collDtlAuthor').innerText = b.author;
+        document.getElementById('collDtlPub').innerText = b.publisher;
+        document.getElementById('collDtlPhysical').innerText = b.physical;
+        document.getElementById('collDtlCover').src = b.img;
+        collNavigateTo('detail');
+    }
+
+    function collGoBack() { collHandleSearch(); }
+    function collToggleFilter() { const m = document.getElementById('collFilterOverlay'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+    function collApplyFilterSearch(e) { e.preventDefault(); collToggleFilter(); collHandleSearch(e); }
+
+    // Init awal
+    setTimeout(() => collNavigateTo('home'), 150);
+</#noparse>
+</script>

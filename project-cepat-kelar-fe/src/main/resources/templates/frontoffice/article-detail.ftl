@@ -1,172 +1,106 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>${pageTitle!"Detail Artikel - Graha Pusat Literasi"}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<#-- =======================================================
+     ARTICLE-DETAIL.FTL - KODE TERPADU (FIGMA UI + KOMENTAR DINAMIS)
+     Murni HTML & CSS Internal, Anti Error 500
+     ======================================================= -->
+<style>
+    /* Mengimpor font secara paksa khusus untuk fragment ini */
+    @import url('https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+    .fg-wrapper { width: 100%; display: flex; flex-direction: column; padding: 20px 40px 60px 40px; box-sizing: border-box; }
     
-    <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    /* Tipografi & Gambar */
+    .fg-title { font-family: 'Gelasio', serif; color: #3B5998; font-size: 42px; font-weight: bold; text-align: center; margin-bottom: 30px; line-height: 1.2; }
+    .fg-image { width: 100%; height: 400px; object-fit: cover; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .fg-content { font-family: 'Lato', sans-serif; color: #334155; font-size: 20px; line-height: 1.8; text-align: justify; margin-bottom: 50px; }
+    .fg-content p { margin-bottom: 20px; }
 
-        /* KANVAS UTAMA */
-        #article-canvas {
-            width: 1080px; height: 1920px;
-            background-color: #f5f5f4; 
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 120px rgba(0,0,0,0.6);
-            transform-origin: center center;
-        }
+    /* Area Formulir Komentar (Sesuai Figma) */
+    .fg-comment-box { background-color: #E2E8F0; border-radius: 24px; padding: 40px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 20px; }
+    .fg-input { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
+    .fg-input::placeholder { color: #94A3B8; }
+    
+    .fg-textarea-wrapper { position: relative; width: 100%; }
+    .fg-textarea { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; height: 120px; resize: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
+    .fg-textarea::placeholder { color: #94A3B8; text-align: center; line-height: 80px; }
+    
+    .fg-submit-btn { position: absolute; bottom: 15px; right: 20px; background: transparent; border: none; font-size: 24px; color: #3B5998; cursor: pointer; transition: transform 0.2s; }
+    .fg-submit-btn:hover { transform: scale(1.1); }
 
-        /* TOMBOL KELUAR: Dinamis Menghilang */
-        .close-btn {
-            position: absolute; top: 40px; right: 50px;
-            font-size: 60px; color: #1F1F1F;
-            cursor: pointer; z-index: 1000; font-family: 'Inter', sans-serif;
-            transition: opacity 0.4s ease, visibility 0.4s;
-        }
+    /* Daftar Komentar */
+    .fg-comment-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+    .fg-comment-item { display: flex; gap: 20px; align-items: flex-start; }
+    .fg-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #3B5998; color: white; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; overflow: hidden; }
+    .fg-comment-text-area { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+    .fg-comment-name { font-family: 'Lato', sans-serif; font-size: 16px; font-weight: bold; color: #3B5998; }
+    .fg-comment-isi { font-family: 'Lato', sans-serif; font-size: 16px; color: #475569; line-height: 1.5; }
+</style>
 
-        /* AREA GULIR */
-        .content-scroll {
-            flex: 1; overflow-y: auto;
-            padding: 50px 32px; z-index: 10;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
-        }
-        .content-scroll::-webkit-scrollbar { display: none; }
+<div class="fg-wrapper">
+    
+    <#-- 1. Judul & Gambar Utama -->
+    <h1 class="fg-title">Memori Milik Kita</h1>
+    <img src="https://picsum.photos/seed/magetan1/1080/600" alt="Memori Milik Kita" class="fg-image">
 
-        /* WRAPPER KONTEN PUTIH */
-        .article-wrapper {
-            background-color: #ffffff; border-radius: 32px;
-            padding: 60px 40px; display: flex; flex-direction: column;
-            align-items: center; gap: 40px;
-            margin-bottom: 50px;
-        }
+    <#-- 2. Konten Artikel -->
+    <div class="fg-content">
+        <p>Literasi tidak berhenti pada membaca, Di Graha Pusat Literasi, literasi bergerak lebih jauh: menjadi aksi, eksperimen, dan penciptaan makna. Melalui ruang lab komputer, pengunjung diajak melangkah dari rasa ingin tahu menuju pengalaman memahami informasi secara aktif.</p>
+        
+        <p>Ketika jawaban tidak selalu tersedia di rak koleksi, lab komputer menjadi ruang terbuka untuk menjelajah. Di sini, pengunjung dapat mengakses beragam sumber informasi melalui internet, menelusuri topik yang dibutuhkan, memperluas sudut pandang, dan menemukan referensi dalam berbagai bentuk—tidak hanya tulisan, tetapi juga visual dan audio digital lainnya.</p>
 
-        .back-link { font-family: 'Lato', sans-serif; color: #7dd3fc; font-size: 24px; text-decoration: none; }
-        .article-title { font-family: 'Gelasio', serif; color: rgba(51, 65, 85, 0.75); font-size: 48px; font-weight: bold; text-align: center; }
-        .main-img { width: 100%; height: 450px; object-fit: cover; border-radius: 16px; }
+        <p>Suasana yang nyaman dan fasilitas yang tersedia memberi kebebasan bagi pengunjung untuk belajar sesuai ritmenya sendiri. Proses mencari informasi menjadi pengalaman yang menyenangkan: mencoba, menemukan, dan mengelola pengetahuan secara mandiri. Dari sinilah literasi berubah menjadi keterampilan yang hidup dan relevan dengan kebutuhan masa kini.</p>
 
-        /* TEKS ARTIKEL: Indigo-800 */
-        .body-text { 
-            font-family: 'Gelasio', serif; color: #3730a3; font-size: 26px; 
-            font-weight: bold; line-height: 1.8; text-align: center; 
-        }
-
-        /* SEKSI KOMENTAR */
-        .comment-section {
-            width: 100%; background-color: #d4d4d8; border-radius: 24px;
-            padding: 40px; display: flex; flex-direction: column; gap: 30px;
-        }
-        .input-field {
-            width: 100%; background: white; border-radius: 16px;
-            padding: 20px; font-family: 'Gelasio', serif; font-size: 24px;
-            border: none; text-align: center;
-        }
-        .textarea-field {
-            width: 100%; height: 200px; background: white; border-radius: 16px;
-            padding: 20px; font-family: 'Lato', sans-serif; font-size: 24px;
-            border: none; text-align: center; resize: none;
-        }
-
-        .comment-item { display: flex; gap: 20px; align-items: flex-start; margin-top: 20px; }
-        .avatar { width: 60px; height: 60px; border-radius: 50%; background: #e5e7eb; flex-shrink: 0; }
-        .user-name { font-family: 'Lato', sans-serif; font-size: 22px; color: #1F1F1F; }
-        .user-text { font-family: 'Gelasio', serif; font-size: 24px; font-weight: bold; color: #1F1F1F; }
-    </style>
-</head>
-<body>
-
-    <div id="article-canvas">
-        <div id="dynamicCloseBtn" class="close-btn" onclick="window.history.back()">x</div>
-
-        <div id="scrollArea" class="content-scroll">
-            
-            <div class="article-wrapper">
-                <a href="${backUrl!"/articles"}" class="back-link">&lt; Kembali ke daftar berita</a>
-                
-                <h1 class="article-title">${articleTitle!"Judul Artikel"}</h1>
-                
-                <#if articleImage??>
-                    <img src="${articleImage}" class="main-img" alt="Header">
-                <#else>
-                    <img src="https://placehold.co/752x421" class="main-img">
-                </#if>
-
-                <div class="body-text">
-                    ${articleContent!"Isi artikel tidak ditemukan."}
-                </div>
-
-                <#-- SEKSI KOMENTAR -->
-                <div class="comment-section">
-                    <#if commentSuccess??>
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                            ${commentSuccess}
-                        </div>
-                    </#if>
-                    <#if commentError??>
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            ${commentError}
-                        </div>
-                    </#if>
-                    <form action="${commentAction!"/comment/submit"}" method="POST" class="flex flex-col gap-6">
-                        <input type="hidden" name="articleId" value="${articleId!''}"/>
-                        <input type="hidden" name="source" value="${commentSource!''}"/>
-                        <input type="hidden" name="redirectUrl" value="${redirectUrl!''}"/>
-                        <input type="text" name="name" placeholder="Nama" class="input-field" required>
-                        <input type="email" name="email" placeholder="Email (opsional)" class="input-field">
-                        <div class="relative">
-                            <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="textarea-field" required></textarea>
-                            <button type="submit" class="absolute bottom-4 right-4 text-indigo-800 text-3xl"><i class="fas fa-paper-plane"></i></button>
-                        </div>
-                    </form>
-
-                    <div class="mt-8 space-y-6">
-                        <#if comments??>
-                            <#list comments as c>
-                                <div class="comment-item">
-                                    <div class="avatar">
-                                        <#if c.avatar??><img src="${c.avatar}" class="rounded-full w-full h-full"></#if>
-                                    </div>
-                                    <div class="text-left">
-                                        <div class="user-name">${c.userName}</div>
-                                        <div class="user-text">${c.text}</div>
-                                    </div>
-                                </div>
-                            </#list>
-                        </#if>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <p>Lab komputer di Graha Pusat Literasi hadir sebagai jembatan—menghubungkan pengetahuan dengan praktik, dan mengajak setiap pengunjung menjadi dari informasi ... sebuah lompatan awal untuk melangkah.</p>
     </div>
 
-    <script>
-        const scrollArea = document.getElementById('scrollArea');
-        const closeBtn = document.getElementById('dynamicCloseBtn');
+    <#-- 3. Formulir Komentar (Aktif & Bisa Diketik) -->
+    <form action="/submit-comment" method="POST" class="fg-comment-box">
+        <#-- Menyisipkan ID Artikel secara diam-diam agar Java tahu komentar ini untuk artikel mana -->
+        <input type="hidden" name="articleId" value="${(article.id)!''}">
+        
+        <input type="email" name="email" placeholder="Email" class="fg-input" required>
+        <input type="password" name="password" placeholder="Password" class="fg-input">
+        
+        <div class="fg-textarea-wrapper">
+            <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="fg-textarea" required></textarea>
+            <button type="submit" class="fg-submit-btn">
+                <i class="fa-regular fa-paper-plane"></i>
+            </button>
+        </div>
+    </form>
 
-        scrollArea.addEventListener('scroll', () => {
-            if (scrollArea.scrollTop > 80) {
-                closeBtn.style.opacity = '0';
-                closeBtn.style.visibility = 'hidden';
-            } else {
-                closeBtn.style.opacity = '1';
-                closeBtn.style.visibility = 'visible';
-            }
-        });
+    <#-- 4. Daftar Komentar Dinamis (Anti Error 500) -->
+    <div class="fg-comment-list">
+        <#-- Jaring Pengaman: Jika 'comments' belum dikirim backend, jadikan array kosong agar aman -->
+        <#assign safeComments = comments![]>
+        
+        <#if safeComments?size gt 0>
+            <#-- Loop jika ada komentar dari database -->
+            <#list safeComments as c>
+                <div class="fg-comment-item">
+                    <div class="fg-avatar">
+                        <#if c.avatar?? && c.avatar?has_content>
+                            <img src="${c.avatar}" style="width: 100%; height: 100%; object-fit: cover;" alt="User">
+                        <#else>
+                            <i class="fa-solid fa-user"></i>
+                        </#if>
+                    </div>
+                    <div class="fg-comment-text-area">
+                        <div class="fg-comment-name">${(c.userName)!"Anonim"}</div>
+                        <div class="fg-comment-isi">${(c.text)!"..."}</div>
+                    </div>
+                </div>
+            </#list>
+        <#else>
+            <#-- Tampilan Default jika belum ada komentar sama sekali -->
+            <div class="fg-comment-item">
+                <div class="fg-avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="fg-comment-text-area">
+                    <div class="fg-comment-name">Admin Graha Pusat Literasi</div>
+                    <div class="fg-comment-isi">Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan pendapat Anda!</div>
+                </div>
+            </div>
+        </#if>
+    </div>
 
-        function scaleCanvas() {
-            const canvas = document.getElementById('article-canvas');
-            const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-            canvas.style.transform = "scale(" + scale + ")";
-        }
-        window.addEventListener('load', scaleCanvas);
-        window.addEventListener('resize', scaleCanvas);
-    </script>
-</body>
-</html>
+</div>

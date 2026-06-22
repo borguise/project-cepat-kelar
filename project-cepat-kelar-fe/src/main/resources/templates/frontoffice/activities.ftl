@@ -1,183 +1,173 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>${pageTitle!"Kegiatan - Graha Pusat Literasi Magetan"}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<#-- activities.ftl - FIX LINK & FULL CONTENT 8 ITEMS -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+    .activities-wrapper { 
+        background-color: white; 
+        /* PERBAIKAN: Jarak atas disesuaikan menjadi 80px agar elemen atas bernapas lega dan tidak sesak */
+        padding: 80px 20px 40px 20px; 
+        font-family: 'Inter', sans-serif; 
+        min-height: 100%; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center;
+    }
     
-    <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    /* PERBAIKAN UTAMA: Perbaikan line-height agar teks tidak terpotong & max-width sebagai safe zone dari tombol silang */
+    .main-title { 
+        font-size: 32px; 
+        font-weight: 900; 
+        color: #000; 
+        text-align: center; 
+        margin-bottom: 35px; 
+        line-height: 1.4; /* Mengatasi teks terpotong di bagian bawah */
+        max-width: 700px; /* Mencegah teks melebar terlalu ke kanan-kiri mendekati tombol silang */
+        padding: 0 40px; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
+    
+    .tab-container { display: flex; justify-content: center; margin-bottom: 40px; }
+    .tab-box { display: flex; background: #3B5998; border-radius: 12px; padding: 5px; }
+    .tab-item { width: 140px; height: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; cursor: pointer; border-radius: 8px; transition: 0.3s; }
+    .tab-item.active { background: rgba(255,255,255,0.3); font-weight: bold; }
 
-        /* KANVAS OVERLAY: 864x1536 */
-        #overlay-kegiatan {
-            width: 864px; height: 1536px;
-            background-color: #f7f0cb; /* CREAM */
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 100px rgba(0,0,0,0.6);
-        }
+    .content-section { width: 100%; max-width: 750px; display: flex; flex-direction: column; }
+    .unit { display: flex; align-items: center; gap: 30px; margin: 45px 0; width: 100%; }
+    .unit.reverse { flex-direction: row-reverse; }
+    
+    .unit-text { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .unit-title { font-size: 26px; font-weight: 900; margin-bottom: 10px; color: #000; }
+    .unit-desc { font-size: 19px; font-weight: 600; line-height: 1.4; color: #1a1a1a; margin-bottom: 10px; }
+    .unit-link { font-size: 19px; color: #3B5998; font-weight: 800; text-decoration: underline; cursor: pointer; }
+    
+    .unit-img { width: 240px; height: 300px; border-radius: 40px; object-fit: cover; background: #f9f6e5; flex-shrink: 0; }
+    
+    .sep { border-top: 2px solid #6B8A7A; width: 100%; margin: 10px 0; opacity: 0.3; }
+    .hidden { display: none !important; }
+</style>
 
-        /* BATIK PRING TEGAS */
-        .batik-overlay {
-            position: absolute; inset: 0;
-            background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
-            background-size: 500px;
-            opacity: 0.6; mix-blend-mode: multiply;
-            pointer-events: none; z-index: 1;
-        }
+<div class="activities-wrapper">
+    <header>
+        <h1 class="main-title" id="tab-heading">Layanan - layanan untuk pengunjung<br>Graha Pusat Literasi Kabupaten Magetan</h1>
+        <div class="tab-container">
+            <div class="tab-box">
+                <div id="btn-layanan" class="tab-item active" onclick="switchContent('layanan')">Layanan</div>
+                <div id="btn-kegiatan" class="tab-item" onclick="switchContent('kegiatan')">Kegiatan</div>
+            </div>
+        </div>
+    </header>
 
-        .scroll-wrapper {
-            width: 100%; height: 100%;
-            overflow-y: auto; padding: 0 40px;
-            z-index: 10; scrollbar-width: none;
-            scroll-behavior: smooth;
-        }
-        .scroll-wrapper::-webkit-scrollbar { display: none; }
-
-        /* NAVIGASI (IKUT SCROLL) */
-        .scrollable-nav { 
-            position: relative; padding-top: 140px; 
-            text-align: center; margin-bottom: 60px; 
-        }
-
-        .close-btn {
-            position: absolute; top: 40px; right: 20px; 
-            font-size: 70px; color: #1a1a1a;
-            cursor: pointer; line-height: 1; font-family: 'Inter', sans-serif;
-        }
-
-        .main-title { 
-            font-family: 'Inter'; font-size: 38px; font-weight: 900; color: #1a1a1a; 
-            line-height: 1.3; margin-bottom: 50px; padding: 0 50px;
-        }
-        
-        .tab-container {
-            display: inline-flex; background-color: #3730a3; 
-            padding: 5px; border-radius: 12px; gap: 8px;
-        }
-        .tab-button {
-            width: 165px; height: 44px; display: flex; align-items: center; justify-content: center;
-            border-radius: 10px; font-family: 'Lato'; font-size: 24px; color: white;
-            text-decoration: none;
-        }
-        .tab-button.active { font-weight: bold; background-color: rgba(255,255,255,0.2); }
-
-        /* PEMISAH HIJAU BAMBU */
-        .thin-separator {
-            border-top: 2px solid #6B8A7A; /* HIJAU BAMBU */
-            width: 85%; margin: 0 auto;
-            opacity: 0.6;
-        }
-
-        /* UNIT PROGRAM ZIGZAG */
-        .program-unit {
-            display: flex; align-items: center; gap: 40px;
-            margin: 80px 0; position: relative;
-        }
-        .program-unit.reverse { flex-direction: row-reverse; }
-
-        /* TEKS RATA TENGAH - UKURAN FONT DISERAGAMKAN */
-        .program-text { 
-            flex: 1; display: flex; flex-direction: column; 
-            gap: 15px; text-align: center; align-items: center; 
-        }
-
-        .program-title { font-family: 'Inter'; font-size: 32px; font-weight: 900; color: #000; }
-        .program-desc { font-family: 'Inter'; font-size: 26px; color: #1a1a1a; line-height: 1.4; font-weight: 600; }
-        
-        .program-img { 
-            width: 260px; height: 320px; 
-            border-radius: 40px; object-fit: cover; 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-        }
-
-        .scroll-footer { height: 250px; }
-
-        .scroll-hint {
-            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
-            z-index: 1500; cursor: pointer; transition: opacity 0.5s ease;
-        }
-        .arrow-icon { font-size: 70px; color: #1a1a1a; opacity: 0.7; animation: bounce 2s infinite; }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-25px);}
-        }
-    </style>
-</head>
-<body>
-
-    <div id="overlay-kegiatan">
-        <div class="batik-overlay"></div>
-        
-        <div class="scroll-wrapper" id="scrollArea">
-            
-            <header class="scrollable-nav">
-                <div class="close-btn" onclick="window.history.back()">x</div>
-                <h1 class="main-title">${mainTitle!"Program - program unggulan<br>Graha Pusat Literasi Kabupaten Magetan"}</h1>
-                <nav class="tab-container">
-                    <a href="${layananLink!"#"}" class="tab-button">Layanan</a>
-                    <a href="${kegiatanLink!"#"}" class="tab-button active">Kegiatan</a>
-                </nav>
-            </header>
-
-            <div class="thin-separator" style="margin-bottom: 40px;"></div>
-
-            <#-- LOOPING PROGRAM DINAMIS -->
-            <#if programs??>
-                <#list programs as program>
-                    <#-- Logika zigzag: indeks ganjil akan menggunakan class 'reverse' -->
-                    <div class="program-unit ${((program?index % 2) == 0)?string('reverse', '')}">
-                        <img src="${program.imagePath}" class="program-img" alt="${program.title}">
-                        <div class="program-text">
-                            <h2 class="program-title">${program.title}</h2>
-                            <p class="program-desc">${program.description}</p>
-                        </div>
+    <#-- SECTION LAYANAN -->
+    <div id="content-layanan" class="content-section">
+        <#list 1..8 as i>
+            <div class="unit ${(i % 2 == 0)?string('reverse', '')}">
+                <#if i==1>
+                    <img src="${basePath}/umum.png" class="unit-img">
+                    <div class="unit-text">
+                        <h2 class="unit-title">Layanan Baca Ditempat</h2>
+                        <p class="unit-desc">Ruang tenang untuk menikmati bacaan dan meluangkan waktu bersama buku.</p>
+                        <a href="#" class="unit-link">Baca ceritanya di sini.</a>
                     </div>
-                    <#if program?has_next>
-                        <div class="thin-separator"></div>
-                    </#if>
-                </#list>
-            </#if>
-
-            <div class="scroll-footer"></div>
-        </div>
-
-        <div class="scroll-hint" id="scrollHint" onclick="scrollDown()">
-            <i class="fas fa-chevron-down arrow-icon"></i>
-        </div>
+                <#elseif i==2>
+                    <img src="${basePath}/anak.png" class="unit-img">
+                    <div class="unit-text">
+                        <h2 class="unit-title">Layanan Ruang Baca Anak</h2>
+                        <p class="unit-desc">Ruang ramah anak untuk membaca, bermain, dan mengenal literasi sejak dini.</p>
+                        <a href="#" class="unit-link">Jelajahi selengkapnya.</a>
+                    </div>
+                <#elseif i==3>
+                    <img src="${basePath}/berkelompok.png" class="unit-img">
+                    <div class="unit-text">
+                        <h2 class="unit-title">Layanan Kunjungan Berkelompok</h2>
+                        <p class="unit-desc">Pengalaman literasi yang lebih seru melalui kunjungan dan kebersamaan.</p>
+                        <a href="#" class="unit-link">Baca ceritanya di sini.</a>
+                    </div>
+                <#elseif i==4>
+                    <img src="${basePath}/member.png" class="unit-img">
+                    <div class="unit-text">
+                        <h2 class="unit-title">Layanan Pendaftaran Anggota</h2>
+                        <p class="unit-desc">Langkah awal untuk menikmati layanan dan koleksi perpustakaan secara lebih luas.</p>
+                        <a href="#" class="unit-link">Jelajahi selengkapnya.</a>
+                    </div>
+                <#elseif i==5>
+                    <img src="${basePath}/sirkulasi.png" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Layanan Sirkulasi</h2><p class="unit-desc">Proses peminjaman dan pengembalian buku yang mudah.</p><a href="#" class="unit-link">Baca selengkapnya.</a></div>
+                <#elseif i==6>
+                    <img src="${basePath}/komputer.png" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Lab Komputer</h2><p class="unit-desc">Akses informasi digital dan riset untuk pengunjung.</p><a href="#" class="unit-link">Jelajahi.</a></div>
+                <#elseif i==7>
+                    <img src="${basePath}/rack.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Layanan Loker</h2><p class="unit-desc">Perhatian khusus untuk Sahabat Literasi.</p><a href="#" class="unit-link">Lihat fasilitas.</a></div>
+                <#else>
+                    <img src="${basePath}/bangunan-copy-0.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Pemanfaatan Ruang</h2><p class="unit-desc">Area serbaguna untuk diskusi dan kegiatan komunitas.</p><a href="#" class="unit-link">Jelajahi.</a></div>
+                </#if>
+            </div>
+            <#if i != 8><div class="sep"></div></#if>
+        </#list>
     </div>
 
-    <script>
-        const scrollArea = document.getElementById('scrollArea');
-        const scrollHint = document.getElementById('scrollHint');
+    <#-- SECTION KEGIATAN -->
+    <div id="content-kegiatan" class="content-section hidden">
+        <#list 1..8 as i>
+            <div class="unit ${(i % 2 == 0)?string('reverse', '')}">
+                <#if i==1>
+                    <img src="${basePath}/junior.png" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Junior Writerpreneurship</h2><p class="unit-desc">Ajang mengarang tulisan bagi siswa sekolah menengah.</p></div>
+                <#elseif i==2>
+                    <img src="${basePath}/duta.png" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Seleksi Duta Baca</h2><p class="unit-desc">Pemilihan ikon literasi untuk memotivasi generasi muda.</p></div>
+                <#elseif i==3>
+                    <img src="${basePath}/puisi.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Kepenulisan Puisi</h2><p class="unit-desc">Wadah ekspresi melalui rangkaian kata indah.</p></div>
+                <#elseif i==4>
+                    <img src="${basePath}/peer.png" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Peer Learning Meeting</h2><p class="unit-desc">Berbagi ilmu dan pengalaman antar pengelola perpustakaan.</p></div>
+                <#elseif i==5>
+                    <img src="${basePath}/kemah.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Camp Literasi</h2><p class="unit-desc">Keseruan belajar di alam terbuka.</p></div>
+                <#elseif i==6>
+                    <img src="${basePath}/bazar.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Bazaar TPBIS</h2><p class="unit-desc">Pameran produk literasi masyarakat lokal.</p></div>
+                <#elseif i==7>
+                    <img src="${basePath}/bedahbuku.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Bedah Buku</h2><p class="unit-desc">Diskusi mendalam bersama penulis buku favorit.</p></div>
+                <#else>
+                    <img src="${basePath}/sosialisasi.jpg" class="unit-img">
+                    <div class="unit-text"><h2 class="unit-title">Sosialisasi Budaya Baca</h2><p class="unit-desc">Mengenalkan pentingnya literasi ke masyarakat luas.</p></div>
+                </#if>
+            </div>
+            <#if i != 8><div class="sep"></div></#if>
+        </#list>
+    </div>
 
-        function scrollDown() {
-            scrollArea.scrollBy({ top: 450, behavior: 'smooth' });
+    <div style="height: 80px;"></div>
+</div>
+
+<script>
+    function switchContent(target) {
+        const cLayanan = document.getElementById('content-layanan');
+        const cKegiatan = document.getElementById('content-kegiatan');
+        const bLayanan = document.getElementById('btn-layanan');
+        const bKegiatan = document.getElementById('btn-kegiatan');
+        const heading = document.getElementById('tab-heading');
+
+        if (target === 'layanan') {
+            cLayanan.classList.remove('hidden');
+            cKegiatan.classList.add('hidden');
+            bLayanan.classList.add('active');
+            bKegiatan.classList.remove('active');
+            heading.innerHTML = "Layanan - layanan untuk pengunjung<br>Graha Pusat Literasi Kabupaten Magetan";
+        } else {
+            cKegiatan.classList.remove('hidden');
+            cLayanan.classList.add('hidden');
+            bKegiatan.classList.add('active');
+            bLayanan.classList.remove('active');
+            heading.innerHTML = "Program - program unggulan<br>Graha Pusat Literasi Kabupaten Magetan";
         }
-
-        scrollArea.addEventListener('scroll', () => {
-            const isAtBottom = scrollArea.scrollHeight - scrollArea.scrollTop <= scrollArea.clientHeight + 100;
-            if (scrollArea.scrollTop > 80 || isAtBottom) {
-                scrollHint.style.opacity = '0';
-                scrollHint.style.pointerEvents = 'none';
-            } else {
-                scrollHint.style.opacity = '0.7';
-                scrollHint.style.pointerEvents = 'auto';
-            }
-        });
-
-        function scaleCanvas() {
-            const canvas = document.getElementById('overlay-kegiatan');
-            const scale = Math.min(window.innerWidth / 864, window.innerHeight / 1536);
-            canvas.style.transform = "scale(" + scale + ")";
-        }
-        window.addEventListener('load', scaleCanvas);
-        window.addEventListener('resize', scaleCanvas);
-    </script>
-</body>
-</html>
+        
+        const scrollBox = document.querySelector('.content-scroll');
+        if (scrollBox) scrollBox.scrollTop = 0;
+    }
+</script>

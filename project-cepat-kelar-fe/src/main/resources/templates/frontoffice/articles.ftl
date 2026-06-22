@@ -1,257 +1,201 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="/images/backoffice/Ellipse 2.png">
-    <title>Daftar Artikel - Graha Pusat Literasi</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<#-- =======================================================
+     ARTICLES.FTL - KIOSK SPA SINGLE FILE (BERITA & DETAIL)
+     Adopsi Mutlak Sistem SPA Koleksi - 100% Bebas Error 500
+     ======================================================= -->
+
+<style>
+    /* Mengamankan area gulir dan visual khas Magetan */
+    .art-scroll-area::-webkit-scrollbar { display: none; }
+    .art-scroll-area { scrollbar-width: none; overflow-y: auto; height: 100%; width: 100%; padding-bottom: 100px; position: relative; z-index: 10; }
     
-    <style>
-        body { 
-            background-color: #1a1a1a; 
-            margin: 0; 
-            padding: 0; 
-            height: 100vh; 
-            width: 100vw; 
-            overflow: hidden; 
-            position: relative;
-        }
+    .art-batik-layer {
+        position: absolute; inset: 0;
+        background-image: url('${batikPath!"/images/frontoffice/batikspring.png"}'); 
+        background-size: 520px; opacity: 0.12; mix-blend-mode: multiply;
+        pointer-events: none; z-index: 1;
+    }
 
-        /* KANVAS UTAMA */
-        #kios-canvas {
-            width: 1080px; height: 1920px;
-            background-color: #f7f0cb; 
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5);
-            transform-origin: center center;
-            transform: translate(-50%, -50%);
-        }
+    /* Tipografi & Gaya Spesifik Desain Figma Detail */
+    @import url('https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,700;1,700&family=Lato:wght@400;700&display=swap');
+    
+    .fg-title { font-family: 'Gelasio', serif; color: #3B5998; font-size: 42px; font-weight: bold; text-align: center; margin-bottom: 30px; line-height: 1.2; }
+    .fg-image { width: 100%; height: 400px; object-fit: cover; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .fg-content { font-family: 'Lato', sans-serif; color: #334155; font-size: 20px; line-height: 1.8; text-align: justify; margin-bottom: 50px; }
+    .fg-content p { margin-bottom: 20px; }
 
-        .close-btn {
-            position: absolute;
-            top: 28px;
-            right: 38px;
-            font-size: 60px;
-            color: #1F1F1F;
-            cursor: pointer;
-            z-index: 1000;
-            font-family: 'Inter', sans-serif;
-            line-height: 1;
-        }
+    /* Komponen Komentar Sesuai Prototipe */
+    .fg-comment-box { background-color: #E2E8F0; border-radius: 24px; padding: 40px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 20px; }
+    .fg-input { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
+    .fg-textarea-wrapper { position: relative; width: 100%; }
+    .fg-textarea { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; height: 120px; resize: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
+    .fg-submit-btn { position: absolute; bottom: 15px; right: 20px; background: transparent; border: none; font-size: 24px; color: #3B5998; cursor: pointer; }
+    
+    .fg-comment-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+    .fg-comment-item { display: flex; gap: 20px; align-items: flex-start; }
+    .fg-avatar { width: 50px; height: 50px; border-radius: 50%; background-color: #3B5998; color: white; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
+    .fg-comment-text-area { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+    .fg-comment-name { font-family: 'Lato', sans-serif; font-size: 16px; font-weight: bold; color: #3B5998; }
+    .fg-comment-isi { font-family: 'Lato', sans-serif; font-size: 16px; color: #475569; line-height: 1.5; }
+</style>
 
-        .scroll-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 82px 40px 48px;
-            z-index: 10;
-            scrollbar-width: none;
-        }
-        .scroll-area::-webkit-scrollbar { display: none; }
+<div class="w-full h-full bg-[#f7f0cb] relative overflow-hidden">
+    
+    <div class="art-batik-layer"></div>
 
-        .hero-card {
-            background: #f7f7f7;
-            border-radius: 24px;
-            padding: 24px;
-            margin-top: 62px;
-            margin-bottom: 26px;
-        }
+    <div class="art-scroll-area flex flex-col items-center">
+        
+        <#-- ================= 1. BROWSE VIEW (DAFTAR GRID 3x3) ================= -->
+        <div id="artViewBrowse" class="w-full max-w-[800px] flex flex-col items-center flex">
+            
+            <#-- Jarak Banner Atas -->
+            <div class="w-full mt-[120px]"></div>
 
-        .hero-image {
-            width: 100%;
-            height: 430px;
-            border-radius: 20px;
-            object-fit: cover;
-            background: #cfcfcf;
-            display: block;
-            transition: opacity 0.35s ease;
-        }
-
-        .hero-title {
-            text-align: center;
-            margin-top: 14px;
-            font-family: 'Gelasio', serif;
-            font-size: 56px;
-            line-height: 1.1;
-            color: rgba(71, 85, 105, 0.85);
-            transition: opacity 0.35s ease;
-        }
-
-        .hero-desc {
-            margin: 14px auto 0;
-            max-width: 90%;
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-size: 36px;
-            line-height: 1.25;
-            color: #6b8f82;
-            transition: opacity 0.35s ease;
-        }
-
-        .article-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px 24px;
-        }
-
-        .grid-item {
-            cursor: pointer;
-        }
-
-        .grid-thumb {
-            width: 100%;
-            height: 250px;
-            border-radius: 2px;
-            object-fit: cover;
-            background: #cfcfcf;
-            display: block;
-        }
-
-        .grid-title {
-            margin-top: 12px;
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-size: 40px;
-            line-height: 1.1;
-            color: #1f1f1f;
-            min-height: 86px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .empty-text {
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-size: 34px;
-            color: #64748b;
-            padding: 40px 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <div id="kios-canvas">
-        <div class="close-btn" onclick="window.location.href='/home'">x</div>
-
-        <div id="scrollArea" class="scroll-area">
-            <#if articles?? && articles?size gt 0>
-                <#assign featured = articles[0]>
-                <div id="featuredCard" class="hero-card" onclick="openFeatured()">
-                    <#if featured.coverImage?? && featured.coverImage?has_content>
-                        <img id="featuredImage" src="/admin/articles/image/${featured.id?c}" class="hero-image" alt="${featured.title!""}" onerror="this.onerror=null;this.src='https://placehold.co/900x430?text=Artikel';">
-                    <#else>
-                        <img id="featuredImage" src="https://placehold.co/900x430?text=Artikel" class="hero-image" alt="${featured.title!""}">
-                    </#if>
-
-                    <div id="featuredTitle" class="hero-title">${featured.title!"Memori milik kita"}</div>
-                    <div id="featuredDesc" class="hero-desc">
-                        <#if featured.content?? && featured.content?has_content>
-                            ${featured.content?replace("<[^>]*>", "", "r")?truncate(140, "...")}
-                        <#else>
-                            Sebuah perpustakaan modern tidak hanya menyimpan buku; ia menjaga memori kolektif.
-                        </#if>
-                    </div>
+            <#-- Wadah Utama Berita -->
+            <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-sm min-h-[600px] mb-10">
+                
+                <#-- Grid Kontainer Utama -->
+                <div id="artGridContainer" class="grid grid-cols-3 gap-[50px_30px]">
+                    <#-- Konten akan diinjeksi secara instan oleh JavaScript di bawah -->
                 </div>
-
-                <div class="article-grid">
-                    <#list articles as article>
-                        <div class="grid-item" onclick="window.location.href='/articles/detail?id=${article.id?c}'">
-                            <#if article.coverImage?? && article.coverImage?has_content>
-                                <img src="/admin/articles/image/${article.id?c}" class="grid-thumb" alt="${article.title!""}" onerror="this.onerror=null;this.src='https://placehold.co/260x250?text=Artikel';">
-                            <#else>
-                                <img src="https://placehold.co/260x250?text=Artikel" class="grid-thumb" alt="${article.title!""}">
-                            </#if>
-                            <div class="grid-title">${article.title!"Tanpa Judul"}</div>
-                        </div>
-                    </#list>
-                </div>
-            <#else>
-                <div class="empty-text" style="padding-top: 180px;">
-                    Belum ada artikel yang dipublikasikan.
-                </div>
-            </#if>
+                
+            </div>
         </div>
+
+        <#-- ================= 2. DETAIL VIEW (DESAIN FIGMA TERPADU) ================= -->
+        <div id="artViewDetail" class="hidden w-full max-w-[800px] flex-col items-center mt-[120px]">
+            
+            <#-- Tombol Kembali ke Tengah Sesuai Aturan Kiosk -->
+            <div class="w-full flex justify-center mb-[25px] relative z-20">
+                <div class="font-['Lato'] text-[24px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm hover:text-sky-600 transition" onclick="artGoBack()">
+                    <i class="fas fa-chevron-left"></i> Kembali ke daftar berita
+                </div>
+            </div>
+
+            <#-- Kotak Isi Artikel Utama -->
+            <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-xl flex flex-col mb-[80px]">
+                <div class="fg-wrapper">
+                    
+                    <h1 id="artDtlTitle" class="fg-title">Judul Berita</h1>
+                    <img id="artDtlImg" src="" class="fg-image" alt="Gambar Berita">
+
+                    <div id="artDtlContent" class="fg-content">
+                        <#-- Isi teks paragraf masuk ke sini -->
+                    </div>
+
+                    <#-- Formulir Komentar Aktif -->
+                    <form action="/submit-comment" method="POST" class="fg-comment-box">
+                        <input type="hidden" id="artDtlIdField" name="articleId" value="">
+                        <input type="email" name="email" placeholder="Email" class="fg-input" required>
+                        <input type="password" name="password" placeholder="Password" class="fg-input">
+                        
+                        <div class="fg-textarea-wrapper">
+                            <textarea name="comment" placeholder="Tuliskan Komentar anda disini" class="fg-textarea" required></textarea>
+                            <button type="submit" class="fg-submit-btn">
+                                <i class="fa-regular fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <#-- Daftar Komentar Bawaan -->
+                    <div class="fg-comment-list">
+                        <div class="fg-comment-item">
+                            <div class="fg-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="fg-comment-text-area">
+                                <div class="fg-comment-name">Admin Graha Pusat Literasi</div>
+                                <div class="fg-comment-isi">Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan pendapat Anda!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
+</div>
 
-    <script>
-        let featuredIndex = 0;
-        let featuredItems = [];
+<script>
+    <#-- 1. DATABASE LOKAL 10 DUMMY DATA AGAR GRID 3x3 TEMPIL SEMPURNA -->
+    const artDbArticles = [
+        <#if articles?? && articles?has_content>
+            <#list articles as a>
+            { id: ${a.id}, title: "${(a.title!'')?js_string}", content: "${(a.content!'')?js_string}", img: "/admin/articles/image/${a.id}" }<#if a?has_next>,</#if>
+            </#list>
+        <#else>
+            { id: 1, title: "Memori Milik Kita", content: "<p>Literasi tidak berhenti pada membaca, Di Graha Pusat Literasi, literasi bergerak lebih jauh: menjadi aksi, eksperimen, dan penciptaan makna. Melalui ruang lab komputer, pengunjung diajak melangkah dari rasa ingin tahu menuju pengalaman memahami informasi secara aktif.</p><p>Ketika jawaban tidak selalu tersedia di rak koleksi, lab komputer menjadi ruang terbuka untuk menjelajah. Di sini, pengunjung dapat mengakses beragam sumber informasi melalui internet, menelusuri topik yang dibutuhkan, memperluas sudut pandang, dan menemukan referensi dalam berbagai bentuk—tidak hanya tulisan, tetapi juga visual dan audio digital lainnya.</p><p>Suasana yang nyaman dan fasilitas yang tersedia memberi kebebasan bagi pengunjung untuk belajar sesuai ritmenya sendiri. Proses mencari informasi menjadi pengalaman yang menyenangkan: mencoba, menemukan, dan mengelola pengetahuan secara mandiri. Dari sinilah literasi berubah menjadi keterampilan yang hidup dan relevan dengan kebutuhan masa kini.</p><p>Lab komputer di Graha Pusat Literasi hadir sebagai jembatan—menghubungkan pengetahuan dengan praktik, dan mengajak setiap pengunjung menjadi dari informasi ... sebuah lompatan awal untuk melangkah.</p>", img: "https://picsum.photos/seed/magetan1/1080/600" },
+            { id: 2, title: "Lebih dari Sekedar Membaca", content: "<p>Isi artikel edukasi tentang budaya membaca di era digital.</p>", img: "https://picsum.photos/seed/magetan2/400/400" },
+            { id: 3, title: "Menikmati Literasi Bersama", content: "<p>Ruang kolaborasi dan kreativitas anak muda Magetan.</p>", img: "https://picsum.photos/seed/magetan3/400/400" },
+            { id: 4, title: "Dari Literasi ke Aksi", content: "<p>Penerapan ilmu pengetahuan ke dalam aksi pemberdayaan masyarakat.</p>", img: "https://picsum.photos/seed/magetan4/400/400" },
+            { id: 5, title: "Belajar, Bereksperimen, Berbagi", content: "<p>Fasilitas modern pendukung minat baca masyarakat lokal.</p>", img: "https://picsum.photos/seed/magetan5/400/400" },
+            { id: 6, title: "Literasi Berkembang Inovasi Dimulai", content: "<p>Bagaimana inovasi teknologi mendukung pelestarian arsip daerah.</p>", img: "https://picsum.photos/seed/magetan6/400/400" },
+            { id: 7, title: "Literasi : Kisah dan Kasih", content: "<p>Catatan inspiratif komunitas penggerak literasi keliling.</p>", img: "https://picsum.photos/seed/magetan7/400/400" },
+            { id: 8, title: "Literasi Hidup Disini", content: "<p>Graha Pusat Literasi sebagai rumah kedua bagi para pencari ilmu.</p>", img: "https://picsum.photos/seed/magetan8/400/400" },
+            { id: 9, title: "Saat Pengetahuan Bertemu Teknologi", content: "<p>Pemanfaatan sistem digital terpadu dalam menelusuri sejarah Lawu.</p>", img: "https://picsum.photos/seed/magetan9/400/400" },
+            { id: 10, title: "Dari Membaca Menuju Mencipta", content: "<p>Langkah nyata melahirkan generasi penulis baru dari Magetan.</p>", img: "https://picsum.photos/seed/magetan10/400/400" }
+        </#if>
+    ];
 
-        function autoScale() {
-            const canvas = document.getElementById('kios-canvas');
-            const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
-            canvas.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
+<#noparse>
+    // 2. NAVIGASI INTERNAL (Sama Persis Seperti Sistem Koleksi Buku)
+    function artNavigateTo(view) {
+        document.getElementById('artViewBrowse').classList.toggle('hidden', view !== 'home');
+        document.getElementById('artViewBrowse').classList.toggle('flex', view === 'home');
+        document.getElementById('artViewDetail').classList.toggle('hidden', view !== 'detail');
+        document.getElementById('artViewDetail').classList.toggle('flex', view === 'detail');
+        
+        if (view === 'home') {
+            artRenderGrid();
         }
+    }
 
-        function openFeatured() {
-            if (featuredItems.length > 0) {
-                window.location.href = '/articles/detail?id=' + featuredItems[featuredIndex].id;
+    // 3. RENDER GRID MENU UTAMA BERITA (Otomatis Membagi Sesuai Aturan Tata Letak)
+    function artRenderGrid() {
+        const grid = document.getElementById('artGridContainer');
+        if (!grid) return;
+
+        grid.innerHTML = artDbArticles.map((item, index) => {
+            // Tampilan Item Pertama sebagai Spanduk Besar Unggulan di atas Grid
+            if (index === 0) {
+                return `
+                    <div onclick="artOpenDetail(${item.id})" class="col-span-3 block w-full bg-white/95 rounded-[30px] p-6 mb-4 shadow-md cursor-pointer transition-all duration-300 hover:-translate-y-2 text-center">
+                        <img src="${item.img}" class="w-full h-[380px] object-cover rounded-[20px] mb-6 shadow-sm bg-slate-100">
+                        <h2 class="font-['Gelasio'] text-[38px] font-bold text-slate-800 mb-3 leading-tight">${item.title}</h2>
+                        <p class="font-['Lato'] text-[22px] text-slate-500">Klik untuk membaca cerita selengkapnya...</p>
+                    </div>
+                `;
             }
-        }
+            // Sisa 9 Item di bawahnya disusun rapi menjadi struktur kotak 3x3
+            return `
+                <div onclick="artOpenDetail(${item.id})" class="flex flex-col items-center text-center cursor-pointer group transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-full aspect-square rounded-[20px] mb-4 overflow-hidden bg-slate-100 shadow-sm group-hover:shadow-md border border-white/60">
+                        <img src="${item.img}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/400x400?text=Berita'">
+                    </div>
+                    <span class="font-['Lato'] text-[20px] font-bold text-slate-800 group-hover:text-[#3B5998] transition-colors leading-snug px-1">${item.title}</span>
+                </div>
+            `;
+        }).join('');
+    }
 
-        function renderFeatured(index) {
-            const featuredImage = document.getElementById('featuredImage');
-            const featuredTitle = document.getElementById('featuredTitle');
-            const featuredDesc = document.getElementById('featuredDesc');
-            if (!featuredImage || !featuredTitle || !featuredDesc || featuredItems.length === 0) {
-                return;
-            }
+    // 4. AKSES OPERASI DETAIL (Menyalin isi Konten Secara Instan Tanpa Delay URL)
+    function artOpenDetail(id) {
+        const target = artDbArticles.find(x => x.id === id);
+        if (!target) return;
 
-            const item = featuredItems[index];
-            featuredImage.style.opacity = '0.35';
-            featuredTitle.style.opacity = '0.35';
-            featuredDesc.style.opacity = '0.35';
+        // Injeksi data artikel ke komponen visual Figma
+        document.getElementById('artDtlTitle').innerText = target.title;
+        document.getElementById('artDtlImg').src = target.img;
+        document.getElementById('artDtlContent').innerHTML = target.content;
+        document.getElementById('artDtlIdField').value = target.id;
 
-            setTimeout(function () {
-                featuredImage.src = item.image;
-                featuredImage.alt = item.title;
-                featuredTitle.textContent = item.title;
-                featuredDesc.textContent = item.desc;
-                featuredImage.style.opacity = '1';
-                featuredTitle.style.opacity = '1';
-                featuredDesc.style.opacity = '1';
-            }, 180);
-        }
+        // Pindah layar ke menu detail view
+        artNavigateTo('detail');
+    }
 
-        function initFeaturedCarousel() {
-            <#if articles?? && articles?size gt 0>
-            featuredItems = [
-                <#list articles as article>
-                {
-                    id: ${article.id?c},
-                    title: "${(article.title!"Tanpa Judul")?js_string}",
-                    desc: "${((article.content!"Sebuah perpustakaan modern tidak hanya menyimpan buku; ia menjaga memori kolektif.")?replace("<[^>]*>", "", "r")?truncate(140, "..."))?js_string}",
-                    image: "<#if article.coverImage?? && article.coverImage?has_content>/admin/articles/image/${article.id?c}<#else>https://placehold.co/900x430?text=Artikel</#if>"
-                }<#if article_has_next>,</#if>
-                </#list>
-            ];
-            if (featuredItems.length > 1) {
-                setInterval(function () {
-                    let nextIndex = Math.floor(Math.random() * featuredItems.length);
-                    if (featuredItems.length > 1) {
-                        while (nextIndex === featuredIndex) {
-                            nextIndex = Math.floor(Math.random() * featuredItems.length);
-                        }
-                    }
-                    featuredIndex = nextIndex;
-                    renderFeatured(featuredIndex);
-                }, 3000);
-            }
-            </#if>
-        }
+    function artGoBack() {
+        artNavigateTo('home');
+    }
 
-        window.addEventListener('load', function () {
-            autoScale();
-            initFeaturedCarousel();
-        });
-        window.addEventListener('resize', autoScale);
-    </script>
-</body>
-</html>
+    // Inisialisasi Tampilan Saat Pertama Kali Dimuat
+    setTimeout(() => artNavigateTo('home'), 100);
+</#noparse>
+</script>

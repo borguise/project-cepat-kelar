@@ -98,7 +98,8 @@
 
         <#-- FOOTER: Tombol dinaikkan dengan pb-80 (320px dari bawah) -->
         <footer class="pb-80 flex justify-center">
-            <a href="${(content.buttonUrl)!"/home"}" 
+            <#-- PERUBAHAN: Tautan mengarah ke halaman Loading -->
+            <a href="/loading" 
                class="animate-napas inline-block transform bg-bamboo-green text-stone-100 font-gelasio text-4xl tracking-[0.2em] px-24 py-8 rounded-[2rem] shadow-2xl 
                       transition-all duration-300 ease-in-out hover:brightness-110 active:scale-90">
                 ${(content.buttonText)!"mari menjelajah"}

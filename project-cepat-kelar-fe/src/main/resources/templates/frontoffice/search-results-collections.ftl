@@ -88,7 +88,7 @@
             <div class="white-wrapper">
                 <#-- JUDUL HASIL PENCARIAN -->
                 <h2 class="font-['Gelasio'] font-bold text-4xl text-slate-500/70 text-center mb-12">
-                    Ini hasil pencarian “${keyword!"Sepak bola"}”
+                    Ini hasil pencarian "${keyword!"Sepak bola"}"
                 </h2>
 
                 <div class="${(resultCount <= 3)?string('centered-content', '')}">
@@ -143,9 +143,9 @@
                 <#-- PAGINASI: HANYA MUNCUL JIKA > 3 ITEM -->
                 <#if resultCount gt 3>
                 <div class="pagination-bar">
-                    <a href="?keyword=${keyword!""}&page=${currentPage-1}" class="bg-zinc-100 text-zinc-500 px-10 py-5 rounded-2xl font-bold text-2xl">← Sblmnya</a>
+                    <a href="?keyword=${keyword!""}&page=${currentPage-1}" class="bg-zinc-100 text-zinc-500 px-10 py-5 rounded-2xl font-bold text-2xl">Prev</a>
                     <span class="text-zinc-400 text-2xl font-semibold">Hal <b class="text-[#3730a3]">${currentPage!1}</b> dari ${totalPages!5}</span>
-                    <a href="?keyword=${keyword!""}&page=${currentPage+1}" class="bg-[#3730a3] text-white px-10 py-5 rounded-2xl font-bold text-2xl shadow-lg">Brkutnya →</a>
+                    <a href="?keyword=${keyword!""}&page=${currentPage+1}" class="bg-[#3730a3] text-white px-10 py-5 rounded-2xl font-bold text-2xl shadow-lg">Next</a>
                 </div>
                 </#if>
             </div>
