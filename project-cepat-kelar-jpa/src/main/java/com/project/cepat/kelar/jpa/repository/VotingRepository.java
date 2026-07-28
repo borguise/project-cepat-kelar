@@ -15,4 +15,7 @@ public interface VotingRepository extends JpaRepository<Voting, Long> {
 
     @Query("select v from VotingEntity v where v.deleted = 0 and lower(coalesce(v.name,'')) like lower(concat('%', :text, '%')) order by v.id desc")
     Page<Voting> getPageable(@Param("text") String text, Pageable pageable);
+
+    // --- FITUR BARU: Pencarian voting aktif ---
+    Voting findFirstByStatus(String status);
 }
