@@ -11,9 +11,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.project.cepat.kelar.jpa.model.Event;
 
 @Controller
 @RequestMapping("/events")
@@ -40,8 +47,8 @@ public class EventFrontofficeController {
                     primaryEvent.put("title", primary.getName());
                     primaryEvent.put("description", primary.getEventDescription());
                     primaryEvent.put("dateLabel", primary.getEventDate() != null ? formatter.format(primary.getEventDate()) : "Tanggal belum tersedia");
-                    if (primary.getPosterImage() != null && !primary.getPosterImage().isBlank()) {
-                        primaryEvent.put("imageUrl", "/admin/events/image/" + primary.getId());
+                    if (primary.getPosterImageData() != null && primary.getPosterImageData().length > 0) {
+                        primaryEvent.put("imageUrl", "/events/image/" + primary.getId());
                     }
                 }
 
@@ -71,5 +78,41 @@ public class EventFrontofficeController {
         model.addAttribute("basePath", "");
 
         return "frontoffice/events";
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getEventImage(@PathVariable Long id) {
+        try {
+            if (eventService != null) {
+                Event event = eventService.getById(id);
+                if (event != null && event.getPosterImageData() != null && event.getPosterImageData().length > 0) {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(resolveMediaType(event.getPosterImage()));
+                    headers.setContentLength(event.getPosterImageData().length);
+                    return new ResponseEntity<>(event.getPosterImageData(), headers, HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.error("Error loading frontoffice event image: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private MediaType resolveMediaType(String fileName) {
+        if (fileName == null) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+        String lower = fileName.toLowerCase();
+        if (lower.endsWith(".png")) {
+            return MediaType.IMAGE_PNG;
+        }
+        if (lower.endsWith(".gif")) {
+            return MediaType.IMAGE_GIF;
+        }
+        if (lower.endsWith(".webp")) {
+            return MediaType.parseMediaType("image/webp");
+        }
+        return MediaType.IMAGE_JPEG;
     }
 }

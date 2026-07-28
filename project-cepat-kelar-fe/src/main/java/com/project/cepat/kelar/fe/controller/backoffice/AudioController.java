@@ -1,5 +1,7 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
+import java.util.Base64;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.cepat.kelar.common.controller.BaseController;
 import com.project.cepat.kelar.jpa.model.Audio;
 import com.project.cepat.kelar.service.backoffice.AudioService;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/admin/audio")
@@ -51,12 +49,12 @@ public class AudioController extends BaseController {
             @RequestParam(value = "mediaType", required = false) String mediaType,
             @RequestParam(value = "audioFormat", required = false) String audioFormat,
             @RequestParam(value = "status", required = false) String status,
-            HttpServletRequest request,
+            @RequestParam(value = "coverImageBase64", required = false) String coverImageBase64,
+            @RequestParam(value = "coverFileName", required = false) String coverFileName,
             RedirectAttributes redirectAttributes) {
         Long parsedId = null;
         try {
             parsedId = parseLongOrNull(idRaw, "id");
-            MultipartFile coverFile = resolveCoverFile(request);
 
             if (title == null || title.isBlank()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Judul rekaman audio wajib diisi.");
@@ -71,21 +69,42 @@ public class AudioController extends BaseController {
                 return "redirect:/admin/audio";
             }
 
-            Audio saved = audioService.saveFromForm(parsedId, callNumber, subject, title, responsibility, gmd,
-                    publisher, originCity, publishYear, mediaType, audioFormat, status, coverFile);
+            logger.info("Saving audio: id={}, title='{}', hasBase64Cover={}",
+                    parsedId,
+                    title,
+                    coverImageBase64 != null && !coverImageBase64.isBlank());
+
+                Audio saved = audioService.saveFromForm(parsedId, callNumber, subject, title, responsibility, gmd,
+                    publisher, originCity, publishYear, mediaType, audioFormat, status, null);
+
+                if (coverImageBase64 != null && !coverImageBase64.isBlank()) {
+                try {
+                    byte[] imageBytes = Base64.getDecoder().decode(coverImageBase64);
+                    if (imageBytes.length > 0) {
+                        saved.setCoverImage((coverFileName == null || coverFileName.isBlank()) ? "cover-upload.jpg" : coverFileName);
+                        saved.setCoverImageData(imageBytes);
+                        saved = audioService.save(saved);
+                    }
+                } catch (IllegalArgumentException decodeError) {
+                    logger.warn("Invalid base64 image payload for audio {}: {}", saved.getId(), decodeError.getMessage());
+                }
+            }
+
             logger.info("Audio saved with ID: {}", saved.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Rekaman audio berhasil disimpan!");
             return "redirect:/admin/audio";
         } catch (Exception e) {
             logger.error("Error saving audio: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Gagal menyimpan rekaman audio: " + e.getMessage());
+            String detail = (e.getMessage() == null || e.getMessage().isBlank()) ? "Unknown error" : e.getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", "Gagal menyimpan rekaman audio: " + detail);
             if (parsedId != null) {
                 return "redirect:/admin/audio/edit/" + parsedId;
             }
             return "redirect:/admin/audio/new";
         } catch (Throwable t) {
             logger.error("Unexpected error saving audio", t);
-            redirectAttributes.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menyimpan rekaman audio.");
+            String detail = (t.getMessage() == null || t.getMessage().isBlank()) ? "Unexpected error" : t.getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", "Terjadi kesalahan saat menyimpan rekaman audio: " + detail);
             if (parsedId != null) {
                 return "redirect:/admin/audio/edit/" + parsedId;
             }
@@ -102,13 +121,6 @@ public class AudioController extends BaseController {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Nilai " + fieldName + " tidak valid");
         }
-    }
-
-    private MultipartFile resolveCoverFile(HttpServletRequest request) {
-        if (request instanceof MultipartHttpServletRequest multipartRequest) {
-            return multipartRequest.getFile("coverFile");
-        }
-        return null;
     }
 
     @GetMapping("/delete/{id}")
@@ -132,9 +144,9 @@ public class AudioController extends BaseController {
         try {
             if (audioService != null) {
                 Audio audio = audioService.getById(id);
-                if (audio != null && audio.getCoverImageData() != null) {
+                if (audio != null && audio.getCoverImageData() != null && audio.getCoverImageData().length > 0) {
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.IMAGE_JPEG);
+                    headers.setContentType(resolveMediaType(audio.getCoverImage()));
                     headers.setContentLength(audio.getCoverImageData().length);
                     return new ResponseEntity<>(audio.getCoverImageData(), headers, HttpStatus.OK);
                 }
@@ -144,5 +156,22 @@ public class AudioController extends BaseController {
             logger.error("Error retrieving audio image: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private MediaType resolveMediaType(String fileName) {
+        if (fileName == null) {
+            return MediaType.APPLICATION_OCTET_STREAM;
+        }
+        String lower = fileName.toLowerCase();
+        if (lower.endsWith(".png")) {
+            return MediaType.IMAGE_PNG;
+        }
+        if (lower.endsWith(".gif")) {
+            return MediaType.IMAGE_GIF;
+        }
+        if (lower.endsWith(".webp")) {
+            return MediaType.parseMediaType("image/webp");
+        }
+        return MediaType.IMAGE_JPEG;
     }
 }

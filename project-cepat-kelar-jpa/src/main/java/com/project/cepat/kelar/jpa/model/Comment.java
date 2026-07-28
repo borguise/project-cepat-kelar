@@ -13,6 +13,7 @@ import com.project.cepat.kelar.common.model.ReferenceBase;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity(name = "CommentEntity")
 @Table(name = "comment")
@@ -33,6 +34,8 @@ public class Comment extends ReferenceBase {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ARTICLE_ID")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Article article;
 
     @Column(name = "SOURCE")

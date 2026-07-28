@@ -206,6 +206,9 @@
 </div>
 
 <script>
+    // Mengambil ID voting aktif dari model FreeMarker
+    const activeVotingId = "${voting.id!'1'}";
+
     // Menyimpan data asli DB agar visual akurat
     const initialVoteData = {
         <#if participants?? && participants?size gt 0>
@@ -222,38 +225,59 @@
     function executeVoteAction(id, element) {
         if (userVotedId === id) return;
 
-        // 1. Reset kartu sebelumnya
-        if (userVotedId !== null) {
-            const oldCard = document.getElementById('vCardItem-' + userVotedId);
-            const oldNum = document.getElementById('vNumDisplay-' + userVotedId);
-            if(oldCard) {
-                oldCard.classList.remove('selected-active');
-                const oldHeart = oldCard.querySelector('.vote-heart-action');
-                if(oldHeart) { 
-                    oldHeart.classList.replace('fas', 'far');
-                }
-                if(oldNum) { 
-                    oldNum.classList.remove('counter-active');
-                    oldNum.innerText = initialVoteData[userVotedId] || 0;
+        // Mengirim data ke backend Java menggunakan Fetch API
+        fetch('/voting/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'entryId=' + id + '&votingId=' + activeVotingId
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            return response.text();
+        })
+        .then(data => {
+            // 1. Reset kartu sebelumnya di UI
+            if (userVotedId !== null) {
+                const oldCard = document.getElementById('vCardItem-' + userVotedId);
+                const oldNum = document.getElementById('vNumDisplay-' + userVotedId);
+                if(oldCard) {
+                    oldCard.classList.remove('selected-active');
+                    const oldHeart = oldCard.querySelector('.vote-heart-action');
+                    if(oldHeart) { 
+                        oldHeart.classList.replace('fas', 'far');
+                    }
+                    if(oldNum) { 
+                        oldNum.classList.remove('counter-active');
+                        oldNum.innerText = initialVoteData[userVotedId] || 0;
+                    }
                 }
             }
         }
 
-        // 2. Aktifkan kartu baru
-        const newCard = document.getElementById('vCardItem-' + id);
-        const newNum = document.getElementById('vNumDisplay-' + id);
-        
-        if(newCard && newNum) {
-            newCard.classList.add('selected-active');
-            element.classList.replace('far', 'fas');
-            newNum.classList.add('counter-active');
+            // 2. Aktifkan kartu baru di UI
+            const newCard = document.getElementById('vCardItem-' + id);
+            const newNum = document.getElementById('vNumDisplay-' + id);
             
-            // Visual +1
-            const baseValue = initialVoteData[id] || 0;
-            newNum.innerText = baseValue + 1;
-            
-            userVotedId = id;
-            console.log("Vote recorded for ID: " + id);
-        }
+            if(newCard && newNum) {
+                newCard.classList.add('selected-active');
+                element.classList.replace('far', 'fas');
+                newNum.classList.add('counter-active');
+                
+                // Visual +1
+                const baseValue = initialVoteData[id] || 0;
+                newNum.innerText = baseValue + 1;
+                
+                userVotedId = id;
+                console.log("Vote successfully recorded on server for ID: " + id);
+            }
+        })
+        .catch(error => {
+            console.error("Gagal menyimpan vote:", error);
+            alert("Gagal mencatat suara. Silakan coba lagi.");
+        });
     }
 </script>

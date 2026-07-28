@@ -1,20 +1,14 @@
 spring:
   application:
     name: project-cepat-kelar
-  web:
-    error:
-      include-message: always
-      include-binding-errors: always
-      include-exception: true
-      include-stacktrace: always
   datasource:
-    url: jdbc:postgresql://localhost:5432/project_cepat_kelar
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: root
+    password: database
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -29,12 +23,6 @@ spring:
     expose-request-attributes: true
     expose-session-attributes: true
     request-context-attribute: request
-  servlet:
-    multipart:
-      location: /tmp/uploads
-      max-file-size: 25MB
-      max-request-size: 30MB
-      file-size-threshold: 2KB
 
 server:
   port: 8080
@@ -57,7 +45,7 @@ email:
     whiteDomainList: ""
 
 file:
-  uploaded-temp-dir: /tmp/uploads
+  uploaded-temp-dir: ./tmp/uploads
   uploaded-dir: ./uploads
 
 logging:
