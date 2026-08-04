@@ -1,15 +1,16 @@
+<#-- 1. Penanda Halaman Aktif untuk Sidebar -->
 <#assign activePage = "komentar">
 <#import "/layout/backoffice_layout.ftl" as layout>
 
 <@layout.backofficeLayout title="Admin - Moderasi Komentar" activePage=activePage adminName=adminName>
-      
+     
       <div class="w-full max-w-5xl mx-auto px-4 mb-6">
         <h2 class="text-xl font-bold font-gelasio text-black">Moderasi Komentar Artikel & Berita</h2>
       </div>
 
       <div class="w-full max-w-5xl mx-auto px-4 mb-8 flex justify-center">
         <form action="/admin/comments" method="GET" class="w-full max-w-2xl relative">
-          <input type="text" name="search" placeholder="Ketik Sumber Komentar disini" 
+          <input type="text" name="search" placeholder="Ketik Sumber Komentar atau Judul Artikel disini" 
                  value="${searchKeyword!''}"
                  class="w-full py-4 px-6 pr-14 bg-white rounded-xl shadow-[0px_2px_10px_rgba(0,0,0,0.05)] border border-slate-100 outline-none font-lato text-center focus:ring-2 focus:ring-indigo-100">
           
@@ -36,26 +37,35 @@
               
               <#if comments?? && comments?size gt 0>
                 <#list comments as c>
-                  <tr class="h-24 hover:bg-slate-50 transition border-b border-black/5 last:border-b-0" id="row-${c.id}">
-                    <td class="px-6 border-r border-black/20 font-bold">${c.sender}</td>
-                    <td class="px-4 border-r border-black/20 font-bold">${c.commentDate}</td>
-                    <td class="px-6 border-r border-black/20 text-left font-bold text-slate-800">${c.content}</td>
-                    <td class="px-4 border-r border-black/20 text-slate-600">${c.source}</td>
+                  <tr class="h-24 hover:bg-slate-50 transition border-b border-black/5 last:border-b-0" id="row-${c.id?c}">
+                    <td class="px-6 border-r border-black/20 font-bold">${c.sender!''}</td>
+                    <td class="px-4 border-r border-black/20 font-bold">${c.commentDate!''}</td>
+                    <td class="px-6 border-r border-black/20 text-left font-bold text-slate-800">${c.content!''}</td>
+                    
+                    <!-- Kolom Sumber Diperbarui Menampilkan Judul Artikel Relasi -->
+                    <td class="px-4 border-r border-black/20 text-slate-600 text-left">
+                      <#if c.article??>
+                          <span class="font-semibold text-[#3B5998]">${c.article.title}</span>
+                      <#else>
+                          <span class="text-slate-400 italic">${c.source!'Artikel Umum'}</span>
+                      </#if>
+                    </td>
+
                     <td class="px-4 border-r border-black/20 font-medium status-text text-black">
-                      <#if c.status == 'Hidden'>Disembunyikan<#else>Tampil</#if>
+                      <#if c.status?? && c.status == 'Hidden'>Disembunyikan<#else>Tampil</#if>
                     </td>
                     <td class="px-4">
                       <div class="flex justify-center gap-4 items-center">
                         
-                        <button onclick="toggleEye(${c.id})" title="Ubah Status Tayang" class="text-black hover:text-[#4338ca] hover:scale-110 transition eye-btn">
-                          <#if c.status == 'Hidden'>
+                        <button type="button" data-id="${c.id?c}" title="Ubah Status Tayang" class="text-black hover:text-[#4338ca] hover:scale-110 transition toggle-comment-btn">
+                          <#if c.status?? && c.status == 'Hidden'>
                             <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                           <#else>
                             <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                           </#if>
                         </button>
 
-                        <button onclick="confirmDelete(${c.id})" title="Hapus Komentar" class="text-black hover:text-red-500 hover:scale-110 transition">
+                        <button type="button" data-id="${c.id?c}" title="Hapus Komentar" class="text-black hover:text-red-500 hover:scale-110 transition delete-comment-btn">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                         </button>
 
@@ -74,28 +84,68 @@
         </div>
 
         <div class="w-full px-8 py-6 bg-white border border-t-0 border-stone-100 rounded-b-2xl shadow-[0px_5px_20px_rgba(243,237,237,1.0)] flex justify-between items-center text-slate-500 text-sm">
-            <span>Menampilkan ${(comments?size)!0} Komentar</span>
+            <span>
+                <#if searchKeyword?? && searchKeyword != "">
+                    Menampilkan hasil pencarian untuk "${searchKeyword}" (Total: ${totalItems!0} komentar)
+                <#else>
+                    Menampilkan halaman ${(currentPage!0) + 1} dari ${totalPages!1} (Total: ${totalItems!0} Komentar)
+                </#if>
+            </span>
+            
             <div class="flex gap-4 items-center">
-                <button class="hover:text-[#4338ca] font-semibold transition">Prev</button>
+                <#-- Tombol Prev -->
+                <#if currentPage?? && currentPage gt 0>
+                    <a href="/admin/comments?page=${currentPage - 1}&search=${searchKeyword!''}" class="hover:text-[#4338ca] font-semibold transition">Prev</a>
+                <#else>
+                    <span class="text-slate-300 cursor-not-allowed font-semibold">Prev</span>
+                </#if>
+
+                <#-- Nomor Halaman Dinamis -->
                 <div class="flex gap-2">
-                    <span class="w-8 h-8 flex items-center justify-center bg-[#4338ca] text-white rounded-full cursor-pointer shadow-md">1</span>
+                    <#if totalPages?? && totalPages gt 0>
+                        <#list 0..(totalPages - 1) as i>
+                            <#if i == currentPage>
+                                <span class="w-8 h-8 flex items-center justify-center bg-[#4338ca] text-white rounded-full font-bold shadow-md">${i + 1}</span>
+                            <#else>
+                                <a href="/admin/comments?page=${i}&search=${searchKeyword!''}" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition">${i + 1}</a>
+                            </#if>
+                        </#list>
+                    <#else>
+                        <span class="w-8 h-8 flex items-center justify-center bg-[#4338ca] text-white rounded-full font-bold shadow-md">1</span>
+                    </#if>
                 </div>
-                <button class="hover:text-[#4338ca] font-semibold transition">Next</button>
+
+                <#-- Tombol Next -->
+                <#if currentPage?? && totalPages?? && (currentPage + 1) lt totalPages>
+                    <a href="/admin/comments?page=${currentPage + 1}&search=${searchKeyword!''}" class="hover:text-[#4338ca] font-semibold transition">Next</a>
+                <#else>
+                    <span class="text-slate-300 cursor-not-allowed font-semibold">Next</span>
+                </#if>
             </div>
         </div>
       </div>
 
   <script>
-    function toggleEye(id) {
-        if(confirm("Ubah status tayang komentar ini?")) {
-             window.location.href = "/admin/comments/toggle/" + id;
-        }
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            const toggleBtn = e.target.closest('.toggle-comment-btn');
+            if (toggleBtn) {
+                const id = toggleBtn.getAttribute('data-id');
+                if (confirm("Ubah status tayang komentar ini?")) {
+                    window.location.href = "/admin/comments/toggle/" + id;
+                }
+                return;
+            }
 
-    function confirmDelete(id) {
-        if(confirm("Hapus komentar ini?")) {
-            window.location.href = "/admin/comments/delete/" + id;
-        }
-    }
+            const deleteBtn = e.target.closest('.delete-comment-btn');
+            if (deleteBtn) {
+                const id = deleteBtn.getAttribute('data-id');
+                if (confirm("Hapus komentar ini?")) {
+                    window.location.href = "/admin/comments/delete/" + id;
+                }
+                return;
+            }
+        });
+    });
   </script>
 </@layout.backofficeLayout>

@@ -1,20 +1,34 @@
 package com.project.cepat.kelar.fe.controller.frontoffice;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.project.cepat.kelar.jpa.model.Article;
+import com.project.cepat.kelar.jpa.model.Comment;
 import com.project.cepat.kelar.jpa.model.Voting;
+import com.project.cepat.kelar.service.backoffice.ArticleService;
 import com.project.cepat.kelar.service.backoffice.AudioService;
 import com.project.cepat.kelar.service.backoffice.CollectionService;
+import com.project.cepat.kelar.service.backoffice.CommentService;
 import com.project.cepat.kelar.service.backoffice.HighlightService;
 import com.project.cepat.kelar.service.backoffice.VotingService;
 
 @Controller
 public class FrontofficeController {
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
 
     @Autowired(required = false)
     private HighlightService highlightService;
@@ -28,6 +42,12 @@ public class FrontofficeController {
     @Autowired(required = false)
     private VotingService votingService;
 
+    @Autowired(required = false)
+    private ArticleService articleService;
+
+    @Autowired(required = false)
+    private CommentService commentService;
+
     // --- LANDING & NAVIGATION ---
     @GetMapping({"/", "/landing-page"})
     public String landingPage() {
@@ -40,13 +60,20 @@ public class FrontofficeController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(ModelMap model) {
+        loadHomeData(model);
         return "frontoffice/home";
     }
 
     // --- MAIN DATA LOADER (HOME-ALT) ---
     @GetMapping("/home-alt")
     public String homeAlt(ModelMap model) {
+        loadHomeData(model);
+        return "frontoffice/home-alt";
+    }
+
+    // Method terpusat untuk memuat data ke model frontoffice
+    private void loadHomeData(ModelMap model) {
         try {
             // 1. Data Koleksi
             if (collectionService != null) {
@@ -64,14 +91,62 @@ public class FrontofficeController {
                 if (activeVoting != null) {
                     model.addAttribute("voting", activeVoting);
                     model.addAttribute("participants", votingService.getEntriesByVotingId(activeVoting.getId()));
-                } else {
-                    System.out.println("DEBUG: Tidak ada voting dengan status 'Aktif' di database.");
                 }
             }
+
+            // 4. Data Artikel & Komentarnya
+            List<Article> rawArticles = new ArrayList<>();
+            if (articleService != null) {
+                try {
+                    rawArticles = articleService.getAll();
+                } catch (Exception e) {
+                    try {
+                        rawArticles = articleService.getByStatus(com.project.cepat.kelar.common.constant.ArticleStatus.PUBLISHED);
+                    } catch (Exception ignored) {}
+                }
+            }
+
+            List<Map<String, Object>> articleListMaps = new ArrayList<>();
+            if (rawArticles != null) {
+                for (Article a : rawArticles) {
+                    Map<String, Object> aMap = new HashMap<>();
+                    aMap.put("id", a.getId());
+                    aMap.put("title", a.getTitle() != null ? a.getTitle() : "");
+                    aMap.put("content", a.getContent() != null ? a.getContent() : "");
+                    aMap.put("img", "/admin/articles/image/" + a.getId());
+
+                    // Ambil dan saring komentar untuk artikel ini
+                    List<Map<String, Object>> commentMaps = new ArrayList<>();
+                    if (commentService != null) {
+                        try {
+                            Pageable pageable = PageRequest.of(0, 100);
+                            Page<Comment> commentPage = commentService.getCommentsByArticleId(a.getId(), pageable);
+                            for (Comment c : commentPage.getContent()) {
+                                if ("Tampil".equalsIgnoreCase(c.getStatus()) || "Published".equalsIgnoreCase(c.getStatus())) {
+                                    Map<String, Object> cMap = new HashMap<>();
+                                    cMap.put("sender", c.getSender() != null ? c.getSender() : "Anonim");
+                                    cMap.put("content", c.getContent() != null ? c.getContent() : "");
+                                    cMap.put("date", c.getCommentDate() != null ? DATE_FORMAT.format(c.getCommentDate()) : "");
+                                    commentMaps.add(cMap);
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error loading comments for article " + a.getId() + ": " + e.getMessage());
+                        }
+                    }
+                    aMap.put("comments", commentMaps);
+                    articleListMaps.add(aMap);
+                }
+            }
+
+            model.addAttribute("articlesMap", articleListMaps);
+            model.addAttribute("articles", rawArticles != null ? rawArticles : new ArrayList<>());
+
         } catch (Exception e) {
-            System.out.println("ERROR memuat home-alt: " + e.getMessage());
+            System.out.println("ERROR memuat data beranda frontoffice: " + e.getMessage());
+            model.addAttribute("articles", new ArrayList<>());
+            model.addAttribute("articlesMap", new ArrayList<>());
         }
-        return "frontoffice/home-alt";
     }
 
     // --- OTHER PAGES ---
