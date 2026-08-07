@@ -2,7 +2,7 @@ package com.project.cepat.kelar.fe.controller.frontoffice;
 
 import java.util.Date;
 
-import org.slf4j.Logger;
+import org.slf4j.Logger; // <-- Import ini
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,8 @@ import com.project.cepat.kelar.jpa.model.Article;
 import com.project.cepat.kelar.jpa.model.Comment;
 import com.project.cepat.kelar.service.backoffice.ArticleService;
 import com.project.cepat.kelar.service.backoffice.CommentService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/comment")
@@ -36,10 +38,14 @@ public class CommentFrontofficeController {
             @RequestParam(value = "articleId", required = false) String articleIdStr,
             @RequestParam(value = "source", required = false, defaultValue = "Article") String source,
             @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
+            HttpServletRequest request, // <-- Tambahkan parameter ini untuk mendeteksi halaman asal
             RedirectAttributes redirectAttributes) {
         
-        // Menggunakan redirectUrl dinamis, default ke /home jika kosong
-        String targetUrl = (redirectUrl != null && !redirectUrl.trim().isEmpty()) ? redirectUrl : "/home";
+        // Ambil halaman asal (referer) secara otomatis agar user kembali ke artikel yang dibaca
+        String referer = request.getHeader("Referer");
+        String targetUrl = (redirectUrl != null && !redirectUrl.trim().isEmpty()) 
+                            ? redirectUrl 
+                            : (referer != null ? referer : "/home");
 
         try {
             if (commentService != null) {
@@ -48,7 +54,7 @@ public class CommentFrontofficeController {
                 comment.setUserEmail(email);
                 comment.setContent(commentText);
                 comment.setSource(source);
-                comment.setStatus("Tampil"); 
+                comment.setStatus("Published"); 
                 comment.setCommentDate(new Date());
 
                 if (articleIdStr != null && !articleIdStr.trim().isEmpty()) {
@@ -57,9 +63,7 @@ public class CommentFrontofficeController {
                         if (articleService != null) {
                             Article article = articleService.getById(articleId);
                             if (article != null) {
-                                // Menghubungkan relasi objek Article
                                 comment.setArticle(article);
-                                // Menyimpan judul artikel ke kolom source sebagai teks cadangan
                                 comment.setSource(article.getTitle());
                             }
                         }
@@ -70,7 +74,7 @@ public class CommentFrontofficeController {
 
                 commentService.save(comment);
                 logger.info("Comment successfully saved by: {}", name);
-                redirectAttributes.addFlashAttribute("commentSuccess", "Komentar Anda berhasil dikirim!");
+                redirectAttributes.addFlashAttribute("commentSuccess", "Komentar berhasil dikirim!");
             } else {
                 redirectAttributes.addFlashAttribute("commentError", "Layanan komentar tidak tersedia!");
             }

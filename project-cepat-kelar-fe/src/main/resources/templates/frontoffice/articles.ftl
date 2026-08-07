@@ -24,7 +24,8 @@
     .fg-input { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
     .fg-textarea-wrapper { position: relative; width: 100%; }
     .fg-textarea { width: 100%; padding: 18px 24px; border-radius: 12px; border: none; height: 120px; resize: none; font-family: 'Lato', sans-serif; font-size: 16px; color: #333; outline: none; box-sizing: border-box; }
-    .fg-submit-btn { position: absolute; bottom: 15px; right: 20px; background: transparent; border: none; font-size: 24px; color: #3B5998; cursor: pointer; }
+    .fg-submit-btn { position: absolute; bottom: 15px; right: 20px; background: transparent; border: none; font-size: 24px; color: #3B5998; cursor: pointer; transition: 0.3s; }
+    .fg-submit-btn:disabled { color: #94a3b8; cursor: not-allowed; }
     
     .fg-comment-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
     .fg-comment-item { display: flex; gap: 20px; align-items: flex-start; }
@@ -40,6 +41,7 @@
 
     <div class="art-scroll-area flex flex-col items-center">
         
+        <!-- Notifikasi (jika dibutuhkan, kini akan ditangani alert browser) -->
         <div class="w-full max-w-[800px] px-4 mt-6">
             <#if commentSuccess??>
                 <div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl relative mb-4 font-['Lato']" role="alert">
@@ -86,7 +88,7 @@
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         </#if>
                         <input type="hidden" id="artDtlIdField" name="articleId" value="">
-                        <input type="hidden" id="artDtlRedirectField" name="redirectUrl" value="">
+                        <!-- Hapus parameter redirectUrl agar endpoint API tidak me-reload halaman -->
                         
                         <input type="text" name="name" placeholder="Nama Lengkap" class="fg-input" required>
                         <input type="email" name="email" placeholder="Email" class="fg-input" required>
@@ -100,13 +102,7 @@
                     </form>
 
                     <div class="fg-comment-list">
-                        <div class="fg-comment-item">
-                            <div class="fg-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="fg-comment-text-area">
-                                <div class="fg-comment-name">Admin Graha Pusat Literasi</div>
-                                <div class="fg-comment-isi">Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan pendapat Anda!</div>
-                            </div>
-                        </div>
+                        <!-- Komentar akan di-render di sini -->
                     </div>
 
                 </div>
@@ -212,7 +208,6 @@
     }
 
     function artOpenDetail(id) {
-        // Menggunakan konversi String agar pencocokan ID aman dari perbedaan tipe data (Number vs String)
         const target = artDbArticles.find(x => String(x.id) === String(id));
         if (!target) return;
 
@@ -220,19 +215,13 @@
         const imgEl = document.getElementById('artDtlImg');
         const contentEl = document.getElementById('artDtlContent');
         const idField = document.getElementById('artDtlIdField');
-        const redirectField = document.getElementById('artDtlRedirectField');
 
         if (titleEl) titleEl.innerText = target.title;
         if (imgEl) imgEl.src = target.img;
         if (contentEl) contentEl.innerHTML = target.content;
         if (idField) idField.value = target.id;
 
-        // Menggunakan jalur URL aktif saat ini (misal: /home) secara dinamis agar tetap di halaman asal
-        if (redirectField) {
-            redirectField.value = window.location.pathname + "?openId=" + target.id;
-        }
-
-        // RENDER KOMENTAR MENGGUNAKAN STRING CONCATENATION
+        // Render Komentar (Tampilan Awal)
         const commentListContainer = document.querySelector('.fg-comment-list');
         if (commentListContainer) {
             if (target.comments && target.comments.length > 0) {
@@ -267,7 +256,6 @@
         artNavigateTo('home');
     }
 
-    // Inisialisasi instan untuk mendukung lingkungan SPA / Kiosk
     function initArticleModule() {
         const urlParams = new URLSearchParams(window.location.search);
         const openId = urlParams.get('openId');
@@ -277,32 +265,104 @@
             artNavigateTo('home');
         }
 
-        // Interseptor AJAX form komentar agar langsung reload dengan openId di path asal
+        // Interseptor AJAX form komentar Murni SPA (Tanpa Reload & Tanpa Popup Alert)
         const commentForm = document.querySelector('.fg-comment-box');
         if (commentForm && !commentForm.dataset.initialized) {
             commentForm.dataset.initialized = "true";
+            
             commentForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+                e.preventDefault(); // Matikan perpindahan halaman bawaan browser
                 
                 const formData = new FormData(commentForm);
-                const articleId = document.getElementById('artDtlIdField').value;
+                const submitBtn = commentForm.querySelector('.fg-submit-btn');
+                const originalIcon = submitBtn.innerHTML;
+                
+                // Ubah status ke loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
                 fetch(commentForm.action, {
                     method: 'POST',
                     body: formData
                 })
                 .then(response => {
-                    window.location.href = window.location.pathname + "?openId=" + articleId;
+                    /* ========================================================
+                       SOLUSI TANPA POPUP: Notifikasi Halus di Sebelah Tombol
+                       ======================================================== */
+                    let statusMsg = commentForm.querySelector('.inline-status-msg');
+                    if (!statusMsg) {
+                        statusMsg = document.createElement('div');
+                        // Menambahkan styling Tailwind agar posisinya tepat di kiri tombol kirim
+                        statusMsg.className = 'inline-status-msg absolute bottom-[18px] right-[60px] font-["Lato"] text-sm font-bold transition-opacity duration-500';
+                        commentForm.querySelector('.fg-textarea-wrapper').appendChild(statusMsg);
+                    }
+                    
+                    statusMsg.innerText = "Komentar terkirim!";
+                    statusMsg.classList.remove('text-red-500');
+                    statusMsg.classList.add('text-green-600');
+                    statusMsg.style.opacity = '1';
+                    
+                    // Menghilangkan teks secara otomatis setelah 3 detik
+                    setTimeout(() => {
+                        statusMsg.style.opacity = '0';
+                    }, 3000);
+                    // ========================================================
+
+                    // Ambil isi input
+                    const newName = formData.get('name') || "Anonim";
+                    const newContent = formData.get('comment') || "";
+                    
+                    // Tempelkan langsung ke daftar komentar tanpa reload
+                    const commentListContainer = document.querySelector('.fg-comment-list');
+                    if (commentListContainer) {
+                        // Bersihkan tulisan "Belum ada komentar" jika ada
+                        if (commentListContainer.innerHTML.includes('Belum ada komentar')) {
+                            commentListContainer.innerHTML = '';
+                        }
+                        
+                        const newCommentHtml = '<div class="fg-comment-item">' +
+                            '<div class="fg-avatar"><i class="fa-solid fa-user"></i></div>' +
+                            '<div class="fg-comment-text-area">' +
+                                '<div class="fg-comment-name">' + newName + ' <span class="text-xs font-normal text-slate-400 ml-2">Baru saja</span></div>' +
+                                '<div class="fg-comment-isi">' + newContent + '</div>' +
+                            '</div>' +
+                        '</div>';
+                        
+                        // Letakkan komentar paling atas
+                        commentListContainer.insertAdjacentHTML('afterbegin', newCommentHtml);
+                    }
+
+                    // Bersihkan kolom form
+                    commentForm.reset();
                 })
                 .catch(error => {
-                    console.error('Gagal mengirim komentar:', error);
-                    commentForm.submit();
+                    console.error('Error:', error);
+                    
+                    // Notifikasi error yang juga halus (tanpa popup)
+                    let statusMsg = commentForm.querySelector('.inline-status-msg');
+                    if (!statusMsg) {
+                        statusMsg = document.createElement('div');
+                        statusMsg.className = 'inline-status-msg absolute bottom-[18px] right-[60px] font-["Lato"] text-sm font-bold transition-opacity duration-500';
+                        commentForm.querySelector('.fg-textarea-wrapper').appendChild(statusMsg);
+                    }
+                    statusMsg.innerText = "Gagal mengirim!";
+                    statusMsg.classList.remove('text-green-600');
+                    statusMsg.classList.add('text-red-500');
+                    statusMsg.style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        statusMsg.style.opacity = '0';
+                    }, 3000);
+                })
+                .finally(() => {
+                    // Kembalikan ikon tombol kertas terbang
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalIcon;
                 });
             });
         }
     }
 
-    // Eksekusi langsung tanpa menunggu DOMContentLoaded yang terkadang terlewat di SPA
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initArticleModule);
     } else {
