@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.project.cepat.kelar.jpa.model.Article;
 import com.project.cepat.kelar.jpa.model.Comment;
+import com.project.cepat.kelar.jpa.model.Event;
 import com.project.cepat.kelar.jpa.model.Highlight;
 import com.project.cepat.kelar.jpa.model.Voting;
 import com.project.cepat.kelar.service.backoffice.ArticleService;
 import com.project.cepat.kelar.service.backoffice.AudioService;
 import com.project.cepat.kelar.service.backoffice.CollectionService;
 import com.project.cepat.kelar.service.backoffice.CommentService;
+import com.project.cepat.kelar.service.backoffice.EventService;
 import com.project.cepat.kelar.service.backoffice.HighlightService;
 import com.project.cepat.kelar.service.backoffice.VotingService;
 
@@ -49,6 +52,9 @@ public class FrontofficeController {
     @Autowired(required = false)
     private CommentService commentService;
 
+    @Autowired(required = false)
+    private EventService eventService;
+
     // --- LANDING & NAVIGATION ---
     @GetMapping({"/", "/landing-page"})
     public String landingPage() {
@@ -66,27 +72,22 @@ public class FrontofficeController {
         return "frontoffice/home";
     }
 
-    // --- MAIN DATA LOADER (HOME-ALT) ---
     @GetMapping("/home-alt")
     public String homeAlt(ModelMap model) {
         loadHomeData(model);
         return "frontoffice/home-alt";
     }
 
-    // Method terpusat untuk memuat data ke model frontoffice
     private void loadHomeData(ModelMap model) {
         try {
-            // 1. Data Koleksi
             if (collectionService != null) {
                 model.addAttribute("collections", collectionService.getPageablePublished(PageRequest.of(0, 9)));
             }
             
-            // 2. Data Audio
             if (audioService != null) {
                 model.addAttribute("audios", audioService.getPageablePublished(PageRequest.of(0, 9)).getContent());
             }
             
-            // 3. Data Voting (Kandidat Aktif)
             if (votingService != null) {
                 Voting activeVoting = votingService.getActiveVoting();
                 if (activeVoting != null) {
@@ -95,7 +96,6 @@ public class FrontofficeController {
                 }
             }
 
-            // 4. Data Artikel & Komentarnya
             List<Article> rawArticles = new ArrayList<>();
             if (articleService != null) {
                 try {
@@ -142,9 +142,6 @@ public class FrontofficeController {
             model.addAttribute("articlesMap", articleListMaps);
             model.addAttribute("articles", rawArticles != null ? rawArticles : new ArrayList<>());
 
-            // =========================================================================
-            // 5. DATA SOROTAN / FAQ (KUNCI UTAMA AGAR MODAL HOME TIDAK LAGI GAGAL MEMUAT)
-            // =========================================================================
             if (highlightService != null) {
                 List<Map<String, Object>> faqs = new ArrayList<>();
                 for (Highlight item : highlightService.getPublishedList()) {
@@ -157,17 +154,68 @@ public class FrontofficeController {
             } else {
                 model.addAttribute("faqs", new ArrayList<>());
             }
-            // =========================================================================
+
+            // 6. DATA AGENDA / EVENT UNTUK KIOSK (FILTER KETAT: PUBLISHED ONLY)
+            Map<String, Object> primaryEvent = new HashMap<>();
+            List<Map<String, Object>> upcomingEventList = new ArrayList<>();
+
+            if (eventService != null) {
+                try {
+                    var rawEvents = eventService.getPageableActive(PageRequest.of(0, 20)).getContent();
+                    
+                    List<Event> events = new ArrayList<>();
+                    for (Event ev : rawEvents) {
+                        // FILTER KETAT: Hanya status PUBLISHED
+                        if (ev.getStatus() != null && "PUBLISHED".equalsIgnoreCase(ev.getStatus().trim())) {
+                            events.add(ev);
+                        }
+                    }
+
+                    SimpleDateFormat indonesianFormatter = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+
+                    if (!events.isEmpty()) {
+                        Event primary = events.get(0);
+                        primaryEvent.put("id", primary.getId());
+                        primaryEvent.put("title", primary.getName() != null ? primary.getName() : "Agenda Literasi");
+                        primaryEvent.put("description", primary.getEventDescription() != null ? primary.getEventDescription() : "-");
+                        primaryEvent.put("dateLabel", primary.getEventDate() != null ? indonesianFormatter.format(primary.getEventDate()) : "Tanggal belum tersedia");
+                        if (primary.getPosterImageData() != null && primary.getPosterImageData().length > 0) {
+                            primaryEvent.put("imageUrl", "/admin/events/image/" + primary.getId());
+                        }
+                    }
+
+                    String[] iconClasses = {"fa-book-open", "fa-calendar-days", "fa-users", "fa-lightbulb", "fa-graduation-cap", "fa-chalkboard-user"};
+                    
+                    // Batasi maksimal 2 agenda selanjutnya
+                    int limitCount = Math.min(events.size(), 3);
+                    for (int index = 1; index < limitCount; index++) {
+                        Event event = events.get(index);
+                        Map<String, Object> next = new HashMap<>();
+                        next.put("id", event.getId());
+                        next.put("title", event.getName() != null ? event.getName() : "Agenda");
+                        next.put("dateLabel", event.getEventDate() != null ? indonesianFormatter.format(event.getEventDate()) : "Tanggal belum tersedia");
+                        next.put("iconClass", iconClasses[(index - 1) % iconClasses.length]);
+                        upcomingEventList.add(next);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error mapping frontoffice events: " + e.getMessage());
+                }
+            }
+
+            if (primaryEvent.isEmpty()) {
+                primaryEvent.put("title", "Jadwal Kegiatan Literasi");
+                primaryEvent.put("description", "Belum ada agenda yang dipublikasikan.");
+                primaryEvent.put("dateLabel", "Tanggal belum tersedia");
+            }
+
+            model.addAttribute("primaryEvent", primaryEvent);
+            model.addAttribute("upcomingEventList", upcomingEventList);
 
         } catch (Exception e) {
             System.out.println("ERROR memuat data beranda frontoffice: " + e.getMessage());
-            model.addAttribute("articles", new ArrayList<>());
-            model.addAttribute("articlesMap", new ArrayList<>());
-            model.addAttribute("faqs", new ArrayList<>());
         }
     }
 
-    // --- OTHER PAGES ---
     @GetMapping("/highlights")
     public String highlights(ModelMap model) {
         try {

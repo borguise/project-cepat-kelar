@@ -1,6 +1,5 @@
 <#assign activePage = "agenda">
 <#import "/layout/backoffice_layout.ftl" as layout>
-<#assign totalAgenda = (eventList?size)!0>
 
 <@layout.backofficeLayout title="Admin - Daftar Agenda" activePage=activePage adminName=adminName>
 
@@ -52,7 +51,7 @@
                 <td class="px-4 py-4 text-slate-600">${event.location!""}</td>
                 <td class="px-4 py-4">
                   <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold border 
-                    <#if (event.status!"") == 'Disetujui'>bg-green-50 text-green-700 border-green-200<#else>bg-yellow-50 text-yellow-700 border-yellow-200</#if>">
+                    <#if (event.status!"") == 'Disetujui' || (event.status!"") == 'PUBLISHED'>bg-green-50 text-green-700 border-green-200<#else>bg-yellow-50 text-yellow-700 border-yellow-200</#if>">
                     ${event.status!"Diproses"}
                   </span>
                 </td>
@@ -76,12 +75,39 @@
         </tbody>
       </table>
 
+      <!-- BAGIAN BAWAH TABEL & PAGINASI DINAMIS -->
       <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-slate-500 text-sm">
-          <span>Menampilkan ${totalAgenda} Data Agenda</span>
+          <span>Menampilkan halaman ${currentPage!1} dari ${totalPages!0} (Total: ${totalItems!0} Agenda)</span>
+          
           <div class="flex gap-2 items-center">
-            <button class="px-3 py-1 hover:bg-slate-200 rounded transition">Prev</button>
-            <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-sm font-medium">1</span>
-            <button class="px-3 py-1 hover:bg-slate-200 rounded transition">Next</button>
+            <#-- Tombol Prev -->
+            <#if currentPage?? && currentPage &gt; 1>
+                <a href="?page=${currentPage - 1}<#if query??>&query=${query}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Prev</a>
+            <#else>
+                <span class="px-3 py-1 text-slate-300 cursor-not-allowed">Prev</span>
+            </#if>
+
+            <#-- Nomor Halaman -->
+            <div class="flex gap-1">
+                <#if totalPages?? && totalPages &gt; 0>
+                    <#list 1..totalPages as p>
+                        <#if p == currentPage>
+                            <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-sm font-medium">${p}</span>
+                        <#else>
+                            <a href="?page=${p}<#if query??>&query=${query}</#if>" class="w-8 h-8 flex items-center justify-center hover:bg-slate-200 text-slate-700 rounded-lg transition font-medium">${p}</a>
+                        </#if>
+                    </#list>
+                <#else>
+                    <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-sm font-medium">1</span>
+                </#if>
+            </div>
+
+            <#-- Tombol Next -->
+            <#if currentPage?? && totalPages?? && currentPage &lt; totalPages>
+                <a href="?page=${currentPage + 1}<#if query??>&query=${query}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Next</a>
+            <#else>
+                <span class="px-3 py-1 text-slate-300 cursor-not-allowed">Next</span>
+            </#if>
           </div>
       </div>
     </div>
