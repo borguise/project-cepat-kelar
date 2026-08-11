@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.project.cepat.kelar.jpa.model.Article;
 import com.project.cepat.kelar.jpa.model.Comment;
+import com.project.cepat.kelar.jpa.model.Highlight;
 import com.project.cepat.kelar.jpa.model.Voting;
 import com.project.cepat.kelar.service.backoffice.ArticleService;
 import com.project.cepat.kelar.service.backoffice.AudioService;
@@ -115,7 +116,6 @@ public class FrontofficeController {
                     aMap.put("content", a.getContent() != null ? a.getContent() : "");
                     aMap.put("img", "/admin/articles/image/" + a.getId());
 
-                    // Ambil dan saring komentar untuk artikel ini
                     List<Map<String, Object>> commentMaps = new ArrayList<>();
                     if (commentService != null) {
                         try {
@@ -142,10 +142,28 @@ public class FrontofficeController {
             model.addAttribute("articlesMap", articleListMaps);
             model.addAttribute("articles", rawArticles != null ? rawArticles : new ArrayList<>());
 
+            // =========================================================================
+            // 5. DATA SOROTAN / FAQ (KUNCI UTAMA AGAR MODAL HOME TIDAK LAGI GAGAL MEMUAT)
+            // =========================================================================
+            if (highlightService != null) {
+                List<Map<String, Object>> faqs = new ArrayList<>();
+                for (Highlight item : highlightService.getPublishedList()) {
+                    Map<String, Object> faq = new HashMap<>();
+                    faq.put("question", item.getQuestion());
+                    faq.put("answer", item.getAnswer());
+                    faqs.add(faq);
+                }
+                model.addAttribute("faqs", faqs);
+            } else {
+                model.addAttribute("faqs", new ArrayList<>());
+            }
+            // =========================================================================
+
         } catch (Exception e) {
             System.out.println("ERROR memuat data beranda frontoffice: " + e.getMessage());
             model.addAttribute("articles", new ArrayList<>());
             model.addAttribute("articlesMap", new ArrayList<>());
+            model.addAttribute("faqs", new ArrayList<>());
         }
     }
 
@@ -154,9 +172,9 @@ public class FrontofficeController {
     public String highlights(ModelMap model) {
         try {
             if (highlightService != null) {
-                java.util.List<java.util.Map<String, Object>> faqs = new java.util.ArrayList<>();
+                List<Map<String, Object>> faqs = new ArrayList<>();
                 for (var item : highlightService.getPublishedList()) {
-                    java.util.Map<String, Object> faq = new java.util.HashMap<>();
+                    Map<String, Object> faq = new HashMap<>();
                     faq.put("question", item.getQuestion());
                     faq.put("answer", item.getAnswer());
                     faqs.add(faq);
@@ -164,7 +182,7 @@ public class FrontofficeController {
                 model.addAttribute("faqs", faqs);
             }
         } catch (Exception ignored) {
-            model.addAttribute("faqs", new java.util.ArrayList<>());
+            model.addAttribute("faqs", new ArrayList<>());
         }
         return "frontoffice/highlights";
     }

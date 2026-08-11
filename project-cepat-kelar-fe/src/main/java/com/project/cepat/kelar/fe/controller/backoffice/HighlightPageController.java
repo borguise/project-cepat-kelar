@@ -1,6 +1,9 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,19 +15,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.cepat.kelar.jpa.model.Highlight;
+import com.project.cepat.kelar.service.backoffice.AdminService;
+import com.project.cepat.kelar.service.backoffice.HighlightService;
 
 @Controller
 @RequestMapping("/admin/highlights")
 public class HighlightPageController {
 
     @Autowired(required = false)
-    private com.project.cepat.kelar.service.backoffice.AdminService adminService;
+    private AdminService adminService;
 
     @Autowired(required = false)
-    private com.project.cepat.kelar.service.backoffice.HighlightService highlightService;
+    private HighlightService highlightService;
 
     @GetMapping("")
-    public String highlights(@RequestParam(value = "query", required = false) String query, ModelMap model) {
+    public String highlights(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "page", defaultValue = "1") int page, // Mengambil parameter halaman
+            ModelMap model) {
+            
         if (adminService != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             model.addAttribute("adminName", adminService.resolveAdminName(auth));
@@ -32,22 +41,44 @@ public class HighlightPageController {
 
         try {
             if (highlightService != null) {
-                var pageRequest = PageRequest.of(0, 100);
+                // Spring Data JPA menghitung indeks halaman dari 0
+                int pageIndex = Math.max(0, page - 1); 
+                
+                // Setel 10 item per halaman
+                var pageRequest = PageRequest.of(pageIndex, 10); 
+                
+                Page<Highlight> highlightPage;
+
                 if (query != null && !query.trim().isEmpty()) {
-                    model.addAttribute("sorotanList", highlightService.getPageable(query.trim(), pageRequest).getContent());
+                    highlightPage = highlightService.getPageable(query.trim(), pageRequest);
                     model.addAttribute("query", query);
                 } else {
-                    model.addAttribute("sorotanList", highlightService.getPageableActive(pageRequest).getContent());
+                    highlightPage = highlightService.getPageableActive(pageRequest);
                 }
+
+                // Kirim data ke FTL beserta atribut paginasi
+                model.addAttribute("sorotanList", highlightPage.getContent());
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", highlightPage.getTotalPages());
+                model.addAttribute("totalItems", highlightPage.getTotalElements());
+            } else {
+                model.addAttribute("sorotanList", new ArrayList<Highlight>());
+                model.addAttribute("currentPage", 1);
+                model.addAttribute("totalPages", 0);
+                model.addAttribute("totalItems", 0);
             }
-        } catch (Exception ignored) {
-            model.addAttribute("sorotanList", new java.util.ArrayList<Highlight>());
+        } catch (Exception e) {
+            model.addAttribute("sorotanList", new ArrayList<Highlight>());
+            model.addAttribute("currentPage", 1);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("totalItems", 0);
         }
+
         return "backoffice/admin-highlights";
     }
 
     @GetMapping({"/new", "/edit/{id}"})
-    public String highlightEditor(@PathVariable(required = false) Long id, ModelMap model) {
+    public String highlightEditor(@PathVariable(value = "id", required = false) Long id, ModelMap model) {
         if (adminService != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             model.addAttribute("adminName", adminService.resolveAdminName(auth));
@@ -59,7 +90,7 @@ public class HighlightPageController {
                     model.addAttribute("sorotan", highlightService.getById(id));
                 }
             } catch (Exception ignored) {
-                // Keep editor accessible even if data lookup fails.
+                // Tetap izinkan akses ke editor jika pencarian ID gagal
             }
         }
 

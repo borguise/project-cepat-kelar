@@ -20,6 +20,20 @@
     </a>
   </div>
 
+  <!-- BLOK NOTIFIKASI SUKSES / ERROR -->
+  <div class="max-w-6xl w-full mx-auto px-4">
+    <#if successMessage??>
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4 font-lato text-sm">
+        ${successMessage}
+      </div>
+    </#if>
+    <#if errorMessage??>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-4 font-lato text-sm">
+        ${errorMessage}
+      </div>
+    </#if>
+  </div>
+
   <div class="w-full max-w-6xl mx-auto px-4 mb-12">
     <div class="w-full bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <table class="w-full border-collapse">
@@ -40,7 +54,7 @@
                 <td class="px-6 py-4 text-center">
                   <#assign statusLabel = "Dipublikasikan">
                   <#assign statusClass = "bg-green-50 text-green-700 border border-green-200">
-                  <#if item.status?? && item.status?string == "HIDDEN">
+                  <#if item.status?? && (item.status?string == "HIDDEN" || item.status?string == "Hidden")>
                     <#assign statusLabel = "Disembunyikan">
                     <#assign statusClass = "bg-slate-100 text-slate-600 border border-slate-200">
                   </#if>
@@ -48,13 +62,13 @@
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex justify-center gap-4 text-sm font-semibold">
-                    <a href="/admin/highlights/edit/${item.id}" title="Edit" class="text-indigo-600 hover:text-indigo-800 transition flex items-center gap-1">
+                    <a href="/admin/highlights/edit/${item.id?c}" title="Edit" class="text-indigo-600 hover:text-indigo-800 transition flex items-center gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                       Edit
                     </a>
-                    <a href="/admin/highlights/delete/${item.id}" onclick="return confirm('Hapus data ini?')" title="Hapus" class="text-red-500 hover:text-red-700 transition flex items-center gap-1">
+                    <a href="/admin/highlights/delete/${item.id?c}" onclick="return confirm('Hapus data ini?')" title="Hapus" class="text-red-500 hover:text-red-700 transition flex items-center gap-1">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
@@ -72,14 +86,44 @@
         </tbody>
       </table>
 
-      <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-slate-500 text-sm">
-          <span>Menampilkan ${totalSorotan} Data Sorotan</span>
-          <div class="flex gap-2 items-center">
-            <button class="px-3 py-1 hover:bg-slate-200 rounded transition">Prev</button>
-            <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-sm font-medium">1</span>
-            <button class="px-3 py-1 hover:bg-slate-200 rounded transition">Next</button>
+<!-- BAGIAN BAWAH TABEL & PAGINASI -->
+      <div class="px-8 py-6 flex flex-col sm:flex-row justify-between items-center text-slate-500 text-sm border-t border-slate-100">
+          <span>Menampilkan halaman ${currentPage!1} dari ${totalPages!0} (Total: ${totalItems!0} Sorotan)</span>
+          
+          <div class="flex items-center gap-4 font-medium mt-4 sm:mt-0">
+              <#-- Tombol Sebelumnya (Teks Saja) -->
+              <#if currentPage?? && currentPage &gt; 1>
+                  <a href="?page=${currentPage - 1}<#if query??>&query=${query}</#if>" class="text-slate-400 hover:text-indigo-700 transition">Prev</a>
+              <#else>
+                  <span class="text-slate-300 cursor-not-allowed">Prev</span>
+              </#if>
+
+              <#-- Nomor Halaman (Lingkaran) -->
+              <div class="flex gap-2">
+                  <#if totalPages?? && totalPages &gt; 0>
+                      <#list 1..totalPages as p>
+                          <#if p == currentPage>
+                              <!-- Lingkaran Biru Gelap Untuk Halaman Aktif -->
+                              <span class="w-8 h-8 flex items-center justify-center rounded-full bg-[#3730a3] text-white font-bold shadow-sm">${p}</span>
+                          <#else>
+                              <a href="?page=${p}<#if query??>&query=${query}</#if>" class="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-indigo-50 hover:text-[#3730a3] transition">${p}</a>
+                          </#if>
+                      </#list>
+                  <#else>
+                      <!-- Tampilan Default Jika Kosong -->
+                      <span class="w-8 h-8 flex items-center justify-center rounded-full bg-[#3730a3] text-white font-bold shadow-sm">1</span>
+                  </#if>
+              </div>
+
+              <#-- Tombol Selanjutnya (Teks Saja) -->
+              <#if currentPage?? && totalPages?? && currentPage &lt; totalPages>
+                  <a href="?page=${currentPage + 1}<#if query??>&query=${query}</#if>" class="text-slate-400 hover:text-indigo-700 transition">Next</a>
+              <#else>
+                  <span class="text-slate-300 cursor-not-allowed">Next</span>
+              </#if>
           </div>
       </div>
+      
     </div>
   </div> 
 
