@@ -10,15 +10,15 @@ import com.project.cepat.kelar.jpa.model.Audio;
 
 public interface AudioRepository extends JpaRepository<Audio, Long> {
 
-    @Query("select a from AudioEntity a where a.deleted = 0 order by a.id desc")
+    @Query("select a from Audio a where a.deleted = 0 order by a.id desc")
     Page<Audio> getPageableActive(Pageable pageable);
 
-    @Query("select a from AudioEntity a where a.deleted = 0 and (lower(coalesce(a.title,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.responsibility,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.callNumber,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.subject,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.publisher,'')) like lower(concat('%', :text, '%'))) order by a.id desc")
+    @Query("select a from Audio a where a.deleted = 0 and (lower(coalesce(a.title,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.responsibility,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.callNumber,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.subject,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.publisher,'')) like lower(concat('%', :text, '%'))) order by a.id desc")
     Page<Audio> getPageable(@Param("text") String text, Pageable pageable);
 
-    @Query("select a from AudioEntity a where a.deleted = 0 and upper(coalesce(a.status,'')) = 'PUBLISHED' order by a.id desc")
+    @Query("select a from Audio a where a.deleted = 0 and upper(coalesce(a.status,'')) = 'PUBLISHED' order by a.id desc")
     Page<Audio> getPageablePublished(Pageable pageable);
 
-    @Query("select a from AudioEntity a where a.deleted = 0 and upper(coalesce(a.status,'')) = 'PUBLISHED' and (lower(coalesce(a.title,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.responsibility,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.publisher,'')) like lower(concat('%', :text, '%'))) order by a.id desc")
+    @Query("select a from Audio a where a.deleted = 0 and upper(coalesce(a.status,'')) = 'PUBLISHED' and (lower(coalesce(a.title,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.responsibility,'')) like lower(concat('%', :text, '%')) or lower(coalesce(a.publisher,'')) like lower(concat('%', :text, '%'))) order by a.id desc")
     Page<Audio> searchPublished(@Param("text") String text, Pageable pageable);
 }

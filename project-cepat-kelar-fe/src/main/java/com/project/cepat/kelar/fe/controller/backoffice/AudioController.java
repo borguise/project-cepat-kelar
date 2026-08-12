@@ -56,7 +56,7 @@ public class AudioController extends BaseController {
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "coverImageBase64", required = false) String coverImageBase64,
             @RequestParam(value = "coverFileName", required = false) String coverFileName,
-            @RequestParam(value = "audioFile", required = false) MultipartFile audioFile, // Ditangkap agar tidak Error 500
+            @RequestParam(value = "audioFile", required = false) MultipartFile audioFile,
             RedirectAttributes redirectAttributes) {
         Long parsedId = null;
         try {
@@ -82,7 +82,7 @@ public class AudioController extends BaseController {
                     audioFile != null && !audioFile.isEmpty());
 
             Audio saved = audioService.saveFromForm(parsedId, callNumber, subject, title, responsibility, gmd,
-                    publisher, originCity, publishYear, mediaType, audioFormat, status, null);
+                    publisher, originCity, publishYear, mediaType, audioFormat, status, null, audioFile);
 
             // 1. Proses Cover Gambar
             if (coverImageBase64 != null && !coverImageBase64.isBlank()) {

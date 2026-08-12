@@ -54,4 +54,10 @@ public class Audio extends ReferenceBase {
 
     @Column(name = "COVER_IMAGE_DATA", columnDefinition = "bytea")
     private byte[] coverImageData;
+
+    @Column(name = "AUDIO_FILE_NAME")
+    private String audioFileName;
+
+    @Column(name = "AUDIO_FILE_DATA", columnDefinition = "bytea")
+    private byte[] audioFileData;
 }

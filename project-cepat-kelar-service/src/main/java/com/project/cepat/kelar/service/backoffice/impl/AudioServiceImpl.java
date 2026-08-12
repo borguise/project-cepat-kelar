@@ -80,7 +80,7 @@ public class AudioServiceImpl implements AudioService {
     @Override
     public Audio saveFromForm(Long id, String callNumber, String subject, String title, String responsibility,
             String gmd, String publisher, String originCity, String publishYear, String mediaType, String audioFormat,
-            String status, MultipartFile coverFile) throws Exception {
+            String status, MultipartFile coverFile, MultipartFile audioFile) throws Exception {
         Audio model;
         if (id != null) {
             model = getById(id);
@@ -107,6 +107,15 @@ public class AudioServiceImpl implements AudioService {
                 model.setCoverImageData(coverFile.getBytes());
             } catch (IOException e) {
                 log.warn("Failed to process audio cover file: {}", e.getMessage());
+            }
+        }
+
+        if (audioFile != null && !audioFile.isEmpty()) {
+            model.setAudioFileName(audioFile.getOriginalFilename());
+            try {
+                model.setAudioFileData(audioFile.getBytes());
+            } catch (IOException e) {
+                log.warn("Failed to process audio data file: {}", e.getMessage());
             }
         }
 
