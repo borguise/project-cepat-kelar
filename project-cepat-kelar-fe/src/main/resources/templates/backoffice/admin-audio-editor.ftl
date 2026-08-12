@@ -1,3 +1,4 @@
+<#-- admin-audio-editor.ftl -->
 <#assign activePage = "audio">
 <#import "/layout/backoffice_layout.ftl" as layout>
 
@@ -24,7 +25,7 @@
         </div>
       </#if>
 
-      <form id="audio-form" action="/admin/audio/save" method="POST" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
+      <form id="audio-form" action="/admin/audio/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
         <input type="hidden" name="id" value="${(audio.id)!''}">
         <input type="hidden" name="coverImageBase64" id="audioCoverImageBase64" value="">
@@ -76,6 +77,18 @@
 
         <hr class="border-slate-50">
 
+        <!-- BAGIAN UPLOAD FILE AUDIO FISIK -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">File Audio (MP3 / WAV)</h3>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col gap-3">
+            <label class="label-elegant text-sm font-semibold text-slate-700">Pilih Berkas Suara dari Perangkat</label>
+            <input type="file" name="audioFile" accept="audio/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+            <p class="text-xs text-slate-400">Unggah file format .mp3 atau .wav agar dapat diputar langsung di pemutar utama pengunjung maupun admin.</p>
+          </div>
+        </div>
+
+        <hr class="border-slate-50">
+
         <div class="space-y-5">
           <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Data Penerbit</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -97,7 +110,7 @@
         <hr class="border-slate-50">
 
         <div class="space-y-5">
-          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">  Data Fisik</h3>
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3"> Data Fisik</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="label-elegant">Jumlah dan Jenis Media</label>
@@ -137,7 +150,7 @@
 
             const objectUrl = URL.createObjectURL(file);
             preview.src = objectUrl;
-            preview.classList.remove('hidden');
+            preview.classList.2?.remove('hidden') || preview.classList.remove('hidden');
 
             if (existing) {
               existing.classList.add('hidden');

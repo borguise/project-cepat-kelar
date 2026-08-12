@@ -80,14 +80,21 @@ public class FrontofficeController {
 
     private void loadHomeData(ModelMap model) {
         try {
+            // 1. DATA KOLEKSI BUKU
             if (collectionService != null) {
-                model.addAttribute("collections", collectionService.getPageablePublished(PageRequest.of(0, 9)));
+                var bookPage = collectionService.getPageableActive(PageRequest.of(0, 150));
+                model.addAttribute("bookList", bookPage.getContent());
+                model.addAttribute("collections", bookPage);
             }
             
+            // 2. DATA AUDIO (Diperbarui menggunakan getPageableActive agar data dari admin masuk sepenuhnya)
             if (audioService != null) {
-                model.addAttribute("audios", audioService.getPageablePublished(PageRequest.of(0, 9)).getContent());
+                var audioPage = audioService.getPageableActive(PageRequest.of(0, 50));
+                model.addAttribute("audios", audioPage.getContent());
+                model.addAttribute("audioList", audioPage.getContent());
             }
             
+            // 3. DATA VOTING
             if (votingService != null) {
                 Voting activeVoting = votingService.getActiveVoting();
                 if (activeVoting != null) {
@@ -96,6 +103,7 @@ public class FrontofficeController {
                 }
             }
 
+            // 4. DATA ARTIKEL & KOMENTAR
             List<Article> rawArticles = new ArrayList<>();
             if (articleService != null) {
                 try {
@@ -142,6 +150,7 @@ public class FrontofficeController {
             model.addAttribute("articlesMap", articleListMaps);
             model.addAttribute("articles", rawArticles != null ? rawArticles : new ArrayList<>());
 
+            // 5. DATA HIGHLIGHT / SOROTAN
             if (highlightService != null) {
                 List<Map<String, Object>> faqs = new ArrayList<>();
                 for (Highlight item : highlightService.getPublishedList()) {
@@ -155,7 +164,7 @@ public class FrontofficeController {
                 model.addAttribute("faqs", new ArrayList<>());
             }
 
-            // 6. DATA AGENDA / EVENT UNTUK KIOSK (FILTER KETAT: PUBLISHED ONLY)
+            // 6. DATA AGENDA / EVENT
             Map<String, Object> primaryEvent = new HashMap<>();
             List<Map<String, Object>> upcomingEventList = new ArrayList<>();
 
@@ -165,7 +174,6 @@ public class FrontofficeController {
                     
                     List<Event> events = new ArrayList<>();
                     for (Event ev : rawEvents) {
-                        // FILTER KETAT: Hanya status PUBLISHED
                         if (ev.getStatus() != null && "PUBLISHED".equalsIgnoreCase(ev.getStatus().trim())) {
                             events.add(ev);
                         }
@@ -186,7 +194,6 @@ public class FrontofficeController {
 
                     String[] iconClasses = {"fa-book-open", "fa-calendar-days", "fa-users", "fa-lightbulb", "fa-graduation-cap", "fa-chalkboard-user"};
                     
-                    // Batasi maksimal 2 agenda selanjutnya
                     int limitCount = Math.min(events.size(), 3);
                     for (int index = 1; index < limitCount; index++) {
                         Event event = events.get(index);

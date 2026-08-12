@@ -1,11 +1,10 @@
 package com.project.cepat.kelar.jpa.model;
 
+import com.project.cepat.kelar.common.model.ReferenceBase;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
-import com.project.cepat.kelar.common.model.ReferenceBase;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
