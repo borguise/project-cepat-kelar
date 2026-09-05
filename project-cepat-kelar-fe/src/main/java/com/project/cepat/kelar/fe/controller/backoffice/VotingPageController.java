@@ -37,6 +37,7 @@ public class VotingPageController {
     @GetMapping("")
     public String voting(@RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "query", required = false) String query,
             ModelMap model) {
         if (adminService != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -47,7 +48,16 @@ public class VotingPageController {
             try {
                 Page<Voting> votingPage = votingService.getPageableActive(PageRequest.of(page, size));
                 List<Map<String, Object>> votingList = new ArrayList<>();
+                
                 for (Voting vote : votingPage.getContent()) {
+                    // Filter pencarian sederhana jika ada parameter query
+                    if (query != null && !query.isBlank()) {
+                        String voteName = vote.getName() != null ? vote.getName().toLowerCase() : "";
+                        if (!voteName.contains(query.trim().toLowerCase())) {
+                            continue;
+                        }
+                    }
+
                     Map<String, Object> view = new HashMap<>();
                     view.put("id", vote.getId());
                     view.put("name", (vote.getName() == null || vote.getName().isBlank()) ? "Tanpa Nama (Draft)" : vote.getName());
@@ -68,6 +78,7 @@ public class VotingPageController {
                     votingList.add(view);
                 }
                 model.addAttribute("votingList", votingList);
+                model.addAttribute("query", query != null ? query : "");
             } catch (Exception e) {
                 model.addAttribute("errorMessage", "Gagal memuat data: " + e.getMessage());
             }
@@ -143,9 +154,57 @@ public class VotingPageController {
         return "redirect:/admin/voting/edit/" + votingId;
     }
 
+    // --- Rute Baru: Melihat Hasil Suara Masuk ---
+    @GetMapping("/result/{id}")
+    public String viewVotingResult(@PathVariable Long id, ModelMap model, RedirectAttributes ra) {
+        if (adminService != null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            model.addAttribute("adminName", adminService.resolveAdminName(auth));
+        }
+
+        if (votingService != null) {
+            try {
+                Voting voting = votingService.getById(id);
+                if (voting == null) {
+                    ra.addFlashAttribute("errorMessage", "Data voting tidak ditemukan.");
+                    return "redirect:/admin/voting";
+                }
+                
+                List<VotingEntry> entries = votingService.getEntriesByVotingId(voting.getId());
+                long totalVotes = 0;
+                for (VotingEntry entry : entries) {
+                    if (entry.getVoteCount() != null) {
+                        totalVotes += entry.getVoteCount();
+                    }
+                }
+                
+                model.addAttribute("voting", voting);
+                model.addAttribute("entries", entries);
+                model.addAttribute("totalVotes", totalVotes);
+            } catch (Exception e) {
+                ra.addFlashAttribute("errorMessage", "Gagal memuat hasil voting: " + e.getMessage());
+                return "redirect:/admin/voting";
+            }
+        }
+        return "backoffice/admin-voting-result";
+    }
+
+    // --- Perbaikan: Hapus data kandidat anak terlebih dahulu sebelum data induk ---
     @PostMapping("/delete/{id}")
     public String deleteVoting(@PathVariable Long id, RedirectAttributes ra) {
-        try { votingService.delete(id); } catch (Exception e) { ra.addFlashAttribute("errorMessage", "Gagal: " + e.getMessage()); }
+        try {
+            List<VotingEntry> entries = votingService.getEntriesByVotingId(id);
+            if (entries != null) {
+                for (VotingEntry entry : entries) {
+                    votingService.deleteEntry(entry.getId());
+                }
+            }
+            
+            votingService.delete(id);
+            ra.addFlashAttribute("successMessage", "Data pemilihan beserta seluruh pilihannya berhasil dihapus.");
+        } catch (Exception e) { 
+            ra.addFlashAttribute("errorMessage", "Gagal menghapus: " + e.getMessage()); 
+        }
         return "redirect:/admin/voting";
     }
 }

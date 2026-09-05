@@ -1,5 +1,7 @@
 <#-- admin/audio.ftl -->
 <#assign activePage = "audio">
+<#-- BACA URL LANGSUNG: Ambil nilai dari ?query=... di browser untuk mencegah error UI -->
+<#assign currentSearch = RequestParameters['query']!query!''>
 <#import "/layout/backoffice_layout.ftl" as layout>
 
 <@layout.backofficeLayout title="Admin - Daftar Audio" activePage=activePage adminName=adminName>
@@ -14,10 +16,11 @@
   <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 mb-6 gap-6">
     <form action="/admin/audio" method="GET" class="relative w-full max-w-xl flex items-center">
       <div class="relative w-full">
-        <input type="text" name="query" value="${query!''}" placeholder="Cari judul atau nomor panggil..." 
+        <input type="text" name="query" value="${currentSearch}" placeholder="Cari judul atau nomor panggil..." 
                class="w-full h-12 pl-6 pr-24 bg-white rounded-xl shadow-sm border border-slate-200 outline-none font-lato text-sm focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all">
         
-        <#if query?? && query?trim != "">
+        <#-- Tombol Silang (X) muncul HANYA jika URL search tidak kosong -->
+        <#if currentSearch != "">
           <a href="/admin/audio" class="absolute right-16 top-3 w-6 h-6 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition-all" title="Bersihkan Pencarian">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -95,13 +98,24 @@
               </tr>
             </#list>
           <#else>
+            <#-- KONDISI TABEL KOSONG + TOMBOL RESET -->
             <tr>
-              <td colspan="6" class="py-16 text-center text-slate-400 italic">
-                <div class="flex flex-col items-center justify-center gap-4">
-                  <span>Data rekaman audio untuk pencarian "${query!''}" tidak ditemukan.</span>
-                  <a href="/admin/audio" class="px-6 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl font-medium text-sm transition-all shadow-sm">
-                    Kembali ke Daftar Seluruh Audio
-                  </a>
+              <td colspan="6" class="py-16 text-center text-slate-500">
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <span class="italic text-slate-400 mb-2">
+                    <#if currentSearch != "">
+                      Data rekaman audio untuk pencarian <strong>"${currentSearch}"</strong> tidak ditemukan.
+                    <#else>
+                      Belum ada data rekaman audio tersedia.
+                    </#if>
+                  </span>
+                  
+                  <#-- Tombol Kembali muncul HANYA jika sedang melakukan pencarian -->
+                  <#if currentSearch != "">
+                    <a href="/admin/audio" class="mt-2 px-6 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-xl font-medium text-sm transition-all shadow-sm">
+                      Kembali ke Daftar Seluruh Audio
+                    </a>
+                  </#if>
                 </div>
               </td>
             </tr>
@@ -110,11 +124,17 @@
       </table>
 
       <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-slate-500 text-sm">
-          <span>Menampilkan halaman ${(currentPage!0) + 1} dari ${totalPages!1} (Total: ${totalItems!0} Audio)</span>
+          <span>
+              <#if currentSearch != "">
+                  Menampilkan hasil pencarian (Total: ${totalItems!0} Audio)
+              <#else>
+                  Menampilkan halaman ${(currentPage!0) + 1} dari ${totalPages!1} (Total: ${totalItems!0} Audio)
+              </#if>
+          </span>
           
           <div class="flex gap-2 items-center">
             <#if currentPage?? && currentPage &gt; 0>
-                <a href="?page=${currentPage - 1}<#if query??>&query=${query}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Prev</a>
+                <a href="?page=${currentPage - 1}<#if currentSearch != "">&query=${currentSearch}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Prev</a>
             <#else>
                 <span class="px-3 py-1 text-slate-300 cursor-not-allowed">Prev</span>
             </#if>
@@ -125,7 +145,7 @@
                         <#if p == currentPage>
                             <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-sm font-medium">${p + 1}</span>
                         <#else>
-                            <a href="?page=${p}<#if query??>&query=${query}</#if>" class="w-8 h-8 flex items-center justify-center hover:bg-slate-200 text-slate-700 rounded-lg transition font-medium">${p + 1}</a>
+                            <a href="?page=${p}<#if currentSearch != "">&query=${currentSearch}</#if>" class="w-8 h-8 flex items-center justify-center hover:bg-slate-200 text-slate-700 rounded-lg transition font-medium">${p + 1}</a>
                         </#if>
                     </#list>
                 <#else>
@@ -134,7 +154,7 @@
             </div>
 
             <#if currentPage?? && totalPages?? && (currentPage + 1) &lt; totalPages>
-                <a href="?page=${currentPage + 1}<#if query??>&query=${query}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Next</a>
+                <a href="?page=${currentPage + 1}<#if currentSearch != "">&query=${currentSearch}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Next</a>
             <#else>
                 <span class="px-3 py-1 text-slate-300 cursor-not-allowed">Next</span>
             </#if>

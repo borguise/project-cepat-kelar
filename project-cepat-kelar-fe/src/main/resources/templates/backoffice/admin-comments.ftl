@@ -1,22 +1,38 @@
 <#-- Penanda Halaman Aktif untuk Sidebar -->
 <#assign activePage = "komentar">
+<#-- BACA URL LANGSUNG: Ambil nilai dari ?search=... di browser -->
+<#assign currentSearch = RequestParameters['search']!searchKeyword!searchText!''>
 <#import "/layout/backoffice_layout.ftl" as layout>
 
 <@layout.backofficeLayout title="Admin - Moderasi Komentar" activePage=activePage adminName=adminName>
-     
+      
       <div class="w-full max-w-5xl mx-auto px-4 mb-6">
         <h2 class="text-xl font-bold font-gelasio text-black">Moderasi Komentar Artikel & Berita</h2>
       </div>
 
       <div class="w-full max-w-5xl mx-auto px-4 mb-8 flex justify-center">
         <form action="/admin/comments" method="GET" class="w-full max-w-2xl relative">
-          <input type="text" name="search" placeholder="Ketik Sumber Komentar atau Judul Artikel disini" 
-                 value="${searchKeyword!''}"
-                 class="w-full py-4 px-6 pr-14 bg-white rounded-xl shadow-[0px_2px_10px_rgba(0,0,0,0.05)] border border-slate-100 outline-none font-lato text-center focus:ring-2 focus:ring-indigo-100">
           
-          <button type="submit" class="absolute right-5 top-1/2 transform -translate-y-1/2 text-[#4338ca] hover:scale-125 transition-transform duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          </button>
+          <input type="text" name="search" placeholder="Ketik Sumber Komentar atau Judul Artikel disini" 
+                 value="${currentSearch}"
+                 class="w-full py-4 px-6 pr-20 bg-white rounded-xl shadow-[0px_2px_10px_rgba(0,0,0,0.05)] border border-slate-100 outline-none font-lato text-center focus:ring-2 focus:ring-indigo-100">
+          
+          <div class="absolute right-5 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
+            <#-- Tombol Silang (X) muncul HANYA jika URL search tidak kosong -->
+            <#if currentSearch != "">
+              <a href="/admin/comments" class="text-red-400 hover:text-red-600 hover:scale-110 transition bg-red-50 p-1.5 rounded-full" title="Batalkan Pencarian">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </a>
+            </#if>
+            
+            <#-- Tombol Kaca Pembesar (Submit) -->
+            <button type="submit" class="text-[#4338ca] hover:scale-125 transition-transform duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+          </div>
         </form>
       </div>
 
@@ -71,7 +87,6 @@
                     <td class="px-4">
                       <div class="flex justify-center gap-4 items-center">
                         
-                        <!-- Tombol Ubah Status -->
                         <button type="button" 
                            onclick="executeAdminAction('/admin/comments/toggle/${c.id?c}', 'Ubah status tayang komentar ini?')" 
                            title="Ubah Status Tayang" 
@@ -83,7 +98,6 @@
                           </#if>
                         </button>
 
-                        <!-- Tombol Hapus -->
                         <button type="button" 
                            onclick="executeAdminAction('/admin/comments/delete/${c.id?c}', 'Hapus komentar ini secara permanen?')" 
                            title="Hapus Komentar" 
@@ -97,7 +111,17 @@
                 </#list>
               <#else>
                 <tr>
-                  <td colspan="6" class="py-20 text-center italic text-stone-400">Belum ada komentar masuk.</td>
+                  <td colspan="6" class="py-20 text-center">
+                    <span class="block italic text-stone-400 mb-4">
+                      Belum ada komentar masuk <#if currentSearch != "">untuk kata kunci "<span class="font-bold">${currentSearch}</span>"</#if>.
+                    </span>
+                    
+                    <#if currentSearch != "">
+                        <a href="/admin/comments" class="inline-block px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition font-semibold text-sm shadow-sm border border-slate-200">
+                            Kembali ke Daftar Semua Komentar
+                        </a>
+                    </#if>
+                  </td>
                 </tr>
               </#if>
 
@@ -107,8 +131,8 @@
 
         <div class="w-full px-8 py-6 bg-white border border-t-0 border-stone-100 rounded-b-2xl shadow-[0px_5px_20px_rgba(243,237,237,1.0)] flex justify-between items-center text-slate-500 text-sm">
             <span>
-                <#if searchKeyword?? && searchKeyword != "">
-                    Menampilkan hasil pencarian untuk "${searchKeyword}" (Total: ${totalItems!0} komentar)
+                <#if currentSearch != "">
+                    Menampilkan hasil pencarian untuk "${currentSearch}" (Total: ${totalItems!0} komentar)
                 <#else>
                     Menampilkan halaman ${(currentPage!0) + 1} dari ${totalPages!1} (Total: ${totalItems!0} Komentar)
                 </#if>
@@ -116,7 +140,7 @@
             
             <div class="flex gap-4 items-center">
                 <#if currentPage?? && currentPage gt 0>
-                    <a href="/admin/comments?page=${currentPage - 1}&search=${searchKeyword!''}" class="hover:text-[#4338ca] font-semibold transition">Prev</a>
+                    <a href="/admin/comments?page=${currentPage - 1}&search=${currentSearch}" class="hover:text-[#4338ca] font-semibold transition">Prev</a>
                 <#else>
                     <span class="text-slate-300 cursor-not-allowed font-semibold">Prev</span>
                 </#if>
@@ -127,7 +151,7 @@
                             <#if i == currentPage>
                                 <span class="w-8 h-8 flex items-center justify-center bg-[#4338ca] text-white rounded-full font-bold shadow-md">${i + 1}</span>
                             <#else>
-                                <a href="/admin/comments?page=${i}&search=${searchKeyword!''}" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition">${i + 1}</a>
+                                <a href="/admin/comments?page=${i}&search=${currentSearch}" class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition">${i + 1}</a>
                             </#if>
                         </#list>
                     <#else>
@@ -136,7 +160,7 @@
                 </div>
 
                 <#if currentPage?? && totalPages?? && (currentPage + 1) lt totalPages>
-                    <a href="/admin/comments?page=${currentPage + 1}&search=${searchKeyword!''}" class="hover:text-[#4338ca] font-semibold transition">Next</a>
+                    <a href="/admin/comments?page=${currentPage + 1}&search=${currentSearch}" class="hover:text-[#4338ca] font-semibold transition">Next</a>
                 <#else>
                     <span class="text-slate-300 cursor-not-allowed font-semibold">Next</span>
                 </#if>
@@ -147,11 +171,8 @@
   <script>
     function executeAdminAction(targetUrl, confirmMsg) {
         if (confirm(confirmMsg)) {
-            // CACHE-BUSTER: Menambahkan waktu spesifik (milidetik) di URL 
-            // agar browser DIPAKSA menghubungi backend pada klik PERTAMA.
             var timestamp = new Date().getTime();
             var separator = targetUrl.indexOf('?') !== -1 ? '&' : '?';
-            
             window.location.href = targetUrl + separator + "t=" + timestamp;
         }
     }

@@ -1,4 +1,6 @@
 <#assign activePage = "sorotan">
+<#-- BACA URL LANGSUNG: Ambil nilai dari ?query=... di browser untuk mencegah error UI -->
+<#assign currentSearch = RequestParameters['query']!query!''>
 <#import "/layout/backoffice_layout.ftl" as layout>
 <#assign totalSorotan = (sorotanList?size)!0>
 
@@ -10,9 +12,21 @@
 
   <div class="flex justify-between items-center max-w-6xl w-full mx-auto px-4 mb-6 gap-4">
     <form action="/admin/highlights" method="GET" class="relative w-full max-w-xl">
-      <input type="text" name="query" value="${query!''}" placeholder="Cari pertanyaan atau jawaban..." 
-             class="w-full h-12 pl-6 pr-6 bg-white rounded-xl shadow-sm border border-slate-200 outline-none font-lato text-sm focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all">
-      <button type="submit" class="absolute right-4 top-3.5 text-slate-400 hover:text-indigo-600 transition font-semibold text-sm">Cari</button>
+      <input type="text" name="query" value="${currentSearch}" placeholder="Cari pertanyaan atau jawaban..." 
+             class="w-full h-12 pl-6 pr-24 bg-white rounded-xl shadow-sm border border-slate-200 outline-none font-lato text-sm focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all">
+      
+      <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
+        <#-- Tombol Silang (X) muncul HANYA jika URL search tidak kosong -->
+        <#if currentSearch != "">
+          <a href="/admin/highlights" class="text-red-400 hover:text-red-600 transition bg-red-50 p-1.5 rounded-full" title="Batalkan Pencarian">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </a>
+        </#if>
+        <button type="submit" class="text-slate-400 hover:text-indigo-600 transition font-semibold text-sm px-2">Cari</button>
+      </div>
     </form>
     
     <a href="/admin/highlights/new" class="h-12 bg-[#bef264] text-slate-900 px-7 flex items-center justify-center rounded-xl shadow-sm font-bold text-sm hover:bg-[#a3e635] transition-all active:scale-[0.98]">
@@ -80,20 +94,36 @@
             </#list>
           <#else>
             <tr>
-              <td colspan="4" class="py-16 text-center text-slate-400 italic">Belum ada data sorotan tersedia.</td>
+              <td colspan="4" class="py-16 text-center">
+                <span class="block italic text-slate-400 mb-4">
+                  Belum ada data sorotan tersedia <#if currentSearch != "">untuk kata kunci "<span class="font-bold">${currentSearch}</span>"</#if>.
+                </span>
+                
+                <#if currentSearch != "">
+                    <a href="/admin/highlights" class="inline-block px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition font-semibold text-sm shadow-sm border border-slate-200">
+                        Kembali ke Daftar Semua Sorotan
+                    </a>
+                </#if>
+              </td>
             </tr>
           </#if>
         </tbody>
       </table>
 
-<!-- BAGIAN BAWAH TABEL & PAGINASI -->
+      <!-- BAGIAN BAWAH TABEL & PAGINASI -->
       <div class="px-8 py-6 flex flex-col sm:flex-row justify-between items-center text-slate-500 text-sm border-t border-slate-100">
-          <span>Menampilkan halaman ${currentPage!1} dari ${totalPages!0} (Total: ${totalItems!0} Sorotan)</span>
+          <span>
+              <#if currentSearch != "">
+                  Menampilkan hasil pencarian (Total: ${totalItems!0} sorotan)
+              <#else>
+                  Menampilkan halaman ${currentPage!1} dari ${totalPages!0} (Total: ${totalItems!0} Sorotan)
+              </#if>
+          </span>
           
           <div class="flex items-center gap-4 font-medium mt-4 sm:mt-0">
               <#-- Tombol Sebelumnya (Teks Saja) -->
               <#if currentPage?? && currentPage &gt; 1>
-                  <a href="?page=${currentPage - 1}<#if query??>&query=${query}</#if>" class="text-slate-400 hover:text-indigo-700 transition">Prev</a>
+                  <a href="?page=${currentPage - 1}<#if currentSearch != "">&query=${currentSearch}</#if>" class="text-slate-400 hover:text-indigo-700 transition">Prev</a>
               <#else>
                   <span class="text-slate-300 cursor-not-allowed">Prev</span>
               </#if>
@@ -106,7 +136,7 @@
                               <!-- Lingkaran Biru Gelap Untuk Halaman Aktif -->
                               <span class="w-8 h-8 flex items-center justify-center rounded-full bg-[#3730a3] text-white font-bold shadow-sm">${p}</span>
                           <#else>
-                              <a href="?page=${p}<#if query??>&query=${query}</#if>" class="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-indigo-50 hover:text-[#3730a3] transition">${p}</a>
+                              <a href="?page=${p}<#if currentSearch != "">&query=${currentSearch}</#if>" class="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-indigo-50 hover:text-[#3730a3] transition">${p}</a>
                           </#if>
                       </#list>
                   <#else>
@@ -117,7 +147,7 @@
 
               <#-- Tombol Selanjutnya (Teks Saja) -->
               <#if currentPage?? && totalPages?? && currentPage &lt; totalPages>
-                  <a href="?page=${currentPage + 1}<#if query??>&query=${query}</#if>" class="text-slate-400 hover:text-indigo-700 transition">Next</a>
+                  <a href="?page=${currentPage + 1}<#if currentSearch != "">&query=${currentSearch}</#if>" class="text-slate-400 hover:text-indigo-700 transition">Next</a>
               <#else>
                   <span class="text-slate-300 cursor-not-allowed">Next</span>
               </#if>

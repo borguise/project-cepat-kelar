@@ -1,3 +1,4 @@
+<#-- admin/voting-editor.ftl -->
 <#assign activePage = "voting">
 <#import "/layout/backoffice_layout.ftl" as layout>
 <@layout.backofficeLayout title="Admin - Editor Voting" activePage=activePage adminName=adminName>
@@ -11,21 +12,28 @@
       <div class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
         <!-- ======================================================= -->
-        <!-- FORM 1: INFO UTAMA (Wajib klik Simpan Draf sebelum tambah kandidat) -->
+        <!-- FORM 1: INFO UTAMA & STATUS PUBLIKASI -->
         <!-- ======================================================= -->
         <form action="/admin/voting/save" method="POST" id="formVotingUtama">
             <input type="hidden" name="id" value="${(voting.id)!0}">
-            <input type="hidden" name="status" value="${(voting.status)!'Draft'}">
             
             <div class="space-y-5">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Kegiatan Pemilihan</h3>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2 rounded-xl shadow-md transition-all text-sm">
-                        Simpan Draf
+                    <div>
+                        <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Informasi Kegiatan</h3>
+                        <p class="text-xs text-slate-400 mt-1 pl-4">Simpan bagian ini terlebih dahulu jika ada perubahan nama, tanggal, atau status.</p>
+                    </div>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition-all text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Simpan Info Kegiatan
                     </button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-3">
+                        <label class="label-elegant">Nama Kegiatan</label>
                         <input type="text" name="name" value="${(voting.name)!''}" placeholder="Nama Kegiatan Pemilihan" class="input-premium" required>
                     </div>
                     <div>
@@ -35,6 +43,21 @@
                     <div>
                         <label class="label-elegant">Tanggal Selesai</label>
                         <input type="date" name="endDate" value="${(voting.endDate)!''}" class="input-premium" required>
+                    </div>
+                    
+                    <!-- FIELD STATUS PROPOSIONAL (SEJAJAR DENGAN TANGGAL) -->
+                    <div>
+                        <label class="label-elegant flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Status Publikasi
+                        </label>
+                        <select name="status" class="input-premium font-semibold text-indigo-900 bg-white">
+                            <option value="Draft" ${((voting.status!'Draft') == 'Draft')?string('selected', '')}>Draft (Disembunyikan)</option>
+                            <option value="Aktif" ${((voting.status!'') == 'Aktif')?string('selected', '')}>Publikasi</option>
+                            <option value="Selesai" ${((voting.status!'') == 'Selesai')?string('selected', '')}>Selesai (Arsip)</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -54,7 +77,9 @@
                     <div class="w-52 h-52 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white transition-all group shadow-sm relative overflow-hidden">
                         <img id="kandidatPreviewImage" src="" class="w-full h-full object-cover hidden">
                         <div id="kandidatPlaceholderImage" class="text-center p-4">
-                            <span class="block text-2xl mb-1 group-hover:scale-110 transition">Image</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto text-slate-400 mb-2 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                             <span class="text-indigo-800 font-bold font-lato text-xs">Unggah Gambar</span>
                         </div>
                         <input type="file" id="kandidatFileInput" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
@@ -72,15 +97,15 @@
                         <textarea name="summary" placeholder="Visi Misi..." class="input-premium w-full h-28 resize-none py-3" required></textarea>
                         <div class="flex justify-end mt-5 mb-2">
                             <button type="submit" class="bg-[#bef264] hover:bg-lime-400 text-indigo-900 font-bold px-6 py-2 rounded-xl shadow-md transition-all active:scale-95 text-sm font-lato">
-                                + Tambah Entri
+                                + Tambah Entri Kandidat
                             </button>
                         </div>
                     </div>
                 </div>
             </form>
         <#else>
-            <div class="p-4 bg-yellow-50 text-yellow-800 rounded-xl border border-yellow-200">
-                Silakan isi Nama dan Tanggal di atas lalu klik **Simpan Draf** untuk mengaktifkan fitur tambah kandidat.
+            <div class="p-4 bg-yellow-50 text-yellow-800 rounded-xl border border-yellow-200 font-lato text-sm">
+                Silakan isi Nama, Tanggal, dan Status di atas lalu klik tombol <strong>Simpan Info Kegiatan</strong> di pojok kanan atas untuk mengaktifkan fitur tambah kandidat.
             </div>
         </#if>
 
@@ -125,20 +150,18 @@
         </div>
 
         <!-- ======================================================= -->
-        <!-- TOMBOL PUBLIKASI -->
+        <!-- NAVIGASI KELUAR / KEMBALI -->
         <!-- ======================================================= -->
-        <div class="flex justify-center pt-6 border-t border-slate-50">
-            <form action="/admin/voting/save" method="POST">
-                <input type="hidden" name="id" value="${(voting.id)!0}">
-                <input type="hidden" name="name" value="${(voting.name)!''}">
-                <input type="hidden" name="startDate" value="${(voting.startDate)!''}">
-                <input type="hidden" name="endDate" value="${(voting.endDate)!''}">
-                <input type="hidden" name="status" value="Aktif">
-                <button type="submit" class="bg-[#bef264] hover:bg-lime-400 text-indigo-900 font-bold px-24 py-4 rounded-2xl shadow-lg transition-all active:scale-95 text-xl font-lato">
-                    Publikasikan Pemilihan
-                </button>
-            </form>
+        <div class="flex flex-col items-center justify-center pt-8 border-t border-slate-100 gap-2">
+            <a href="/admin/voting" class="w-full max-w-md py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-bold font-lato text-base text-center shadow-md transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Selesai & Kembali ke Daftar Pemilihan
+            </a>
+            <span class="text-xs text-slate-500 italic font-lato">Pastikan Anda sudah menekan tombol "Simpan Info Kegiatan" di atas jika ada perubahan data.</span>
         </div>
+
       </div> 
 
       <script>

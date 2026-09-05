@@ -1,5 +1,7 @@
 <#-- admin/koleksi.ftl -->
 <#assign activePage = "koleksi">
+<#-- BACA URL LANGSUNG: Ambil nilai dari ?query=... di browser -->
+<#assign currentSearch = RequestParameters['query']!query!''>
 <#import "/layout/backoffice_layout.ftl" as layout>
 
 <@layout.backofficeLayout title="Admin - Katalog Koleksi | Graha Pusat Literasi" activePage=activePage adminName=adminName>
@@ -16,11 +18,11 @@
     <#-- FORM PENCARIAN DENGAN TOMBOL RESET (X) -->
     <form action="/admin/collections" method="GET" class="relative w-full max-w-xl flex items-center gap-2">
       <div class="relative w-full">
-        <input type="text" name="query" value="${query!''}" placeholder="Cari Judul, Pengarang, atau No. Panggil..." 
+        <input type="text" name="query" value="${currentSearch}" placeholder="Cari Judul, Pengarang, atau No. Panggil..." 
                class="w-full h-11 pl-6 pr-24 bg-white rounded-xl shadow-sm border border-slate-200 outline-none font-lato text-sm focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all">
         
         <#-- Tombol Silang (Reset) Menggunakan SVG agar kebal dari masalah encoding -->
-        <#if query?? && query?trim != "">
+        <#if currentSearch != "">
           <a href="/admin/collections" class="absolute right-16 top-2.5 w-6 h-6 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition-all" title="Bersihkan Pencarian">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -91,15 +93,15 @@
               <td colspan="7" class="py-16 text-center text-slate-500">
                 <div class="flex flex-col items-center justify-center gap-2">
                   <span class="italic text-slate-400 mb-2">
-                    <#if query?? && query?trim != "">
-                      Data koleksi untuk pencarian <strong>"${query}"</strong> tidak ditemukan.
+                    <#if currentSearch != "">
+                      Data koleksi untuk pencarian <strong>"${currentSearch}"</strong> tidak ditemukan.
                     <#else>
                       Belum ada data koleksi tersedia.
                     </#if>
                   </span>
                   
                   <#-- Tombol Kembali muncul HANYA jika sedang melakukan pencarian -->
-                  <#if query?? && query?trim != "">
+                  <#if currentSearch != "">
                     <a href="/admin/collections" class="mt-2 px-5 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-lg font-bold transition-all text-sm shadow-sm">
                       Kembali ke Daftar Seluruh Koleksi
                     </a>
@@ -117,7 +119,7 @@
           
           <div class="flex gap-2 items-center">
             <#if currentPage?? && currentPage &gt; 1>
-                <a href="?page=${currentPage - 1}<#if query??>&query=${query}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Prev</a>
+                <a href="?page=${currentPage - 1}<#if currentSearch != "">&query=${currentSearch}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Prev</a>
             <#else>
                 <span class="px-3 py-1 text-slate-300 cursor-not-allowed">Prev</span>
             </#if>
@@ -128,7 +130,7 @@
                         <#if p == currentPage>
                             <span class="w-8 h-8 flex items-center justify-center bg-indigo-600 text-white rounded-lg shadow-sm font-medium">${p}</span>
                         <#else>
-                            <a href="?page=${p}<#if query??>&query=${query}</#if>" class="w-8 h-8 flex items-center justify-center hover:bg-slate-200 text-slate-700 rounded-lg transition font-medium">${p}</a>
+                            <a href="?page=${p}<#if currentSearch != "">&query=${currentSearch}</#if>" class="w-8 h-8 flex items-center justify-center hover:bg-slate-200 text-slate-700 rounded-lg transition font-medium">${p}</a>
                         </#if>
                     </#list>
                 <#else>
@@ -137,7 +139,7 @@
             </div>
 
             <#if currentPage?? && totalPages?? && currentPage &lt; totalPages>
-                <a href="?page=${currentPage + 1}<#if query??>&query=${query}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Next</a>
+                <a href="?page=${currentPage + 1}<#if currentSearch != "">&query=${currentSearch}</#if>" class="px-3 py-1 hover:bg-slate-200 text-slate-700 rounded transition font-medium">Next</a>
             <#else>
                 <span class="px-3 py-1 text-slate-300 cursor-not-allowed">Next</span>
             </#if>

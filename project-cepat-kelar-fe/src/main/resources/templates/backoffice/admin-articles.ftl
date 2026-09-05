@@ -34,14 +34,27 @@
           <input type="text" name="search" id="searchInput" 
                  placeholder="Ketik Judul atau Kategori disini" 
                  value="<#if searchText??>${searchText}</#if>"
-                 class="w-full py-4 px-6 pr-14 bg-white rounded-xl shadow-[0px_2px_10px_rgba(0,0,0,0.05)] border border-slate-100 outline-none font-lato text-center focus:ring-2 focus:ring-indigo-100">
+                 class="w-full py-4 px-6 pr-20 bg-white rounded-xl shadow-[0px_2px_10px_rgba(0,0,0,0.05)] border border-slate-100 outline-none font-lato text-center focus:ring-2 focus:ring-indigo-100">
           
-          <button type="submit" class="absolute right-5 top-1/2 transform -translate-y-1/2 text-black hover:scale-110 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
+          <div class="absolute right-5 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
+            <#-- Tombol Silang (X) muncul HANYA jika sedang melakukan pencarian -->
+            <#if searchText?? && searchText != "">
+              <a href="/admin/articles" class="text-red-400 hover:text-red-600 hover:scale-110 transition bg-red-50 p-1.5 rounded-full" title="Batalkan Pencarian">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </a>
+            </#if>
+            
+            <#-- Tombol Kaca Pembesar (Submit) -->
+            <button type="submit" class="text-black hover:scale-110 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
         </form>
 
         <a href="/admin/articles/new" class="bg-[#bef264] text-black px-8 py-4 flex items-center justify-center rounded-xl shadow-sm font-lato font-semibold text-sm hover:bg-lime-400 transition-all active:scale-95 whitespace-nowrap">
@@ -137,7 +150,18 @@
                 </#list>
               <#else>
                 <tr>
-                  <td colspan="5" class="py-20 text-center italic text-stone-400">Belum ada artikel yang tersedia.</td>
+                  <td colspan="5" class="py-20 text-center">
+                    <span class="block italic text-stone-400 mb-4">
+                      Belum ada artikel yang tersedia <#if searchText?? && searchText != "">untuk kata kunci "<span class="font-bold">${searchText}</span>"</#if>.
+                    </span>
+                    
+                    <#-- Tombol pintasan kembali saat data tidak ditemukan -->
+                    <#if searchText?? && searchText != "">
+                        <a href="/admin/articles" class="inline-block px-6 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition font-semibold text-sm shadow-sm border border-slate-200">
+                            Kembali ke Daftar Semua Artikel
+                        </a>
+                    </#if>
+                  </td>
                 </tr>
               </#if>
 
