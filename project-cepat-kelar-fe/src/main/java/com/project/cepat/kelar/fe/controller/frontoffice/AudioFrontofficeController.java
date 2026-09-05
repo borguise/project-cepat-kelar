@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.cepat.kelar.jpa.model.Audio;
+import com.project.cepat.kelar.service.backoffice.AudioService;
 
 @Controller
 @RequestMapping("/audio")
 public class AudioFrontofficeController {
 
     @Autowired(required = false)
-    private com.project.cepat.kelar.service.backoffice.AudioService audioService;
+    private AudioService audioService;
 
     @GetMapping("")
     public String audio(
@@ -28,13 +29,14 @@ public class AudioFrontofficeController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             ModelMap model) {
         int safePage = Math.max(page, 1);
-        var pageRequest = PageRequest.of(safePage - 1, 9);
+        var pageRequest = PageRequest.of(safePage - 1, 150);
 
         try {
             if (audioService != null) {
                 var pageResult = (keyword != null && !keyword.trim().isEmpty())
-                        ? audioService.searchPublished(keyword.trim(), pageRequest)
-                        : audioService.getPageablePublished(pageRequest);
+                        ? audioService.getPageable(keyword.trim(), pageRequest)
+                        : audioService.getPageableActive(pageRequest);
+                        
                 model.addAttribute("audioList", pageResult.getContent());
                 model.addAttribute("currentPage", safePage);
                 model.addAttribute("totalPages", Math.max(pageResult.getTotalPages(), 1));
@@ -55,7 +57,7 @@ public class AudioFrontofficeController {
     public String audioDetail(@RequestParam("id") Long id, ModelMap model) {
         try {
             if (audioService != null) {
-                var audio = audioService.getById(id);
+                Audio audio = audioService.getById(id);
                 java.util.Map<String, Object> viewAudio = new java.util.HashMap<>();
                 viewAudio.put("id", audio.getId());
                 viewAudio.put("title", audio.getTitle() != null ? audio.getTitle() : "Untitled");
@@ -63,19 +65,22 @@ public class AudioFrontofficeController {
                 viewAudio.put("callNumber", audio.getCallNumber() != null ? audio.getCallNumber() : "-");
                 viewAudio.put("category", audio.getSubject() != null ? audio.getSubject() : "Umum");
                 viewAudio.put("author", audio.getResponsibility() != null ? audio.getResponsibility() : "Unknown");
+                
                 String publisherInfo = (audio.getPublisher() == null ? "" : audio.getPublisher())
                         + ((audio.getOriginCity() == null || audio.getOriginCity().isBlank()) ? "" : " - " + audio.getOriginCity())
                         + ((audio.getPublishYear() == null || audio.getPublishYear().isBlank()) ? "" : ", " + audio.getPublishYear());
                 viewAudio.put("publisher", publisherInfo.isEmpty() ? "-" : publisherInfo);
+                
                 viewAudio.put("mediaType", audio.getMediaType() != null ? audio.getMediaType() : "-");
                 viewAudio.put("audioFormat", audio.getAudioFormat() != null ? audio.getAudioFormat() : "-");
                 viewAudio.put("gmd", audio.getGmd() != null ? audio.getGmd() : "[rekaman suara]");
-                viewAudio.put("filePath", "#"); // Placeholder untuk audio file path
+                
+                // Menggunakan URL string aman pengganti getFilePath() yang tidak ada di entitas
+                viewAudio.put("filePath", "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
+                
                 model.addAttribute("audio", viewAudio);
             }
-        } catch (Exception ignored) {
-            // Keep fallback values from template when data is unavailable.
-        }
+        } catch (Exception ignored) {}
         return "frontoffice/audio-detail";
     }
     

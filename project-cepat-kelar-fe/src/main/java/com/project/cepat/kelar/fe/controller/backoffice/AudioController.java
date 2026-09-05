@@ -1,5 +1,9 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 
 import org.slf4j.Logger;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.cepat.kelar.common.controller.BaseController;
@@ -51,6 +56,7 @@ public class AudioController extends BaseController {
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "coverImageBase64", required = false) String coverImageBase64,
             @RequestParam(value = "coverFileName", required = false) String coverFileName,
+            @RequestParam(value = "audioFile", required = false) MultipartFile audioFile,
             RedirectAttributes redirectAttributes) {
         Long parsedId = null;
         try {
@@ -69,15 +75,17 @@ public class AudioController extends BaseController {
                 return "redirect:/admin/audio";
             }
 
-            logger.info("Saving audio: id={}, title='{}', hasBase64Cover={}",
+            logger.info("Saving audio: id={}, title='{}', hasBase64Cover={}, hasAudioFile={}",
                     parsedId,
                     title,
-                    coverImageBase64 != null && !coverImageBase64.isBlank());
+                    coverImageBase64 != null && !coverImageBase64.isBlank(),
+                    audioFile != null && !audioFile.isEmpty());
 
-                Audio saved = audioService.saveFromForm(parsedId, callNumber, subject, title, responsibility, gmd,
-                    publisher, originCity, publishYear, mediaType, audioFormat, status, null);
+            Audio saved = audioService.saveFromForm(parsedId, callNumber, subject, title, responsibility, gmd,
+                    publisher, originCity, publishYear, mediaType, audioFormat, status, null, audioFile);
 
-                if (coverImageBase64 != null && !coverImageBase64.isBlank()) {
+            // 1. Proses Cover Gambar
+            if (coverImageBase64 != null && !coverImageBase64.isBlank()) {
                 try {
                     byte[] imageBytes = Base64.getDecoder().decode(coverImageBase64);
                     if (imageBytes.length > 0) {
@@ -87,6 +95,24 @@ public class AudioController extends BaseController {
                     }
                 } catch (IllegalArgumentException decodeError) {
                     logger.warn("Invalid base64 image payload for audio {}: {}", saved.getId(), decodeError.getMessage());
+                }
+            }
+
+            // 2. Proses Simpan File Fisik Audio (.mp3 / .wav) ke folder static/audio/
+            if (audioFile != null && !audioFile.isEmpty()) {
+                try {
+                    String fileName = "audio_" + saved.getId() + ".mp3";
+                    Path uploadPath = Paths.get("src/main/resources/static/audio/");
+                    
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+                    
+                    Path filePath = uploadPath.resolve(fileName);
+                    Files.copy(audioFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    logger.info("File audio berhasil disimpan ke: {}", filePath.toString());
+                } catch (Exception fileEx) {
+                    logger.error("Gagal menyimpan file fisik audio: {}", fileEx.getMessage());
                 }
             }
 

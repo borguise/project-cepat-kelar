@@ -27,7 +27,9 @@ public class AudioPageController {
     private AudioService audioService;
 
     @GetMapping("")
-    public String audio(@RequestParam(value = "page", defaultValue = "0") int page,
+    public String audio(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             ModelMap model) {
         if (adminService != null) {
@@ -38,11 +40,19 @@ public class AudioPageController {
         if (audioService != null) {
             try {
                 Pageable pageable = PageRequest.of(page, size);
-                Page<Audio> audioPage = audioService.getPageableActive(pageable);
+                Page<Audio> audioPage;
+
+                if (query != null && !query.trim().isEmpty()) {
+                    audioPage = audioService.getPageable(query.trim(), pageable);
+                } else {
+                    audioPage = audioService.getPageableActive(pageable);
+                }
+
                 model.addAttribute("audioRecordings", audioPage.getContent());
                 model.addAttribute("currentPage", page);
                 model.addAttribute("totalPages", audioPage.getTotalPages());
                 model.addAttribute("totalItems", audioPage.getTotalElements());
+                model.addAttribute("query", query);
             } catch (Exception e) {
                 model.addAttribute("errorMessage", "Gagal memuat daftar audio: " + e.getMessage());
             }

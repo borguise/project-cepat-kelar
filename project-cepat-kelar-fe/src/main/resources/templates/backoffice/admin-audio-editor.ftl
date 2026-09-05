@@ -1,3 +1,4 @@
+<#-- admin-audio-editor.ftl -->
 <#assign activePage = "audio">
 <#import "/layout/backoffice_layout.ftl" as layout>
 
@@ -24,9 +25,19 @@
         </div>
       </#if>
 
-      <form id="audio-form" action="/admin/audio/save" method="POST" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
+      <form id="audio-form" action="/admin/audio/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
-        <input type="hidden" name="id" value="${(audio.id)!''}">
+        <!-- 1. Token Keamanan Spring Security -->
+        <#if _csrf??>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </#if>
+
+        <!-- 2. Perbaikan ID agar format angkanya selalu valid -->
+        <input type="hidden" name="id" value="${(audio.id?c)!''}">
+        
+        <!-- 3. Penahan data status agar tidak error menabrak database -->
+        <input type="hidden" name="status" value="${(audio.status)!'Tersedia'}">
+
         <input type="hidden" name="coverImageBase64" id="audioCoverImageBase64" value="">
         <input type="hidden" name="coverFileName" id="audioCoverFileName" value="">
 
@@ -76,6 +87,18 @@
 
         <hr class="border-slate-50">
 
+        <!-- BAGIAN UPLOAD FILE AUDIO FISIK -->
+        <div class="space-y-3">
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">File Audio (MP3 / WAV)</h3>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col gap-3">
+            <label class="label-elegant text-sm font-semibold text-slate-700">Pilih Berkas Suara dari Perangkat</label>
+            <input type="file" name="audioFile" accept="audio/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+            <p class="text-xs text-slate-400">Unggah file format .mp3 atau .wav agar dapat diputar langsung di pemutar utama pengunjung maupun admin.</p>
+          </div>
+        </div>
+
+        <hr class="border-slate-50">
+
         <div class="space-y-5">
           <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">Data Penerbit</h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -97,7 +120,7 @@
         <hr class="border-slate-50">
 
         <div class="space-y-5">
-          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3">  Data Fisik</h3>
+          <h3 class="text-xl font-bold font-gelasio text-indigo-800 italic border-l-4 border-indigo-800 pl-3"> Data Fisik</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="label-elegant">Jumlah dan Jenis Media</label>
@@ -126,6 +149,29 @@
           const placeholder = document.getElementById('audioCoverPlaceholder');
           const base64Input = document.getElementById('audioCoverImageBase64');
           const fileNameInput = document.getElementById('audioCoverFileName');
+
+          // --- TRIK ULTIMATE: MENYAMAR JADI FORM TEKS BIASA ---
+          const audioForm = document.getElementById('audio-form');
+          if (audioForm) {
+            audioForm.addEventListener('submit', function() {
+              const audioInput = document.querySelector('input[name="audioFile"]');
+              
+              let hasFile = false;
+              if (fileInput && fileInput.files.length > 0) hasFile = true;
+              if (audioInput && audioInput.files.length > 0) hasFile = true;
+
+              // Jika tidak ada file yang diunggah sama sekali (hanya edit teks)
+              if (!hasFile) {
+                // Lucuti atribut multipart agar server Tomcat tidak memblokirnya!
+                audioForm.removeAttribute('enctype');
+                
+                // Matikan input agar benar-benar bersih
+                if (fileInput) fileInput.disabled = true;
+                if (audioInput) audioInput.disabled = true;
+              }
+            });
+          }
+          // --------------------------------------------------
 
           if (!fileInput || !preview) {
             return;
@@ -160,8 +206,7 @@
             reader.readAsDataURL(file);
           });
         });
-      </script> 
-
+      </script>
     </div>
 
 </@layout.backofficeLayout>

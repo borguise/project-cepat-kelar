@@ -31,7 +31,7 @@ public class HighlightController extends BaseController {
 
     @PostMapping("/save")
     public String saveHighlight(
-            @RequestParam(required = false) Long id,
+            @RequestParam(value = "id", required = false) Long id,
             @RequestParam("question") String question,
             @RequestParam("answer") String answer,
             @RequestParam(value = "displayOrder", required = false) Integer displayOrder,
@@ -44,7 +44,7 @@ public class HighlightController extends BaseController {
             }
 
             Highlight saved = highlightService.saveFromForm(id, question, answer, displayOrder, status);
-            logger.info("Highlight saved with ID: {}", saved.getId());
+            logger.info("Highlight saved successfully with ID: {}", saved.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Sorotan berhasil disimpan!");
             return "redirect:/admin/highlights";
         } catch (Exception e) {
@@ -58,7 +58,7 @@ public class HighlightController extends BaseController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteHighlight(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deleteHighlight(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             if (highlightService != null) {
                 highlightService.delete(id);

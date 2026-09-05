@@ -19,5 +19,5 @@ public interface AudioService extends CommonService<Audio, Long> {
 
     Audio saveFromForm(Long id, String callNumber, String subject, String title, String responsibility, String gmd,
             String publisher, String originCity, String publishYear, String mediaType, String audioFormat,
-            String status, MultipartFile coverFile) throws Exception;
+            String status, MultipartFile coverFile, MultipartFile audioFile) throws Exception;
 }

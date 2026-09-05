@@ -1,20 +1,38 @@
 package com.project.cepat.kelar.fe.controller.frontoffice;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.project.cepat.kelar.jpa.model.Article;
+import com.project.cepat.kelar.jpa.model.Comment;
+import com.project.cepat.kelar.jpa.model.Event;
+import com.project.cepat.kelar.jpa.model.Highlight;
 import com.project.cepat.kelar.jpa.model.Voting;
+import com.project.cepat.kelar.service.backoffice.ArticleService;
 import com.project.cepat.kelar.service.backoffice.AudioService;
 import com.project.cepat.kelar.service.backoffice.CollectionService;
+import com.project.cepat.kelar.service.backoffice.CommentService;
+import com.project.cepat.kelar.service.backoffice.EventService;
 import com.project.cepat.kelar.service.backoffice.HighlightService;
 import com.project.cepat.kelar.service.backoffice.VotingService;
 
 @Controller
 public class FrontofficeController {
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
 
     @Autowired(required = false)
     private HighlightService highlightService;
@@ -28,6 +46,15 @@ public class FrontofficeController {
     @Autowired(required = false)
     private VotingService votingService;
 
+    @Autowired(required = false)
+    private ArticleService articleService;
+
+    @Autowired(required = false)
+    private CommentService commentService;
+
+    @Autowired(required = false)
+    private EventService eventService;
+
     // --- LANDING & NAVIGATION ---
     @GetMapping({"/", "/landing-page"})
     public String landingPage() {
@@ -40,48 +67,169 @@ public class FrontofficeController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(ModelMap model) {
+        loadHomeData(model);
         return "frontoffice/home";
     }
 
-    // --- MAIN DATA LOADER (HOME-ALT) ---
     @GetMapping("/home-alt")
     public String homeAlt(ModelMap model) {
+        loadHomeData(model);
+        return "frontoffice/home-alt";
+    }
+
+    private void loadHomeData(ModelMap model) {
         try {
-            // 1. Data Koleksi
+            // 1. DATA KOLEKSI BUKU
             if (collectionService != null) {
-                model.addAttribute("collections", collectionService.getPageablePublished(PageRequest.of(0, 9)));
+                var bookPage = collectionService.getPageableActive(PageRequest.of(0, 150));
+                model.addAttribute("bookList", bookPage.getContent());
+                model.addAttribute("collections", bookPage);
             }
             
-            // 2. Data Audio
+            // 2. DATA AUDIO (Diperbarui menggunakan getPageableActive agar data dari admin masuk sepenuhnya)
             if (audioService != null) {
-                model.addAttribute("audios", audioService.getPageablePublished(PageRequest.of(0, 9)).getContent());
+                var audioPage = audioService.getPageableActive(PageRequest.of(0, 50));
+                model.addAttribute("audios", audioPage.getContent());
+                model.addAttribute("audioList", audioPage.getContent());
             }
             
-            // 3. Data Voting (Kandidat Aktif)
+            // 3. DATA VOTING
             if (votingService != null) {
                 Voting activeVoting = votingService.getActiveVoting();
                 if (activeVoting != null) {
                     model.addAttribute("voting", activeVoting);
                     model.addAttribute("participants", votingService.getEntriesByVotingId(activeVoting.getId()));
-                } else {
-                    System.out.println("DEBUG: Tidak ada voting dengan status 'Aktif' di database.");
                 }
             }
+
+            // 4. DATA ARTIKEL & KOMENTAR
+            List<Article> rawArticles = new ArrayList<>();
+            if (articleService != null) {
+                try {
+                    rawArticles = articleService.getAll();
+                } catch (Exception e) {
+                    try {
+                        rawArticles = articleService.getByStatus(com.project.cepat.kelar.common.constant.ArticleStatus.PUBLISHED);
+                    } catch (Exception ignored) {}
+                }
+            }
+
+            List<Map<String, Object>> articleListMaps = new ArrayList<>();
+            if (rawArticles != null) {
+                for (Article a : rawArticles) {
+                    Map<String, Object> aMap = new HashMap<>();
+                    aMap.put("id", a.getId());
+                    aMap.put("title", a.getTitle() != null ? a.getTitle() : "");
+                    aMap.put("content", a.getContent() != null ? a.getContent() : "");
+                    aMap.put("img", "/admin/articles/image/" + a.getId());
+
+                    List<Map<String, Object>> commentMaps = new ArrayList<>();
+                    if (commentService != null) {
+                        try {
+                            Pageable pageable = PageRequest.of(0, 100);
+                            Page<Comment> commentPage = commentService.getCommentsByArticleId(a.getId(), pageable);
+                            for (Comment c : commentPage.getContent()) {
+                                if ("Tampil".equalsIgnoreCase(c.getStatus()) || "Published".equalsIgnoreCase(c.getStatus())) {
+                                    Map<String, Object> cMap = new HashMap<>();
+                                    cMap.put("sender", c.getSender() != null ? c.getSender() : "Anonim");
+                                    cMap.put("content", c.getContent() != null ? c.getContent() : "");
+                                    cMap.put("date", c.getCommentDate() != null ? DATE_FORMAT.format(c.getCommentDate()) : "");
+                                    commentMaps.add(cMap);
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error loading comments for article " + a.getId() + ": " + e.getMessage());
+                        }
+                    }
+                    aMap.put("comments", commentMaps);
+                    articleListMaps.add(aMap);
+                }
+            }
+
+            model.addAttribute("articlesMap", articleListMaps);
+            model.addAttribute("articles", rawArticles != null ? rawArticles : new ArrayList<>());
+
+            // 5. DATA HIGHLIGHT / SOROTAN
+            if (highlightService != null) {
+                List<Map<String, Object>> faqs = new ArrayList<>();
+                for (Highlight item : highlightService.getPublishedList()) {
+                    Map<String, Object> faq = new HashMap<>();
+                    faq.put("question", item.getQuestion());
+                    faq.put("answer", item.getAnswer());
+                    faqs.add(faq);
+                }
+                model.addAttribute("faqs", faqs);
+            } else {
+                model.addAttribute("faqs", new ArrayList<>());
+            }
+
+            // 6. DATA AGENDA / EVENT
+            Map<String, Object> primaryEvent = new HashMap<>();
+            List<Map<String, Object>> upcomingEventList = new ArrayList<>();
+
+            if (eventService != null) {
+                try {
+                    var rawEvents = eventService.getPageableActive(PageRequest.of(0, 20)).getContent();
+                    
+                    List<Event> events = new ArrayList<>();
+                    for (Event ev : rawEvents) {
+                        if (ev.getStatus() != null && "PUBLISHED".equalsIgnoreCase(ev.getStatus().trim())) {
+                            events.add(ev);
+                        }
+                    }
+
+                    SimpleDateFormat indonesianFormatter = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+
+                    if (!events.isEmpty()) {
+                        Event primary = events.get(0);
+                        primaryEvent.put("id", primary.getId());
+                        primaryEvent.put("title", primary.getName() != null ? primary.getName() : "Agenda Literasi");
+                        primaryEvent.put("description", primary.getEventDescription() != null ? primary.getEventDescription() : "-");
+                        primaryEvent.put("dateLabel", primary.getEventDate() != null ? indonesianFormatter.format(primary.getEventDate()) : "Tanggal belum tersedia");
+                        if (primary.getPosterImageData() != null && primary.getPosterImageData().length > 0) {
+                            primaryEvent.put("imageUrl", "/admin/events/image/" + primary.getId());
+                        }
+                    }
+
+                    String[] iconClasses = {"fa-book-open", "fa-calendar-days", "fa-users", "fa-lightbulb", "fa-graduation-cap", "fa-chalkboard-user"};
+                    
+                    int limitCount = Math.min(events.size(), 3);
+                    for (int index = 1; index < limitCount; index++) {
+                        Event event = events.get(index);
+                        Map<String, Object> next = new HashMap<>();
+                        next.put("id", event.getId());
+                        next.put("title", event.getName() != null ? event.getName() : "Agenda");
+                        next.put("dateLabel", event.getEventDate() != null ? indonesianFormatter.format(event.getEventDate()) : "Tanggal belum tersedia");
+                        next.put("iconClass", iconClasses[(index - 1) % iconClasses.length]);
+                        upcomingEventList.add(next);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error mapping frontoffice events: " + e.getMessage());
+                }
+            }
+
+            if (primaryEvent.isEmpty()) {
+                primaryEvent.put("title", "Jadwal Kegiatan Literasi");
+                primaryEvent.put("description", "Belum ada agenda yang dipublikasikan.");
+                primaryEvent.put("dateLabel", "Tanggal belum tersedia");
+            }
+
+            model.addAttribute("primaryEvent", primaryEvent);
+            model.addAttribute("upcomingEventList", upcomingEventList);
+
         } catch (Exception e) {
-            System.out.println("ERROR memuat home-alt: " + e.getMessage());
+            System.out.println("ERROR memuat data beranda frontoffice: " + e.getMessage());
         }
-        return "frontoffice/home-alt";
     }
 
-    // --- OTHER PAGES ---
     @GetMapping("/highlights")
     public String highlights(ModelMap model) {
         try {
             if (highlightService != null) {
-                java.util.List<java.util.Map<String, Object>> faqs = new java.util.ArrayList<>();
+                List<Map<String, Object>> faqs = new ArrayList<>();
                 for (var item : highlightService.getPublishedList()) {
-                    java.util.Map<String, Object> faq = new java.util.HashMap<>();
+                    Map<String, Object> faq = new HashMap<>();
                     faq.put("question", item.getQuestion());
                     faq.put("answer", item.getAnswer());
                     faqs.add(faq);
@@ -89,7 +237,7 @@ public class FrontofficeController {
                 model.addAttribute("faqs", faqs);
             }
         } catch (Exception ignored) {
-            model.addAttribute("faqs", new java.util.ArrayList<>());
+            model.addAttribute("faqs", new ArrayList<>());
         }
         return "frontoffice/highlights";
     }

@@ -13,15 +13,16 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0")
     Page<Comment> getPageableActive(Pageable pageable);
 
-    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND (c.sender LIKE %:text% OR c.source LIKE %:text% OR c.content LIKE %:text%)")
+    // Diperbarui: Menambahkan c.article.title agar pencarian admin juga mencocokkan judul artikel
+    @Query("SELECT c FROM CommentEntity c LEFT JOIN FETCH c.article WHERE c.deleted = 0 AND (c.sender LIKE %:text% OR c.source LIKE %:text% OR c.content LIKE %:text% OR c.article.title LIKE %:text%)")
     Page<Comment> getPageable(@Param("text") String text, Pageable pageable);
 
-    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND c.status = 'Published'")
+    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND (c.status = 'Published' OR c.status = 'Tampil')")
     Page<Comment> getPageablePublished(Pageable pageable);
 
-    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND c.status = 'Published' AND c.source LIKE %:text%")
+    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND (c.status = 'Published' OR c.status = 'Tampil') AND (c.source LIKE %:text% OR c.article.title LIKE %:text%)")
     Page<Comment> getCommentsBySource(@Param("text") String text, Pageable pageable);
 
-    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND c.status = 'Published' AND c.article.id = :articleId")
+    @Query("SELECT c FROM CommentEntity c WHERE c.deleted = 0 AND (c.status = 'Published' OR c.status = 'Tampil') AND c.article.id = :articleId")
     Page<Comment> getCommentsByArticleId(@Param("articleId") Long articleId, Pageable pageable);
 }

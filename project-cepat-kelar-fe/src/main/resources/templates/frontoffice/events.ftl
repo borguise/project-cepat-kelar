@@ -1,4 +1,4 @@
-<#-- events.ftl - VERSI KIOSK BESAR (ALWAYS SHOW CONTENT) -->
+<#-- events.ftl - VERSI KIOSK (SINKRON DENGAN CONTROLLER) -->
 <link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -35,6 +35,7 @@
     .kiosk-image-placeholder {
         width: 100%; height: 450px; background-color: #f8fafc; border-radius: 40px;
         display: flex; justify-content: center; align-items: center; margin-bottom: 50px; border: 3px dashed #e2e8f0;
+        overflow: hidden; 
     }
 
     .kiosk-date-row { display: flex; align-items: center; gap: 25px; font-size: 48px; font-weight: 600; color: #1e293b; margin-bottom: 60px; }
@@ -58,18 +59,17 @@
     <h1 class="kiosk-main-title">Agenda Kegiatan Literasi</h1>
 
     <div class="kiosk-card">
-        <#-- VARIABEL LOKAL UNTUK TESTING & FALLBACK -->
-        <#assign title = (events[0].title)!"Kunjungan berkelompok Smp">
-        <#assign date = (events[0].formattedDate)!"12, maret 2027">
-        <#assign desc = (events[0].description)!"Teman-teman siswa mendapat tugas untuk menjelajahi literasi di Graha Pusat Literasi.">
+        <#assign title = (primaryEvent.title)!"Kunjungan berkelompok Smp">
+        <#assign date = (primaryEvent.dateLabel)!"12, maret 2027">
+        <#assign desc = (primaryEvent.description)!"Teman-teman siswa mendapat tugas untuk menjelajahi literasi di Graha Pusat Literasi.">
 
         <div class="kiosk-card-header">
             <div class="kiosk-event-name">${title}</div>
             <div class="kiosk-divider"></div>
 
             <div class="kiosk-image-placeholder">
-                <#if (events[0].imagePath)??>
-                    <img src="${events[0].imagePath}" class="w-full h-full object-cover rounded-[36px]">
+                <#if primaryEvent?? && primaryEvent.imageUrl??>
+                    <img src="${primaryEvent.imageUrl}" class="w-full h-full object-cover rounded-[36px]">
                 <#else>
                     <svg width="240" height="240" viewBox="0 0 24 24" fill="none" opacity="0.3">
                         <circle cx="12" cy="8" r="4" fill="#64748b"/>
@@ -93,28 +93,25 @@
         <div class="kiosk-next-section">
             <div class="next-label">Agenda Selanjutnya</div>
             
-            <#-- Loop Agenda Selanjutnya (Dummy jika DB kosong) -->
-            <#if events?? && (events?size > 1)>
-                <#list events as item>
-                    <#if item?index != 0>
+          <#if upcomingEventList?? && (upcomingEventList?size > 0)>
+                <#list upcomingEventList as item>
+                    <#if item_index < 2>
                         <div class="next-card">
-                            <div class="next-icon-box"><i class="fa-solid fa-book-open"></i></div>
-                            <div class="next-info"><h3>${item.title}</h3><span>${item.formattedDate}</span></div>
+                            <div class="next-icon-box"><i class="fa-solid ${item.iconClass!'fa-book-open'}"></i></div>
+                            <div class="next-info">
+                               <h3>${item.title!'-'}</h3>
+                               <span>${item.dateLabel!'-'}</span>
+                            </div>
                         </div>
                     </#if>
                 </#list>
             <#else>
-                <#-- Statis Fallback agar tetap keren saat dipresentasikan -->
                 <div class="next-card">
-                    <div class="next-icon-box"><i class="fa-solid fa-book-open"></i></div>
-                    <div class="next-info"><h3>Bedah Buku Sejarah</h3><span>15 Maret 2027</span></div>
+                    <div class="next-icon-box"><i class="fa-solid fa-clock"></i></div>
+                    <div class="next-info"><h3>Belum ada agenda lanjutan</h3><span>-</span></div>
                 </div>
-                <div class="next-card">
-                    <div class="next-icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
-                    <div class="next-info"><h3>Workshop Literasi</h3><span>18 Maret 2027</span></div>
-                </div>
-            </#if>
-        </div>
+            </#if>        
+            </div>
     </div>
     <div class="h-40"></div>
 </div>

@@ -1,13 +1,10 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,22 +31,20 @@ public class CommentController extends BaseController {
         return "Comment Management";
     }
 
-    @PostMapping("/toggle/{id}")
-    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+    @GetMapping("/toggle/{id}")
+    public String toggleStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             if (commentService == null) {
-                return ResponseEntity.status(500).body("Service comment tidak tersedia");
+                redirectAttributes.addFlashAttribute("errorMessage", "Service comment tidak tersedia");
+                return "redirect:/admin/comments";
             }
             Comment updated = commentService.toggleStatus(id);
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("id", updated.getId());
-            response.put("status", updated.getStatus());
-            return ResponseEntity.ok().body(response);
+            redirectAttributes.addFlashAttribute("successMessage", "Status komentar berhasil diubah menjadi: " + updated.getStatus());
         } catch (Exception e) {
             logger.error("Error toggling comment status: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body("Gagal mengubah status komentar");
+            redirectAttributes.addFlashAttribute("errorMessage", "Gagal mengubah status komentar: " + e.getMessage());
         }
+        return "redirect:/admin/comments";
     }
 
     @GetMapping("/delete/{id}")

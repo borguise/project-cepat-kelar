@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +27,8 @@ import com.project.cepat.kelar.service.backoffice.CommentService;
 @RequestMapping("/admin/comments")
 public class CommentPageController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CommentPageController.class);
+
     @Autowired(required = false)
     private com.project.cepat.kelar.service.backoffice.AdminService adminService;
 
@@ -34,28 +38,30 @@ public class CommentPageController {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM yyyy");
 
     @GetMapping("")
-    public String comments(@RequestParam(value = "page", defaultValue = "0") int page,
+    public String comments(
+            @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "search", required = false) String search,
             ModelMap model) {
+        
         if (adminService != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             model.addAttribute("adminName", adminService.resolveAdminName(auth));
         }
 
-        if (commentService != null) {
-            try {
+        try {
+            if (commentService != null) {
                 Pageable pageable = PageRequest.of(page, size);
                 Page<Comment> commentPage;
                 
                 if (search != null && !search.trim().isEmpty()) {
+                    logger.info("Searching comments with keyword: {}, page: {}, size: {}", search, page, size);
                     commentPage = commentService.getPageable(search, pageable);
-                    model.addAttribute("searchKeyword", search);
+                    model.addAttribute("searchText", search);
                 } else {
                     commentPage = commentService.getPageableActive(pageable);
                 }
 
-                // Convert to Map with formatted date for template display
                 List<Map<String, Object>> commentMaps = new ArrayList<>();
                 for (Comment comment : commentPage.getContent()) {
                     Map<String, Object> map = new HashMap<>();
@@ -72,9 +78,22 @@ public class CommentPageController {
                 model.addAttribute("currentPage", page);
                 model.addAttribute("totalPages", commentPage.getTotalPages());
                 model.addAttribute("totalItems", commentPage.getTotalElements());
-            } catch (Exception e) {
-                model.addAttribute("errorMessage", "Gagal memuat daftar komentar: " + e.getMessage());
+                model.addAttribute("pageSize", size);
+
+                logger.info("Loaded {} comments for admin moderation page", commentMaps.size());
+            } else {
+                model.addAttribute("comments", new ArrayList<>());
+                model.addAttribute("currentPage", 0);
+                model.addAttribute("totalPages", 0);
+                model.addAttribute("totalItems", 0);
             }
+        } catch (Exception e) {
+            logger.error("Error loading comments page: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Gagal memuat daftar komentar: " + e.getMessage());
+            model.addAttribute("comments", new ArrayList<>());
+            model.addAttribute("currentPage", 0);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("totalItems", 0);
         }
 
         return "backoffice/admin-comments";

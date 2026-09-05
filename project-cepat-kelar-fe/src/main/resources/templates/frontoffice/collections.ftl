@@ -1,6 +1,6 @@
 <#-- =======================================================
      COLLECTIONS.FTL - KIOSK SPA (FINAL MASTERPIECE)
-     Fitur: Smart Grid, Anti-Bug Filter, Namespace Isolated
+     Fitur: Standar OPAC, Tabel Detail Klasik-Modern, Full Data
      ======================================================= -->
 
 <style>
@@ -16,13 +16,10 @@
         pointer-events: none; z-index: 1;
     }
 
-    /* MODAL FILTER UI (Sudah kebal dari Bug Chromium "4 Kotak") */
+    /* MODAL FILTER UI */
     .coll-filter-overlay { 
-        position: absolute; /* Wajib absolute agar tidak mengecil di Kiosk */
-        inset: 0; 
-        background: rgba(0, 0, 0, 0.75); /* Warna hitam transparan elegan */
-        /* backdrop-filter: blur(8px); Dihapus untuk mencegah bug grafis Kiosk */
-        z-index: 9999; 
+        position: absolute; inset: 0; 
+        background: rgba(0, 0, 0, 0.75); z-index: 9999; 
         display: none; justify-content: center; align-items: center; 
     }
     
@@ -56,7 +53,7 @@
         <#-- ================= BROWSE VIEW ================= -->
         <div id="collViewBrowse" class="w-full max-w-[800px] flex flex-col items-center">
             
-            <#-- Search Bar dengan Ikon Pohon -->
+            <#-- Search Bar -->
             <div class="w-full mb-[50px] mt-[150px] relative">
                 <form class="w-full h-[100px] bg-white rounded-[30px] flex items-center px-[40px] shadow-[0_10px_30px_rgba(0,0,0,0.08)]" onsubmit="collHandleSearch(event)">
                     <button type="submit" class="bg-transparent border-none cursor-pointer">
@@ -64,12 +61,11 @@
                     </button>
                     <input type="text" id="collSearchInput" class="flex-1 bg-transparent border-none outline-none text-center font-['Gelasio'] font-bold text-[34px] text-[#3730a3]" value="Cari Judul, Pengarang, Penerbit" autocomplete="off" onfocus="if(this.value=='Cari Judul, Pengarang, Penerbit')this.value=''">
                     
-                    <#-- Ikon Pohon Cemara yang Estetik -->
                     <i class="fas fa-tree text-[50px] text-[#065f46] ml-6 cursor-pointer hover:scale-110 transition-transform" onclick="collToggleFilter()"></i>
                 </form>
             </div>
 
-            <#-- Header Pencarian (Dilengkapi Tombol Reset Estetik) -->
+            <#-- Header Pencarian -->
             <div id="collSearchHeader" class="hidden w-full flex-col justify-center items-center mb-[40px] gap-3">
                 <div id="collSearchTitle" class="font-['Gelasio'] font-bold text-[36px] text-slate-700 text-center w-full truncate">
                     Hasil pencarian
@@ -82,10 +78,8 @@
             <#-- White Card (Wadah Grid) -->
             <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-sm min-h-[600px]">
                 
-                <#-- Grid Kontainer yang dinamis -->
                 <div id="collGridContainer" class="grid grid-cols-3 gap-[50px_30px]"></div>
                 
-                <#-- Wadah Not Found -->
                 <div id="collEmptyContainer" class="hidden flex-col items-center justify-center min-h-[500px] text-center gap-[40px]">
                     <div class="font-['Gelasio'] font-bold text-[46px] text-slate-800">Tidak Ditemukan</div>
                     <div class="w-[220px] h-[220px] rounded-full bg-slate-100 flex items-center justify-center text-slate-300 text-[110px] shadow-inner">
@@ -96,49 +90,84 @@
             </div>
         </div>
 
-        <#-- ================= DETAIL VIEW ================= -->
+        <#-- ================= DETAIL VIEW (TAMPILAN KATALOG STANDAR OPAC) ================= -->
         <div id="collViewDetail" class="hidden w-full max-w-[800px] flex-col items-center mt-[150px]">
             
-            <#-- Tombol Kembali di TENGAH -->
-            <div class="w-full flex justify-center mb-[25px] relative z-20">
-                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition bg-white px-6 py-3 rounded-full shadow-sm" onclick="collGoBack()">
+            <#-- Tombol Kembali yang Ditengahkan dan Dihilangkan Tombol X nya -->
+            <div class="w-full flex justify-center items-center mb-[25px] relative z-20 px-4">
+                <div class="font-['Lato'] text-[26px] font-bold text-sky-500 cursor-pointer flex items-center gap-3 hover:text-sky-600 active:scale-95 transition bg-white px-8 py-3 rounded-full shadow-sm" onclick="collGoBack()">
                     <i class="fas fa-chevron-left"></i> Kembali ke daftar koleksi
                 </div>
             </div>
 
-            <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-xl flex flex-col gap-[50px] mb-[80px]">
+            <div class="w-full bg-white/95 backdrop-blur-sm rounded-[40px] p-[60px] shadow-xl flex flex-col gap-[40px] mb-[80px]">
+                
+                <!-- Info Sampul & Judul Atas -->
                 <div class="flex items-start gap-[50px]">
-                    <div class="w-[280px] h-[400px] shrink-0 rounded-[16px] overflow-hidden border-[4px] border-slate-100 shadow-lg bg-slate-100">
-                        <img id="collDtlCover" src="" class="w-full h-full object-cover">
+                    <div class="w-[240px] h-[340px] shrink-0 rounded-[12px] overflow-hidden border-[4px] border-slate-100 shadow-lg bg-slate-50 flex items-center justify-center">
+                        <img id="collDtlCover" src="" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600/f1f5f9/94a3b8?text=Tidak+Ada+Cover'">
                     </div>
-                    <div class="flex-1 flex flex-col justify-center text-center mt-6">
-                        <h1 id="collDtlTitle" class="font-['Gelasio'] font-bold text-[42px] leading-tight text-slate-900 mb-4">Judul</h1>
-                        <div id="collDtlCall" class="font-['Gelasio'] font-bold text-[60px] text-[#3730a3]">000.000</div>
-                        <div id="collDtlCat" class="font-['Gelasio'] font-bold text-[30px] text-slate-400 uppercase mt-2">Kategori</div>
+                    <div class="flex-1 flex flex-col pt-4">
+                        <h1 id="collDtlTitle" class="font-['Gelasio'] font-bold text-[36px] leading-tight text-slate-900 mb-4 border-b-2 border-slate-200 pb-4">Judul</h1>
+                        
+                        <!-- Status Ketersediaan ala OPAC -->
+                        <div class="mt-2 flex flex-col gap-2">
+                            <span class="font-['Inter'] text-[18px] text-slate-500 font-semibold">Ketersediaan:</span>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-sky-100 text-sky-700 font-bold px-4 py-2 rounded-lg text-[22px]" id="collDtlStock">0 Eks</span>
+                                <span class="bg-green-100 text-green-700 font-bold px-4 py-2 rounded-lg text-[22px]">Tersedia</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="w-full">
-                    <h2 class="font-['Gelasio'] font-bold text-[38px] text-slate-900 mb-[30px] border-b-4 border-slate-100 pb-4 inline-block">Keterangan</h2>
-                    <div class="flex flex-col gap-[20px]">
-                        <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
-                            <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Tajuk Pengarang</div>
-                            <div id="collDtlAuthor" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
-                        </div>
-                        <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
-                            <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Data Penerbit</div>
-                            <div id="collDtlPub" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
-                        </div>
-                        <div class="bg-slate-50 rounded-[24px] p-[30px] border-2 border-slate-100 flex flex-col gap-2">
-                            <div class="font-['Gelasio'] text-[24px] text-slate-400 uppercase">Data Fisik</div>
-                            <div id="collDtlPhysical" class="font-['Gelasio'] font-bold text-[34px] text-slate-800">-</div>
-                        </div>
+                    <h2 class="font-['Gelasio'] font-bold text-[30px] text-slate-900 mb-6 flex items-center gap-4">
+                        <i class="fas fa-info-circle text-sky-500"></i> Informasi Detail
+                    </h2>
+                    
+                    <#-- TABEL INFORMASI DETAIL ALA OPAC NAMUN ELEGAN -->
+                    <div class="bg-slate-50 rounded-[20px] p-[40px] border border-slate-200">
+                        <table class="w-full text-left font-['Inter'] text-[24px] text-slate-700">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">Judul Utama</td>
+                                    <td class="py-5 font-bold align-top text-slate-900" id="collDtlTitleTable">-</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">Pengarang</td>
+                                    <td class="py-5 align-top" id="collDtlAuthor">-</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">No. Panggil</td>
+                                    <td class="py-5 font-bold text-sky-700 align-top" id="collDtlCall">-</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">Penerbitan</td>
+                                    <td class="py-5 align-top" id="collDtlPub">-</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">Deskripsi Fisik</td>
+                                    <td class="py-5 align-top" id="collDtlPhysical">-</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">Klasifikasi</td>
+                                    <td class="py-5 align-top" id="collDtlCat">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-5 font-semibold text-slate-500 w-[35%] align-top">ISBN/ISSN</td>
+                                    <td class="py-5 align-top" id="collDtlIsbn">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <#-- ================= MODAL FILTER (CHECKBOX) ================= -->
+    <#-- ================= MODAL FILTER ================= -->
     <div id="collFilterOverlay" class="coll-filter-overlay" onclick="collToggleFilter()">
         <div class="coll-filter-card" onclick="event.stopPropagation()">
             <div class="coll-filter-close" onclick="collToggleFilter()"><i class="fas fa-times"></i></div>
@@ -160,19 +189,27 @@
 <script>
     const collBasePath = "${basePath!"/images/frontoffice"}";
     
-    <#-- INJEKSI DATA DATABASE (Dengan Fallback Dummy Putih Biru) -->
+    <#-- INJEKSI DATA DATABASE -->
     const collDbBooks = [
         <#if bookList?? && bookList?has_content>
             <#list bookList as b>
-            { id: ${b.id}, title: "${(b.title!'Tanpa Judul')?js_string}", callNum: "${(b.callNum!'000.000')?js_string}", category: "${(b.cat!'Koleksi')?js_string}", author: "${(b.author!'Anonim')?js_string}", publisher: "${(b.pub!'-')?js_string}", physical: "${(b.phys!'-')?js_string}", img: "/admin/collections/image/${b.id}" }<#if b?has_next>,</#if>
+            { 
+                id: ${b.id}, 
+                title: "${(b.title!'Tanpa Judul')?js_string}", 
+                callNum: "${(b.callNumber!'000.000')?js_string}", 
+                category: "${(b.subject!'Koleksi')?js_string}", 
+                author: "${(b.author!'Anonim')?js_string}", 
+                publisher: "${(b.publisher!'-')?js_string}", 
+                pubCity: "${(b.publishCity!'')?js_string}", 
+                pubYear: "${(b.publishYear!'')?js_string}", 
+                physical: "${(b.physicalDescription!'-')?js_string}",
+                isbn: "${(b.isbn!'')?js_string}",
+                stock: ${(b.stock!0)?c},
+                img: "/admin/collections/image/${b.id}" 
+            }<#if b?has_next>,</#if>
             </#list>
         <#else>
-            { id: 1, title: "Seni Memahami Literasi Magetan", callNum: "899.221", category: "Buku Umum", author: "Pemerintah Kab. Magetan", publisher: "Graha Literasi, 2024", physical: "xiv, 250 hlm ; 24 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+1" },
-            { id: 2, title: "Sejarah Gunung Lawu", callNum: "959.8", category: "Sejarah", author: "Dinas Kebudayaan", publisher: "Pustaka Jawa, 2021", physical: "200 hlm ; 21 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+2" },
-            { id: 3, title: "Kumpulan Puisi Pring Sedapur", callNum: "811.1", category: "Sastra", author: "Seniman Lokal", publisher: "Indie Press, 2023", physical: "120 hlm ; 19 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+3" },
-            { id: 4, title: "Ensiklopedia Magetan", callNum: "030.1", category: "Referensi", author: "Tim Riset", publisher: "Pemkab, 2022", physical: "500 hlm ; 30 cm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+4" },
-            { id: 5, title: "Pesona Wisata Telaga Sarangan", callNum: "910.2", category: "Travel", author: "Pariwisata", publisher: "Graha, 2024", physical: "80 hlm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+5" },
-            { id: 6, title: "Batik Pring Sedapur", callNum: "746.6", category: "Seni Budaya", author: "Kreator Magetan", publisher: "Pemkab, 2023", physical: "150 hlm", img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+6" }
+            { id: 1, title: "Seni Memahami Literasi", callNum: "899.221", category: "Buku Umum", author: "Pemerintah Kab. Magetan", publisher: "Graha Literasi", pubCity: "Magetan", pubYear: "2024", physical: "xiv, 250 hlm ; 24 cm", isbn: "978-602-123-456-7", stock: 5, img: "https://placehold.co/400x600/ffffff/3730a3?text=Buku+1" }
         </#if>
     ];
 
@@ -192,14 +229,12 @@
         }
     }
 
-    // Mengembalikan ke tampilan Home awal
     function collResetToHome() {
         document.getElementById('collSearchInput').value = 'Cari Judul, Pengarang, Penerbit';
         collCurrentBooks = [...collDbBooks];
         collNavigateTo('home');
     }
 
-    // Mengeksekusi Pencarian
     function collHandleSearch(e) {
         if(e) e.preventDefault();
         const q = document.getElementById('collSearchInput').value.trim().toLowerCase();
@@ -216,7 +251,7 @@
             if (fJudul && b.title.toLowerCase().includes(q)) match = true;
             if (fPengarang && b.author.toLowerCase().includes(q)) match = true;
             if (fPenerbit && b.publisher.toLowerCase().includes(q)) match = true;
-            if (fIsbn && (b.callNum.toLowerCase().includes(q) || b.category.toLowerCase().includes(q))) match = true;
+            if (fIsbn && (b.callNum.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.isbn.toLowerCase().includes(q))) match = true;
             return match;
         });
         
@@ -224,7 +259,6 @@
         collNavigateTo('search');
     }
 
-    // Membuat Grid Adaptif (Smart Centering)
     function collRenderGrid() {
         const grid = document.getElementById('collGridContainer');
         const empty = document.getElementById('collEmptyContainer');
@@ -240,19 +274,14 @@
         
         const count = collCurrentBooks.length;
         
-        // Logika layout adaptif agar posisinya cantik jika hasil sedikit
-        if (count === 1) { 
-            grid.className = "flex justify-center pt-[20px]"; 
-        } else if (count === 2) { 
-            grid.className = "flex justify-center gap-[60px] pt-[20px]"; 
-        } else { 
-            grid.className = "grid grid-cols-3 gap-[50px_30px]"; 
-        }
+        if (count === 1) { grid.className = "flex justify-center pt-[20px]"; } 
+        else if (count === 2) { grid.className = "flex justify-center gap-[60px] pt-[20px]"; } 
+        else { grid.className = "grid grid-cols-3 gap-[50px_30px]"; }
         
         grid.innerHTML = collCurrentBooks.map(b => `
             <div class="flex flex-col items-center gap-4 cursor-pointer group ${count <= 2 ? 'w-[220px]' : 'w-full'}" onclick="collOpenDetail(${b.id})">
                 <div class="w-full aspect-[2/3] rounded-[16px] overflow-hidden border border-slate-200 bg-white shadow-sm group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300 shrink-0">
-                    <img src="${b.img}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600/ffffff/3730a3?text=Cover'">
+                    <img src="${b.img}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x600/f1f5f9/94a3b8?text=Cover'">
                 </div>
                 <div class="w-full text-center px-2">
                     <div class="font-['Gelasio'] text-[24px] font-bold text-[#3730a3] leading-snug line-clamp-2">${b.title}</div>
@@ -265,13 +294,28 @@
     function collOpenDetail(id) {
         const b = collDbBooks.find(x => x.id === id);
         if(!b) return;
+        
+        // Header
         document.getElementById('collDtlTitle').innerText = b.title;
-        document.getElementById('collDtlCall').innerText = b.callNum;
-        document.getElementById('collDtlCat').innerText = b.category;
+        document.getElementById('collDtlStock').innerText = b.stock + " Eks";
+        
+        // Tabel OPAC Klasik
+        document.getElementById('collDtlTitleTable').innerText = b.title;
         document.getElementById('collDtlAuthor').innerText = b.author;
-        document.getElementById('collDtlPub').innerText = b.publisher;
+        document.getElementById('collDtlCall').innerText = b.callNum;
         document.getElementById('collDtlPhysical').innerText = b.physical;
+        document.getElementById('collDtlCat').innerText = b.category;
+        document.getElementById('collDtlIsbn').innerText = (b.isbn && b.isbn.trim() !== "") ? b.isbn : "-";
+        
+        // FORMAT DATA PUBLIKASI STANDAR KATALOG (Kota : Penerbit, Tahun)
+        let pubText = "";
+        if (b.pubCity && b.pubCity.trim() !== "") pubText += b.pubCity + " : ";
+        pubText += b.publisher;
+        if (b.pubYear && b.pubYear.trim() !== "") pubText += ", " + b.pubYear;
+        
+        document.getElementById('collDtlPub').innerText = pubText !== "" ? pubText : "-";
         document.getElementById('collDtlCover').src = b.img;
+        
         collNavigateTo('detail');
     }
 
@@ -279,7 +323,6 @@
     function collToggleFilter() { const m = document.getElementById('collFilterOverlay'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
     function collApplyFilterSearch(e) { e.preventDefault(); collToggleFilter(); collHandleSearch(e); }
 
-    // Init awal
     setTimeout(() => collNavigateTo('home'), 150);
 </#noparse>
 </script>

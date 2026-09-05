@@ -1,5 +1,7 @@
 <#assign activePage = "agenda">
 <#import "/layout/backoffice_layout.ftl" as layout>
+
+<#-- Logika sinkronisasi status -->
 <#assign currentStatus = "Diproses">
 <#if eventItem?? && eventItem.status?? && eventItem.status?has_content>
   <#assign currentStatus = eventItem.status>
@@ -51,8 +53,8 @@
           <div class="flex flex-col gap-3 text-center">
             <label class="font-gelasio text-2xl text-black">Status</label>
             <select name="status" class="w-full py-4 px-8 border border-stone-200 rounded-xl font-lato text-base text-indigo-800 text-center focus:ring-4 focus:ring-indigo-50 transition-all bg-white h-14 appearance-none cursor-pointer" style="font-size: 16px;">
-              <option value="Diproses" <#if currentStatus == 'Diproses'>selected</#if>>Diproses</option>
-              <option value="Disetujui" <#if currentStatus == 'Disetujui'>selected</#if>>Disetujui</option>
+              <option value="Diproses" <#if currentStatus == 'Diproses'>selected</#if>>Diproses (Sembunyikan)</option>
+              <option value="PUBLISHED" <#if currentStatus == 'PUBLISHED'>selected</#if>>PUBLISHED (Tampil di Kiosk)</option>
             </select>
           </div>
         </div>
@@ -93,11 +95,9 @@
       </form> 
 
   <script>
-    // Memastikan tinggi textarea pas saat dimuat pertama kali
     const tx = document.getElementById('autoExpand');
     tx.setAttribute('style', 'height:' + (tx.scrollHeight) + 'px;overflow-y:hidden;');
 
-    // Combine date and time inputs into eventDate field
     const form = document.querySelector('form');
     const eventDateDateInput = document.querySelector('input[name="eventDateDate"]');
     const eventDateTimeInput = document.querySelector('input[name="eventDateTime"]');
@@ -117,9 +117,7 @@
     if (posterInput && posterPreview && posterPlaceholder) {
       posterInput.addEventListener('change', function() {
         const file = this.files && this.files[0];
-        if (!file) {
-          return;
-        }
+        if (!file) return;
         const objectUrl = URL.createObjectURL(file);
         posterPreview.src = objectUrl;
         posterPreview.classList.remove('hidden');

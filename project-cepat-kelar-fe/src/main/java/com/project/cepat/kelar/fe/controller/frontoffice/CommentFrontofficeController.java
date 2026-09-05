@@ -2,7 +2,7 @@ package com.project.cepat.kelar.fe.controller.frontoffice;
 
 import java.util.Date;
 
-import org.slf4j.Logger;
+import org.slf4j.Logger; // <-- Import ini
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,8 @@ import com.project.cepat.kelar.jpa.model.Article;
 import com.project.cepat.kelar.jpa.model.Comment;
 import com.project.cepat.kelar.service.backoffice.ArticleService;
 import com.project.cepat.kelar.service.backoffice.CommentService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/comment")
@@ -30,15 +32,20 @@ public class CommentFrontofficeController {
 
     @PostMapping("/submit")
     public String submitComment(
-            @RequestParam(value = "name", required = true) String name,
-            @RequestParam(value = "email", required = false) String email,
-            @RequestParam(value = "comment", required = true) String commentText,
-            @RequestParam(value = "articleId", required = false) Long articleId,
-            @RequestParam(value = "source", required = false) String source,
+            @RequestParam(value = "name", required = false, defaultValue = "Anonim") String name,
+            @RequestParam(value = "email", required = false, defaultValue = "") String email,
+            @RequestParam(value = "comment", required = false, defaultValue = "") String commentText,
+            @RequestParam(value = "articleId", required = false) String articleIdStr,
+            @RequestParam(value = "source", required = false, defaultValue = "Article") String source,
             @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
+            HttpServletRequest request, // <-- Tambahkan parameter ini untuk mendeteksi halaman asal
             RedirectAttributes redirectAttributes) {
         
-        String targetUrl = redirectUrl != null && !redirectUrl.isEmpty() ? redirectUrl : "/articles";
+        // Ambil halaman asal (referer) secara otomatis agar user kembali ke artikel yang dibaca
+        String referer = request.getHeader("Referer");
+        String targetUrl = (redirectUrl != null && !redirectUrl.trim().isEmpty()) 
+                            ? redirectUrl 
+                            : (referer != null ? referer : "/home");
 
         try {
             if (commentService != null) {
@@ -46,26 +53,28 @@ public class CommentFrontofficeController {
                 comment.setSender(name);
                 comment.setUserEmail(email);
                 comment.setContent(commentText);
-                comment.setSource(source != null ? source : "Article");
-                comment.setStatus("Hidden"); // Default to hidden for moderation
+                comment.setSource(source);
+                comment.setStatus("Published"); 
                 comment.setCommentDate(new Date());
 
-                // Set article relationship if articleId is provided
-                if (articleId != null && articleService != null) {
+                if (articleIdStr != null && !articleIdStr.trim().isEmpty()) {
                     try {
-                        Article article = articleService.getById(articleId);
-                        if (article != null) {
-                            comment.setArticle(article);
-                            logger.info("Article relationship set for comment on article ID: {}", articleId);
+                        Long articleId = Long.valueOf(articleIdStr.trim());
+                        if (articleService != null) {
+                            Article article = articleService.getById(articleId);
+                            if (article != null) {
+                                comment.setArticle(article);
+                                comment.setSource(article.getTitle());
+                            }
                         }
                     } catch (Exception e) {
-                        logger.warn("Could not load article with ID {}: {}", articleId, e.getMessage());
+                        logger.warn("Could not parse or load article with ID {}: {}", articleIdStr, e.getMessage());
                     }
                 }
 
                 commentService.save(comment);
-                logger.info("Comment submitted by: {}", name);
-                redirectAttributes.addFlashAttribute("commentSuccess", "Komentar Anda berhasil dikirim dan menunggu moderasi!");
+                logger.info("Comment successfully saved by: {}", name);
+                redirectAttributes.addFlashAttribute("commentSuccess", "Komentar berhasil dikirim!");
             } else {
                 redirectAttributes.addFlashAttribute("commentError", "Layanan komentar tidak tersedia!");
             }

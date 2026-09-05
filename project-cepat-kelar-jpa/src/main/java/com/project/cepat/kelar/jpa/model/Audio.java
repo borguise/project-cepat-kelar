@@ -1,11 +1,10 @@
 package com.project.cepat.kelar.jpa.model;
 
+import com.project.cepat.kelar.common.model.ReferenceBase;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
-import com.project.cepat.kelar.common.model.ReferenceBase;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -55,4 +54,10 @@ public class Audio extends ReferenceBase {
 
     @Column(name = "COVER_IMAGE_DATA", columnDefinition = "bytea")
     private byte[] coverImageData;
+
+    @Column(name = "AUDIO_FILE_NAME")
+    private String audioFileName;
+
+    @Column(name = "AUDIO_FILE_DATA", columnDefinition = "bytea")
+    private byte[] audioFileData;
 }

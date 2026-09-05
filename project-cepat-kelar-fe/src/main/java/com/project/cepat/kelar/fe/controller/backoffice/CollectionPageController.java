@@ -1,6 +1,7 @@
 package com.project.cepat.kelar.fe.controller.backoffice;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +25,11 @@ public class CollectionPageController {
     private com.project.cepat.kelar.service.backoffice.CollectionService collectionService;
 
     @GetMapping("")
-    public String collections(@RequestParam(value = "query", required = false) String query, ModelMap model) {
+    public String collections(
+            @RequestParam(value = "query", required = false) String query, 
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            ModelMap model) {
+        
         if (adminService != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             model.addAttribute("adminName", adminService.resolveAdminName(auth));
@@ -32,16 +37,28 @@ public class CollectionPageController {
 
         try {
             if (collectionService != null) {
-                var pageRequest = PageRequest.of(0, 100);
+                int pageIndex = Math.max(0, page - 1);
+                var pageRequest = PageRequest.of(pageIndex, 10); // Batasi 10 data per halaman
+                
+                Page<Collection> bookPage;
                 if (query != null && !query.trim().isEmpty()) {
-                    model.addAttribute("daftarBuku", collectionService.getPageable(query.trim(), pageRequest).getContent());
+                    bookPage = collectionService.getPageable(query.trim(), pageRequest);
                     model.addAttribute("query", query);
                 } else {
-                    model.addAttribute("daftarBuku", collectionService.getPageableActive(pageRequest).getContent());
+                    bookPage = collectionService.getPageableActive(pageRequest);
                 }
+                
+                // Kirim variabel paginasi ke FTL
+                model.addAttribute("daftarBuku", bookPage.getContent());
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", bookPage.getTotalPages());
+                model.addAttribute("totalItems", bookPage.getTotalElements());
             }
         } catch (Exception ignored) {
             model.addAttribute("daftarBuku", new java.util.ArrayList<Collection>());
+            model.addAttribute("currentPage", 1);
+            model.addAttribute("totalPages", 0);
+            model.addAttribute("totalItems", 0);
         }
 
         return "backoffice/admin-collections";
@@ -60,7 +77,6 @@ public class CollectionPageController {
                     model.addAttribute("buku", collectionService.getById(id));
                 }
             } catch (Exception ignored) {
-                // Keep editor accessible even if lookup fails.
             }
         }
 
