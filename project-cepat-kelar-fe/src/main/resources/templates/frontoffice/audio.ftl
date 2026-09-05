@@ -229,7 +229,8 @@
                     fileUrl: "/audio/indonesiaraya.mp3",
                 </#if>
 
-                img: "/audio/image/${audio.id?c}"
+                <#-- DIPERBAIKI: Menambahkan prefiks /admin agar sesuai dengan AudioController.java -->
+                img: "/admin/audio/image/${audio.id?c}"
             }<#if audio?has_next>,</#if>
             </#list>
         <#else>

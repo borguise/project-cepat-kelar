@@ -27,7 +27,17 @@
 
       <form id="audio-form" action="/admin/audio/save" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-slate-100 p-8 mb-8 flex flex-col gap-8">
         
-        <input type="hidden" name="id" value="${(audio.id)!''}">
+        <!-- 1. Token Keamanan Spring Security -->
+        <#if _csrf??>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </#if>
+
+        <!-- 2. Perbaikan ID agar format angkanya selalu valid -->
+        <input type="hidden" name="id" value="${(audio.id?c)!''}">
+        
+        <!-- 3. Penahan data status agar tidak error menabrak database -->
+        <input type="hidden" name="status" value="${(audio.status)!'Tersedia'}">
+
         <input type="hidden" name="coverImageBase64" id="audioCoverImageBase64" value="">
         <input type="hidden" name="coverFileName" id="audioCoverFileName" value="">
 
@@ -140,6 +150,29 @@
           const base64Input = document.getElementById('audioCoverImageBase64');
           const fileNameInput = document.getElementById('audioCoverFileName');
 
+          // --- TRIK ULTIMATE: MENYAMAR JADI FORM TEKS BIASA ---
+          const audioForm = document.getElementById('audio-form');
+          if (audioForm) {
+            audioForm.addEventListener('submit', function() {
+              const audioInput = document.querySelector('input[name="audioFile"]');
+              
+              let hasFile = false;
+              if (fileInput && fileInput.files.length > 0) hasFile = true;
+              if (audioInput && audioInput.files.length > 0) hasFile = true;
+
+              // Jika tidak ada file yang diunggah sama sekali (hanya edit teks)
+              if (!hasFile) {
+                // Lucuti atribut multipart agar server Tomcat tidak memblokirnya!
+                audioForm.removeAttribute('enctype');
+                
+                // Matikan input agar benar-benar bersih
+                if (fileInput) fileInput.disabled = true;
+                if (audioInput) audioInput.disabled = true;
+              }
+            });
+          }
+          // --------------------------------------------------
+
           if (!fileInput || !preview) {
             return;
           }
@@ -150,7 +183,7 @@
 
             const objectUrl = URL.createObjectURL(file);
             preview.src = objectUrl;
-            preview.classList.2?.remove('hidden') || preview.classList.remove('hidden');
+            preview.classList.remove('hidden');
 
             if (existing) {
               existing.classList.add('hidden');
@@ -173,8 +206,7 @@
             reader.readAsDataURL(file);
           });
         });
-      </script> 
-
+      </script>
     </div>
 
 </@layout.backofficeLayout>
